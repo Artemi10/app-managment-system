@@ -1,0 +1,8 @@
+<div class="auth__form__field input-field" [formGroup]="emailFormGroup!">
+  <i class="material-icons prefix">mail_outline</i>
+  <input id="email" type="email"
+         class="validate" name="email"
+         [formControlName]="'email'"
+         [ngClass]="{'invalid' : isInputInvalid}"/>
+  <label for="email" data-error="wrong" data-success="right">Email</label>
+</div>

@@ -1,0 +1,9 @@
+<div class="auth">
+  <div class="auth__container">
+    <form class="auth__form" [formGroup]="resetEmailForm" (ngSubmit)="resetEmail()">
+      <app-email-field formGroupName="emailField"></app-email-field>
+      <app-error-field [error]="errorMessage"></app-error-field>
+      <app-button [buttonName]="'Send'"></app-button>
+    </form>
+  </div>
+</div>

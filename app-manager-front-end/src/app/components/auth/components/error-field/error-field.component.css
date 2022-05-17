@@ -1,0 +1,9 @@
+.auth__form__error{
+  text-align: center;
+  color: 	#ff3333;
+  font-size: 20px;
+  margin: 20px 20px 0;
+}
+.hidden{
+  display: none;
+}

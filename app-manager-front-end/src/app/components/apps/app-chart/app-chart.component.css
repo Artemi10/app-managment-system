@@ -1,0 +1,30 @@
+.chart__container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: calc(100vh - 64px);
+  width: 100vw;
+  margin: 0 auto;
+}
+.chart{
+  max-width: 500px;
+  width: 80%;
+  height: auto;
+  margin: 0 auto;
+}
+.nav{
+  position: absolute;
+  top: 100px;
+  right: 30px;
+}
+.nav__icon_add, .nav__icon_setting{
+  cursor: pointer;
+  margin: 5px;
+  color: #000000;
+}
+.nav__icon_add:hover, .nav__icon_setting:hover{
+  color: #9575cd;
+}
+.hidden{
+  display: none;
+}

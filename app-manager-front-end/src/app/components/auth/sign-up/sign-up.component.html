@@ -1,0 +1,12 @@
+<div class="auth">
+  <div class="auth__container">
+    <form class="auth__form" [formGroup]="signUpForm" (ngSubmit)="signUp()">
+      <app-email-field formGroupName="emailField"></app-email-field>
+      <app-password-field formGroupName="passwordField"></app-password-field>
+      <app-re-password-field formGroupName="rePasswordField"></app-re-password-field>
+      <app-error-field [error]="errorMessage"></app-error-field>
+      <app-button [buttonName]="'Sign up'"></app-button>
+    </form>
+    <div></div>
+  </div>
+</div>

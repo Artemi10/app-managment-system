@@ -1,0 +1,5 @@
+<form class="update__form" [formGroup]="updateForm!" (ngSubmit)="updateApp()">
+  <app-name-field formGroupName="nameField"></app-name-field>
+  <app-error-field [error]="errorMessage"></app-error-field>
+  <app-button [buttonName]="'Update'"></app-button>
+</form>

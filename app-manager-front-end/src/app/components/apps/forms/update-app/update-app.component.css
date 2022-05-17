@@ -1,0 +1,13 @@
+.update{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background-color: #d1c4e9;
+  height: calc(100vh - 64px);
+}
+.update__container{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: calc(100vh - 64px);
+}

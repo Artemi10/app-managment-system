@@ -1,0 +1,7 @@
+<div class="create__form__field input-field" [formGroup]="extraInfFormGroup!">
+  <i class="material-icons prefix">border_color</i>
+  <input id="extra" type="text" class="validate" maxlength="255"
+         [formControlName]="'extraInf'"
+         [ngClass]="{'invalid' : isInputInvalid}"/>
+  <label for="extra" data-error="wrong" data-success="right">Extra information</label>
+</div>

@@ -1,0 +1,7 @@
+<div class="create__form__field input-field" [formGroup]="eventNameFormGroup!">
+  <i class="material-icons prefix">border_color</i>
+  <input id="title" type="text" class="validate" maxlength="50"
+         [formControlName]="'eventName'"
+         [ngClass]="{'invalid' : isInputInvalid}"/>
+  <label for="title" data-error="wrong" data-success="right">Event name</label>
+</div>

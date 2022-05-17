@@ -1,0 +1,10 @@
+<div class="auth">
+  <div class="auth__container">
+    <form class="auth__form" [formGroup]="updateForm" (ngSubmit)="update()">
+      <app-password-field formGroupName="passwordField" [name]="'New password'"></app-password-field>
+      <app-re-password-field formGroupName="rePasswordField"></app-re-password-field>
+      <app-error-field [error]="errorMessage"></app-error-field>
+      <app-button [buttonName]="'Change'"></app-button>
+    </form>
+  </div>
+</div>

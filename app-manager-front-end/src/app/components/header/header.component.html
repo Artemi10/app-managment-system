@@ -1,0 +1,16 @@
+<div class="navbar">
+  <nav class="deep-purple lighten-2">
+    <div class="nav-wrapper">
+      <p class="brand-logo menu__logo">devanmejia</p>
+      <a href="#" data-target="menu-panel" class="sidenav-trigger">
+        <i class="material-icons">menu</i>
+      </a>
+      <ul class="right hide-on-med-and-down">
+        <app-menu [isAuthenticated]="isAuthenticated"></app-menu>
+      </ul>
+    </div>
+  </nav>
+  <ul class="sidenav deep-purple lighten-5" id="menu-panel" #sidenav>
+    <app-menu [isAuthenticated]="isAuthenticated"></app-menu>
+  </ul>
+</div>

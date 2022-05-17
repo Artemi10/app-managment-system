@@ -1,0 +1,42 @@
+.home{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background-color: #d1c4e9;
+  height: calc(100vh - 64px);
+}
+.home__container{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #d1c4e9;
+  max-height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+.home__container__name{
+  padding: 20px 0;
+  text-align: center;
+  color: #ffffff;
+  font-size: 50px;
+  font-family: 'Indie Flower', cursive;
+  font-weight: bold;
+  background-color: #d1c4e9;
+}
+.home__container__img{
+  height: 55%;
+  text-align: center;
+  background-color: #d1c4e9;
+}
+.home__container__img img{
+  height: 100%;
+  width: auto;
+}
+.home__container__link{
+  padding: 20px 0;
+  text-align: center;
+  background-color: #d1c4e9;
+}
+.hidden {
+  display: none;
+}

@@ -1,0 +1,7 @@
+.auth__form__field{
+  margin: 20px 20px 0;
+  padding: 0;
+}
+.invalid{
+  border-bottom: 1px solid rgb(196, 0, 0);
+}

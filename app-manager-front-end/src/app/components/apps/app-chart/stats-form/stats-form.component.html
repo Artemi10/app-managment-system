@@ -1,0 +1,11 @@
+<div class="stats__form__container">
+  <form class="stats__form" [formGroup]="statsForm" (submit)="submitFormListener()">
+    <span class="stats__form__icon_close" (click)="closeFormListener()">
+      <i class="material-icons small">close</i>
+    </span>
+    <app-select-field formGroupName="typeField"></app-select-field>
+    <app-date-field [name]="'From'" (dateChange)="fromDateChange($event)"></app-date-field>
+    <app-date-field [name]="'To'" (dateChange)="toDateChange($event)"></app-date-field>
+    <app-button [buttonName]="'Apply'"></app-button>
+  </form>
+</div>

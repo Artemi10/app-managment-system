@@ -1,0 +1,6 @@
+<form class="create__form" [formGroup]="createEventForm" (ngSubmit)="createEvent()">
+  <app-event-name-field formGroupName="eventNameField"></app-event-name-field>
+  <app-extra-inf-field formGroupName="extraInfField"></app-extra-inf-field>
+  <app-error-field [error]="errorMessage"></app-error-field>
+  <app-button [buttonName]="'Add'"></app-button>
+</form>

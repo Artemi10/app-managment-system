@@ -1,0 +1,24 @@
+<div class="apps__list__table__app"
+     (mouseenter)="showActions()"
+     (mouseleave)="hideActions()">
+  <p class="apps__list__table__app__title">
+    <span>{{app!.id}}</span>.
+    <span>{{app!.name}}</span>
+    <span class="apps__list__table__app__action"
+          [ngClass]="{'hidden' : !isHovered}"
+          (click)="openUpdateForm()">
+      <i class="material-icons prefix apps__list__table__app__icon">edit</i>
+    </span>
+    <span class="apps__list__table__app__action"
+          [ngClass]="{'hidden' : !isHovered}"
+          (click)="deleteAppItem()">
+      <i class="material-icons prefix apps__list__table__app__icon">delete</i>
+    </span>
+    <span class="apps__list__table__app__action"
+          [ngClass]="{'hidden' : !isHovered}"
+          (click)="openAppChart()">
+      <i class="material-icons prefix apps__list__table__app__icon">show_chart</i>
+    </span>
+  </p>
+  <p class="apps__list__table__app__text__time">{{app!.creationTime}}</p>
+</div>

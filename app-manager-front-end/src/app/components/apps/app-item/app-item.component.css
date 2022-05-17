@@ -1,0 +1,37 @@
+.apps__list__table__app{
+  border-top: solid 1px #bdbdbd;
+  background-color: #ffffff;
+}
+.apps__list__table__app__title{
+  margin: 0;
+  font-size: 25px;
+  font-weight: bold;
+  padding: 10px 30px 10px 30px;
+}
+.apps__list__table__app__text{
+  background-color: #ffffff;
+  max-width: 100%;
+  overflow: hidden;
+  margin: 0;
+  font-size: 20px;
+  padding: 0 30px 0 30px;
+}
+.apps__list__table__app__text__time{
+  text-align: right;
+  background-color: #ffffff;
+  max-width: 100%;
+  overflow: hidden;
+  margin: 0;
+  font-size: 17px;
+  padding: 5px 30px 10px 30px;
+}
+.apps__list__table__app__icon {
+  color: #000000;
+  cursor: pointer;
+}
+.apps__list__table__app__icon:hover{
+  color: #9575cd;
+}
+.hidden {
+  display: none;
+}

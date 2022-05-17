@@ -1,0 +1,21 @@
+<div class="apps">
+  <div class="apps__container">
+    <div class="apps__list">
+      <div class="apps__list__header">
+        <p class="apps__list__header__text">Apps</p>
+        <p class="apps__list__header__add" (click)="createApp()">
+          <span><i class="material-icons small">add</i></span>
+        </p>
+      </div>
+      <div *ngIf="!isEmpty" class="apps__list__table">
+        <app-app-item
+          *ngFor="let app of apps"
+          [app]="app"
+          (deleteApp)="updateApps()">
+        </app-app-item>
+      </div>
+      <p *ngIf="isEmpty" class="apps__list__table_empty">Please, add new apps</p>
+    </div>
+  </div>
+</div>
+<app-pagination [(currentPage)]="page" [pageAmount]="pageAmount"></app-pagination>

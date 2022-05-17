@@ -1,0 +1,8 @@
+<div class="auth__form__field input-field" [formGroup]="confirmationFormGroup!">
+  <i class="material-icons prefix">border_color</i>
+  <input id="code" type="text"
+         class="validate" name="code"
+         [formControlName]="'code'"
+         [ngClass]="{'invalid' : isInputInvalid}"/>
+  <label for="code" data-error="wrong" data-success="right">Reset code</label>
+</div>

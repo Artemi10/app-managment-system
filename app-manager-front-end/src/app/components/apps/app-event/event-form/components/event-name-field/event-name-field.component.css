@@ -1,0 +1,7 @@
+.create__form__field{
+  margin: 0 20px;
+  padding: 0;
+}
+.invalid{
+  border-bottom: 1px solid rgb(196, 0, 0);
+}

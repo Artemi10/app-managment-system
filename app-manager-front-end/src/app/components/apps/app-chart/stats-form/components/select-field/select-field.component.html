@@ -1,0 +1,8 @@
+<div class="input-field stats__form__field" [formGroup]="selectFormGroup!">
+  <select name="type" #selectElement [formControlName]="'type'">
+    <option value="months">By months</option>
+    <option value="days">By days</option>
+    <option value="hours">By hours</option>
+  </select>
+  <label>Type</label>
+</div>

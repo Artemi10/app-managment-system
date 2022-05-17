@@ -1,0 +1,15 @@
+.navbar{
+  position: relative;
+  height: 64px !important;
+}
+nav{
+  height: 64px !important;
+}
+.menu__logo {
+  padding: 0 20px 0 20px !important;
+  margin: 0;
+  font-size: 30px;
+  font-family: 'Indie Flower', cursive;
+  font-weight: bold;
+  height: 64px !important;
+}

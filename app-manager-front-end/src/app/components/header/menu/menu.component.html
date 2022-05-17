@@ -1,0 +1,5 @@
+<app-menu-item [href]="'/'" [itemName]="'Home'"></app-menu-item>
+<app-menu-item [ngClass]="{'hidden' : !isAuthenticated}" [href]="'/apps'" [itemName]="'Apps'"></app-menu-item>
+<app-menu-item [ngClass]="{'hidden' : !isAuthenticated}" (click)="logOut()" [itemName]="'Log out'"></app-menu-item>
+<app-menu-item [ngClass]="{'hidden' : isAuthenticated}" [href]="'/auth/log-in'" [itemName]="'Log in'"></app-menu-item>
+<app-menu-item [ngClass]="{'hidden' : isAuthenticated}" [href]="'/auth/sign-up'" [itemName]="'Sign up'"></app-menu-item>

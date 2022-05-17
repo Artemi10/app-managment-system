@@ -1,0 +1,19 @@
+<div class="auth">
+  <div class="auth__container">
+    <form class="auth__form" [formGroup]="confirmationForm" (ngSubmit)="confirmUpdate()">
+      <app-code-field formGroupName="codeField"></app-code-field>
+      <app-counter
+        (timerStopEvent)="enableButton()"
+        [isButtonDisabled]="isSendAgainButtonDisabled"
+        *ngIf="isSendAgainButtonDisabled">
+      </app-counter>
+      <app-send-again-link
+        (success)="disableButton()"
+        (error)="handleError($event)"
+        *ngIf="!isSendAgainButtonDisabled">
+      </app-send-again-link>
+      <app-error-field [error]="errorMessage"></app-error-field>
+      <app-button [buttonName]="'Confirm'"></app-button>
+    </form>
+  </div>
+</div>

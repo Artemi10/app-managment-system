@@ -1,0 +1,5 @@
+<form class="create__form" [formGroup]="createForm!" (ngSubmit)="createApp()">
+  <app-name-field formGroupName="nameField"></app-name-field>
+  <app-error-field [error]="errorMessage"></app-error-field>
+  <app-button [buttonName]="'Create'"></app-button>
+</form>

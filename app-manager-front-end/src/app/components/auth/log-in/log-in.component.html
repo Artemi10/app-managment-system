@@ -1,0 +1,11 @@
+<div class="auth">
+  <div class="auth__container">
+    <form class="auth__form" [formGroup]="logInForm" (ngSubmit)="logIn()">
+      <app-email-field formGroupName="emailField"></app-email-field>
+      <app-password-field formGroupName="passwordField"></app-password-field>
+      <app-forget-field></app-forget-field>
+      <app-error-field [error]="errorMessage"></app-error-field>
+      <app-button [buttonName]="'Log in'"></app-button>
+    </form>
+  </div>
+</div>
