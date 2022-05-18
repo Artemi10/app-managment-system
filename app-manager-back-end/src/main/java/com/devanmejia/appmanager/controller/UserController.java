@@ -12,8 +12,9 @@ import com.devanmejia.appmanager.transfer.auth.token.ResetToken;
 import com.devanmejia.appmanager.transfer.email.EmailRequestDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public class UserController {
 
     @PatchMapping
     public void updateUser(
-            @RequestBody @Validated UpdateDTO requestBody,
+            @RequestBody @Valid UpdateDTO requestBody,
             @AuthenticationPrincipal UserPrincipal userPrincipal){
         requestBody.validate();
         var email = userPrincipal.email();
@@ -34,7 +35,7 @@ public class UserController {
 
     @PostMapping("/reset")
     public AccessToken resetUser(
-            @RequestBody @Validated EmailRequestDTO requestBody) {
+            @RequestBody @Valid EmailRequestDTO requestBody) {
         var email = requestBody.email();
         try {
             var resetToken = userService.resetUser(email);

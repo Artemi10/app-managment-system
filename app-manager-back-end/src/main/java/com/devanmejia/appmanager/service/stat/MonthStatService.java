@@ -31,12 +31,12 @@ public class MonthStatService implements StatService {
 
     @Override
     public List<StatResponseDTO> createStats(long appId, StatRequestDTO statistics) {
-        if (appService.isUserApp(appId, statistics.email())){
-            var rawStat = statsRepository
-                    .getRawApplicationStatsByMonths(appId, statistics.from(), statistics.to());
-            return createMonthStatByRawStat(rawStat, statistics.from(), statistics.to());
+        if (!appService.isUserApp(appId, statistics.email())){
+            throw new EntityException("Application not found");
         }
-        else throw new EntityException("Application not found");
+        var rawStat = statsRepository
+                .getRawApplicationStatsByMonths(appId, statistics.from(), statistics.to());
+        return createMonthStatByRawStat(rawStat, statistics.from(), statistics.to());
     }
 
     private List<StatResponseDTO> createMonthStatByRawStat(Map<String, Integer> rawStat, Timestamp from, Timestamp to){

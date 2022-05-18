@@ -6,8 +6,9 @@ import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import com.devanmejia.appmanager.transfer.event.EventResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public class EventController {
     public EventResponseDTO addAppEvent(
             @PathVariable long appId,
             @AuthenticationPrincipal UserPrincipal principal,
-            @RequestBody @Validated EventRequestDTO request){
+            @RequestBody @Valid EventRequestDTO request){
         return eventService.addEvent(appId, request, principal.email());
     }
 }

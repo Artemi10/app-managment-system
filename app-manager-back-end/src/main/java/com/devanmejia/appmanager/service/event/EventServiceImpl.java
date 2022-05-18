@@ -23,21 +23,21 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventResponseDTO addEvent(long appId, EventRequestDTO requestDTO, String email) {
-        if (appService.isUserApp(appId, email)){
-            var time = new Timestamp(new Date().getTime());
-            var app = App.builder()
-                    .id(appId)
-                    .build();
-            var event = Event.builder()
-                    .name(requestDTO.name())
-                    .extraInformation(requestDTO.extraInformation())
-                    .time(time)
-                    .app(app)
-                    .build();
-            var savedEvent = eventRepository.save(event);
-            return new EventResponseDTO(appId, savedEvent);
+        if (!appService.isUserApp(appId, email)){
+            throw new EntityException("Application not found");
         }
-        else throw new EntityException("Application not found");
+        var time = new Timestamp(new Date().getTime());
+        var app = App.builder()
+                .id(appId)
+                .build();
+        var event = Event.builder()
+                .name(requestDTO.name())
+                .extraInformation(requestDTO.extraInformation())
+                .time(time)
+                .app(app)
+                .build();
+        var savedEvent = eventRepository.save(event);
+        return new EventResponseDTO(appId, savedEvent);
     }
 
     @Override

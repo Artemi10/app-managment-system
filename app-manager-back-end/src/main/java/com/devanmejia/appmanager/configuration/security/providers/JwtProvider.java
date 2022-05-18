@@ -22,23 +22,25 @@ public class JwtProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         try {
-            if (authentication != null) {
-                var accessToken = authentication.getCredentials().toString();
-                if (accessTokenService.isValid(accessToken)) {
-                    var email = accessTokenService.getEmail(accessToken);
-                    var tokenAuthority = accessTokenService.getAuthorityName(accessToken);
-                    var principal = userDetailsService.loadUserByUsername(email);
-                    var hasAuthority = principal.getAuthorities().stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .anyMatch(authority -> authority.equals(tokenAuthority));
-                    if (hasAuthority) {
-                        return new UsernamePasswordAuthenticationToken(principal, email, principal.getAuthorities());
-                    }
-                }
+            if (authentication == null) {
+                throw new JwtAuthenticationException();
             }
-            throw new JwtAuthenticationException("Access token is invalid");
+            var accessToken = authentication.getCredentials().toString();
+            if (accessTokenService.isValid(accessToken)) {
+                throw new JwtAuthenticationException();
+            }
+            var email = accessTokenService.getEmail(accessToken);
+            var tokenAuthority = accessTokenService.getAuthorityName(accessToken);
+            var principal = userDetailsService.loadUserByUsername(email);
+            var hasAuthority = principal.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .anyMatch(authority -> authority.equals(tokenAuthority));
+            if (hasAuthority) {
+                return new UsernamePasswordAuthenticationToken(principal, email, principal.getAuthorities());
+            }
+            throw new JwtAuthenticationException();
         } catch (JwtException exception) {
-            throw new JwtAuthenticationException("Access token is invalid");
+            throw new JwtAuthenticationException();
         }
     }
 

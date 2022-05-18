@@ -6,9 +6,9 @@ import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -35,7 +35,7 @@ public class AppController {
     @PostMapping
     public AppResponseDTO createUserApp(
             @AuthenticationPrincipal UserPrincipal principal,
-            @RequestBody @Validated AppRequestDTO requestBody) {
+            @RequestBody @Valid AppRequestDTO requestBody) {
         return appService.addUserApp(principal.id(), requestBody);
     }
 
@@ -43,7 +43,7 @@ public class AppController {
     public AppResponseDTO updateUserApp(
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable long appId,
-            @RequestBody @Validated AppRequestDTO requestBody) {
+            @RequestBody @Valid AppRequestDTO requestBody) {
         return appService.updateUserApp(appId, requestBody, principal.email());
     }
 

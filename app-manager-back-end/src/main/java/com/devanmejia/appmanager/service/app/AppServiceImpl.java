@@ -30,14 +30,14 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public List<AppResponseDTO> findUserApps(int page, int pageSize, String email) {
-        if (page > 0){
-            var pageable = PageRequest.of(page - 1, pageSize);
-            return appRepository
-                    .findAllByUserEmail(email, pageable).stream()
-                    .map(AppResponseDTO::new)
-                    .toList();
+        if (page <= 0) {
+            throw new EntityException("Application not found");
         }
-        else throw new EntityException("Application not found");
+        var pageable = PageRequest.of(page - 1, pageSize);
+        return appRepository
+                .findAllByUserEmail(email, pageable).stream()
+                .map(AppResponseDTO::new)
+                .toList();
     }
 
     @Override

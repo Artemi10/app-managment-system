@@ -31,12 +31,12 @@ public class HourStatService implements StatService {
 
     @Override
     public List<StatResponseDTO> createStats(long appId, StatRequestDTO statistics) {
-        if (appService.isUserApp(appId, statistics.email())){
-            var rowResult =  statsRepository
-                    .getRawApplicationStatsByHours(appId, statistics.from(), statistics.to());
-            return createHourStatByRawStat(rowResult, statistics.from(), statistics.to());
+        if (!appService.isUserApp(appId, statistics.email())){
+            throw new EntityException("Application not found");
         }
-        else throw new EntityException("Application not found");
+        var rowResult =  statsRepository
+                .getRawApplicationStatsByHours(appId, statistics.from(), statistics.to());
+        return createHourStatByRawStat(rowResult, statistics.from(), statistics.to());
     }
 
     private List<StatResponseDTO> createHourStatByRawStat(Map<String, Integer> rawStat, Timestamp from, Timestamp to){

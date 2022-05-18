@@ -5,8 +5,9 @@ import com.devanmejia.appmanager.transfer.auth.LogInDTO;
 import com.devanmejia.appmanager.transfer.auth.SignUpDTO;
 import com.devanmejia.appmanager.transfer.auth.token.Token;
 import lombok.AllArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @AllArgsConstructor
@@ -15,12 +16,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/log-in")
-    public Token logIn(@RequestBody @Validated LogInDTO logInDTO){
+    public Token logIn(@RequestBody @Valid LogInDTO logInDTO){
         return authService.logIn(logInDTO);
     }
 
     @PostMapping("/sign-up")
-    public Token signUp(@RequestBody @Validated SignUpDTO signUpDTO){
+    public Token signUp(@RequestBody @Valid SignUpDTO signUpDTO){
         signUpDTO.validate();
         return authService.signUp(signUpDTO);
     }

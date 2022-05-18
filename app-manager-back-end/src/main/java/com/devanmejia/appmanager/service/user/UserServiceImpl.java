@@ -31,19 +31,15 @@ public class UserServiceImpl implements UserService {
     public void confirmResetUser(String email, String resetToken) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityException("User not found"));
-        if (user.getAuthority().equals(Authority.UPDATE_NOT_CONFIRMED)) {
-            if (user.getResetToken().equals(resetToken)) {
-                user.setResetToken(null);
-                user.setAuthority(Authority.UPDATE_CONFIRMED);
-                userRepository.save(user);
-            }
-            else {
-                throw new BadCredentialsException("Reset code is invalid");
-            }
-        }
-        else {
+        if (!user.getAuthority().equals(Authority.UPDATE_NOT_CONFIRMED)) {
             throw new BadCredentialsException("Confirmation is not allowed");
         }
+        if (!user.getResetToken().equals(resetToken)) {
+            throw new BadCredentialsException("Reset code is invalid");
+        }
+        user.setResetToken(null);
+        user.setAuthority(Authority.UPDATE_CONFIRMED);
+        userRepository.save(user);
     }
 
     @Override
@@ -59,14 +55,12 @@ public class UserServiceImpl implements UserService {
     public void updateUser(String email, UpdateDTO updateDTO) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityException("User not found"));
-        if (user.getAuthority().equals(Authority.UPDATE_CONFIRMED)) {
-            var hashPassword = passwordEncoder.encode(updateDTO.newPassword());
-            user.setPassword(hashPassword);
-            user.setAuthority(Authority.ACTIVE);
-            userRepository.save(user);
-        }
-        else {
+        if (!user.getAuthority().equals(Authority.UPDATE_CONFIRMED)) {
             throw new BadCredentialsException("Update is not allowed");
         }
+        var hashPassword = passwordEncoder.encode(updateDTO.newPassword());
+        user.setPassword(hashPassword);
+        user.setAuthority(Authority.ACTIVE);
+        userRepository.save(user);
     }
 }
