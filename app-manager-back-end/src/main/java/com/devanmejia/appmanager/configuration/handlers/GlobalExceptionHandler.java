@@ -2,7 +2,7 @@ package com.devanmejia.appmanager.configuration.handlers;
 
 import com.devanmejia.appmanager.exception.EmailException;
 import com.devanmejia.appmanager.exception.EntityException;
-import com.devanmejia.appmanager.exception.ValidatorException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,15 +20,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionMessage> validationException(MethodArgumentNotValidException exception) {
-        var fieldError = exception.getFieldError();
-        var message = fieldError != null ? fieldError.getDefaultMessage() : "Request body is invalid";
+        var message = exception.getAllErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .findFirst()
+                .orElse("Request body is invalid");
         var body = new ExceptionMessage(message, HttpStatus.UNPROCESSABLE_ENTITY.value());
         return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(ValidatorException.class)
-    public ResponseEntity<ExceptionMessage> validationException(ValidatorException exception) {
-        var body = new ExceptionMessage(exception.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY.value());
-        return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
 }

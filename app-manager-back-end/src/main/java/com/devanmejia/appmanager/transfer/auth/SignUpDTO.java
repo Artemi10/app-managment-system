@@ -1,10 +1,15 @@
 package com.devanmejia.appmanager.transfer.auth;
 
-import com.devanmejia.appmanager.exception.ValidatorException;
+import com.devanmejia.appmanager.configuration.validator.EqualFields;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+@EqualFields(
+        baseField = "password",
+        matchField = "rePassword",
+        message = "Passwords do not match"
+)
 public record SignUpDTO(
         @NotBlank(message = "Email is incorrect")
         @Email(message = "Email is incorrect")
@@ -13,11 +18,5 @@ public record SignUpDTO(
         String password,
         @NotBlank(message = "Passwords do not match")
         String rePassword) {
-
-    public void validate() {
-        if (!password.equals(rePassword)) {
-            throw new ValidatorException("Passwords do not match");
-        }
-    }
 
 }

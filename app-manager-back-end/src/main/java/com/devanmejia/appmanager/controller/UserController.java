@@ -28,7 +28,6 @@ public class UserController {
     public void updateUser(
             @RequestBody @Valid UpdateDTO requestBody,
             @AuthenticationPrincipal UserPrincipal userPrincipal){
-        requestBody.validate();
         var email = userPrincipal.email();
         userService.updateUser(email, requestBody);
     }

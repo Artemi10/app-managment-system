@@ -22,7 +22,6 @@ public class AuthController {
 
     @PostMapping("/sign-up")
     public Token signUp(@RequestBody @Valid SignUpDTO signUpDTO){
-        signUpDTO.validate();
         return authService.signUp(signUpDTO);
     }
 
