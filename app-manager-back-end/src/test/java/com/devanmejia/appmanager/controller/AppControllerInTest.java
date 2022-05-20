@@ -93,7 +93,10 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isOk());
         verify(appService, times(1))
-                .findUserApps(1, 3, "lyah.artem10@mail.ru");
+                .findUserApps(
+                        eq("lyah.artem10@mail.ru"),
+                        argThat(pageCriteria -> pageCriteria.getPage() == 1 && pageCriteria.getPageSize() == 3),
+                        argThat(sortCriteria -> sortCriteria.getValue().equals("id") && sortCriteria.isDescending()));
     }
 
     @Test
@@ -103,7 +106,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
         verify(appService, times(0))
-                .findUserApps(anyInt(), anyString());
+                .findUserApps(anyString(), any(), any());
     }
 
     @Test
@@ -117,7 +120,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isForbidden());
         verify(appService, times(0))
-                .findUserApps(anyInt(), anyString());
+                .findUserApps(anyString(), any(), any());
     }
 
     @Test
@@ -155,7 +158,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isForbidden());
         verify(appService, times(0))
-                .findUserApps(anyInt(), anyString());
+                .findUserApps(anyString(), any(), any());
     }
 
     @Test
@@ -312,7 +315,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
         verify(appService, times(0))
-                .findUserApps(anyInt(), anyString());
+                .findUserApps(anyString(), any(), any());
     }
 
     @Test
@@ -326,6 +329,6 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isForbidden());
         verify(appService, times(0))
-                .findUserApps(anyInt(), anyString());
+                .findUserApps(anyString(), any(), any());
     }
 }

@@ -4,6 +4,8 @@ import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.repository.AppRepository;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
+import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
+import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -117,35 +119,18 @@ public class AppServiceImplTest {
 
     @Test
     public void findUserApps_First_Page_Test(){
+        var pageCriteria = new PageCriteria(1, 3);
         var expected = appService
-                .findUserApps(1, 3, "lyah.artem10@gmail.com");
-        assertEquals(3, expected.size());
-    }
-
-    @Test
-    public void findUserApps_Default_Page_Test(){
-        var expected = appService
-                .findUserApps(3, "lyah.artem10@gmail.com");
+                .findUserApps("lyah.artem10@gmail.com", pageCriteria, new SortCriteria());
         assertEquals(3, expected.size());
     }
 
     @Test
     public void findUserApps_Second_Page_Test(){
+        var pageCriteria = new PageCriteria(2, 3);
         var expected = appService
-                .findUserApps(2, 3, "lyah.artem10@gmail.com");
+                .findUserApps("lyah.artem10@gmail.com", pageCriteria, new SortCriteria());
         assertTrue(expected.isEmpty());
-    }
-
-    @Test
-    public void throw_Exception_When_FindUserApps_If_Page_Amount_Less_Than_Or_Equal_Zero_Test() {
-        var expectedWhenZero = assertThrows(
-                EntityException.class,
-                () -> appService.findUserApps(0,3, "lyah.artem10@gmail.com"));
-        assertEquals("Application not found", expectedWhenZero.getMessage());
-        var expectedWhenNegative = assertThrows(
-                EntityException.class,
-                () -> appService.findUserApps(-5, 3, "lyah.artem10@gmail.com"));
-        assertEquals("Application not found", expectedWhenNegative.getMessage());
     }
 
     @Test

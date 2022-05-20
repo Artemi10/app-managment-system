@@ -10,6 +10,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -61,18 +62,19 @@ public class AppRepositoryInTest {
     @Test
     @Order(2)
     public void findAllByUserEmail_By_Pages_Test(){
+        var sort = Sort.by("id").descending();
         var actualFullPage = appRepository
-                .findAllByUserEmail("lyah.artem10@mail.ru", PageRequest.of(0, 4))
+                .findAllByUserEmail("lyah.artem10@mail.ru", PageRequest.of(0, 4, sort))
                 .toList();
         assertEquals(4, actualFullPage.size());
         assertEquals(4, actualFullPage.get(0).getId());
         var actualFirstPagePart = appRepository
-                .findAllByUserEmail("lyah.artem10@mail.ru", PageRequest.of(0, 3))
+                .findAllByUserEmail("lyah.artem10@mail.ru", PageRequest.of(0, 3, sort))
                 .toList();
         assertEquals(3, actualFirstPagePart.size());
         assertEquals(4, actualFirstPagePart.get(0).getId());
         var actualSecondPagePart = appRepository
-                .findAllByUserEmail("lyah.artem10@mail.ru", PageRequest.of(1, 3))
+                .findAllByUserEmail("lyah.artem10@mail.ru", PageRequest.of(1, 3, sort))
                 .toList();
         assertEquals(1, actualSecondPagePart.size());
         assertEquals(1, actualSecondPagePart.get(0).getId());

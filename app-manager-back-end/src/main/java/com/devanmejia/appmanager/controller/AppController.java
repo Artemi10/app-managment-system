@@ -4,6 +4,8 @@ import com.devanmejia.appmanager.configuration.security.details.UserPrincipal;
 import com.devanmejia.appmanager.service.app.AppService;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
+import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
+import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +22,9 @@ public class AppController {
     @GetMapping
     public List<AppResponseDTO> findUserApps(
             @AuthenticationPrincipal UserPrincipal principal,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "3") int pageSize) {
-        return appService.findUserApps(page, pageSize, principal.email());
+            @Valid PageCriteria pageCriteria,
+            @Valid SortCriteria sortCriteria) {
+        return appService.findUserApps(principal.email(), pageCriteria, sortCriteria);
     }
 
     @GetMapping("/count")

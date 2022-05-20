@@ -1,14 +1,17 @@
 package com.devanmejia.appmanager.service.app;
 
-
 import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.entity.user.User;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.repository.AppRepository;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
+import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
+import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -29,20 +32,19 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public List<AppResponseDTO> findUserApps(int page, int pageSize, String email) {
-        if (page <= 0) {
-            throw new EntityException("Application not found");
+    public List<AppResponseDTO> findUserApps(String email, PageCriteria pageCriteria, SortCriteria sortCriteria) {
+        var sort = sortCriteria.isDescending() ?
+                Sort.by(sortCriteria.getValue()).descending() : Sort.by(sortCriteria.getValue()).ascending();
+        var pageable = PageRequest.of(pageCriteria.getPage() - 1, pageCriteria.getPageSize(), sort);
+        try {
+            return appRepository.findAllByUserEmail(email, pageable)
+                    .stream()
+                    .map(AppResponseDTO::new)
+                    .toList();
+        } catch (InvalidDataAccessApiUsageException exception) {
+            var message = "Sorting param is invalid. Field %s does not exist.".formatted(sortCriteria.getValue());
+            throw new EntityException(message);
         }
-        var pageable = PageRequest.of(page - 1, pageSize);
-        return appRepository
-                .findAllByUserEmail(email, pageable).stream()
-                .map(AppResponseDTO::new)
-                .toList();
-    }
-
-    @Override
-    public List<AppResponseDTO> findUserApps(int pageSize, String email) {
-        return findUserApps(1, pageSize, email);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class JwtProvider implements AuthenticationProvider {
                 throw new JwtAuthenticationException();
             }
             var accessToken = authentication.getCredentials().toString();
-            if (accessTokenService.isValid(accessToken)) {
+            if (!accessTokenService.isValid(accessToken)) {
                 throw new JwtAuthenticationException();
             }
             var email = accessTokenService.getEmail(accessToken);

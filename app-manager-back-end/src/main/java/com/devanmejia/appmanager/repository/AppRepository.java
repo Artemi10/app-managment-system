@@ -14,8 +14,7 @@ public interface AppRepository extends JpaRepository<App, Long> {
     @Query(value = """
               SELECT app
               FROM App app
-              WHERE app.user.email = :email
-              ORDER BY app.id DESC""")
+              WHERE app.user.email = :email""")
     Page<App> findAllByUserEmail(String email, Pageable pageable);
 
     @Query("""
