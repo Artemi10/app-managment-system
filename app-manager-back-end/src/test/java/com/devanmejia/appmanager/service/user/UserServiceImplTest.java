@@ -240,9 +240,9 @@ public class UserServiceImplTest {
     @Test
     public void throw_Exception_When_Reset_Token_Is_Invalid() {
         assertThrows(BadCredentialsException.class,
-                () -> userService.confirmResetUser("lyah.artem10@mail.ru", "kVhclnWO"));
+                () -> userService.confirmResetUser("lyah.artem11@gmail.com", "kVhclnWO"));
         verify(userRepository, times(1))
-                .findByEmail("lyah.artem10@mail.ru");
+                .findByEmail("lyah.artem11@gmail.com");
         verify(userRepository, times(0)).save(any(User.class));
     }
 

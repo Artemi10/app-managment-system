@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.ActiveProfiles;
@@ -93,6 +94,9 @@ public class AppServiceImplTest {
                 eq("lyah.artem10@gmail.com"),
                 argThat(pageable -> pageable.getPageNumber() == 1)))
                 .thenReturn(Page.empty());
+        doThrow(new InvalidDataAccessApiUsageException("invalid data"))
+                .when(appRepository)
+                .findAllByUserEmail(eq("lyah.artem100@gmail.com"), any());
         when(appRepository.getUserAppsAmount("lyah.artem10@gmail.com"))
                 .thenReturn(fullPageUserApps.size());
         when(appRepository.getUserAppsAmount("lyah.artem10@mail.ru"))
@@ -131,6 +135,17 @@ public class AppServiceImplTest {
         var expected = appService
                 .findUserApps("lyah.artem10@gmail.com", pageCriteria, new SortCriteria());
         assertTrue(expected.isEmpty());
+    }
+
+    @Test
+    public void throwException_When_findUserApps_If_Sorting_Field_Does_Not_Exist_Test(){
+        var sortCriteria = new SortCriteria("amount", true);
+        var pageCriteria = new PageCriteria(1, 3);
+        var exception= assertThrows(
+                EntityException.class,
+                () -> appService.findUserApps("lyah.artem100@gmail.com", pageCriteria, sortCriteria)
+        );
+        assertEquals("Sorting param is invalid. Field amount does not exist.", exception.getMessage());
     }
 
     @Test
