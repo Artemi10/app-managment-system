@@ -1,0 +1,17 @@
+<ul id='dropdown1' class='dropdown-content'>
+  <li
+    (click)="selectId()"
+    [ngClass]="{'active' : isIdSelected}">
+    <a>Id</a>
+  </li>
+  <li
+    (click)="selectName()"
+    [ngClass]="{'active' : isNameSelected}">
+    <a>Name</a>
+  </li>
+  <li
+    (click)="selectDate()"
+    [ngClass]="{'active' : isDateSelected}">
+    <a>Date</a>
+  </li>
+</ul>
