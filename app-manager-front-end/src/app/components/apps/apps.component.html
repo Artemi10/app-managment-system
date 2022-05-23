@@ -1,11 +1,30 @@
+<app-dropdown (selectedItemChange)="getSortedApps($event)"></app-dropdown>
 <div class="apps">
   <div class="apps__container">
     <div class="apps__list">
-      <div class="apps__list__header">
+      <app-search-panel
+        [ngClass]="{'hidden' : !isSearchPanelShown}"
+        (closeEvent)="closePanel()">
+      </app-search-panel>
+      <div [ngClass]="{'hidden' : isSearchPanelShown}" class="apps__list__header">
         <p class="apps__list__header__text">Apps</p>
-        <p class="apps__list__header__add" (click)="createApp()">
-          <span><i class="material-icons small">add</i></span>
+        <p class="apps__list__header__dropdown">
+          <span class="dropdown-trigger" data-target='dropdown1'>Sort by</span>
+          <span class="apps__list__header__dropdown__descending" (click)="changeDescending()">
+            <i class="material-icons" [ngClass]="{'hidden': descending}">arrow_drop_down</i>
+            <i class="material-icons" [ngClass]="{'hidden': !descending}">arrow_drop_up</i>
+          </span>
         </p>
+        <div class="apps__list__header__buttons">
+          <div class="apps__list__header__buttons__container">
+            <span class="apps__list__header__buttons__search" (click)="openPanel()">
+            <i class="material-icons small">search</i>
+          </span>
+            <span class="apps__list__header__buttons__add" (click)="createApp()">
+            <i class="material-icons small">add</i>
+          </span>
+          </div>
+        </div>
       </div>
       <div *ngIf="!isEmpty" class="apps__list__table">
         <app-app-item

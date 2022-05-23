@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AppService} from 'src/app/service/app/app.service';
 import {TokenService} from 'src/app/service/token/token.service';
@@ -9,19 +9,25 @@ import {App} from "../../model/app.model";
   templateUrl: './apps.component.html',
   styleUrls: ['./apps.component.css']
 })
-export class AppsComponent implements OnInit {
+export class AppsComponent implements OnInit, AfterViewInit {
   public apps: App[];
   public _page: number;
   public pageAmount: number;
   private readonly pageSize: number;
+  private sortField: string;
+  public descending: boolean;
+  public isSearchPanelShown: boolean;
 
   constructor(private appService: AppService,
               private router: Router,
               private tokenService: TokenService) {
+    this.sortField = 'id';
     this.apps = [];
     this.pageSize = 3;
     this._page = 1;
     this.pageAmount = 1;
+    this.descending = false;
+    this.isSearchPanelShown = false;
   }
 
   public get isEmpty(): boolean {
@@ -35,7 +41,7 @@ export class AppsComponent implements OnInit {
   public set page(value: number) {
     if (value > 0) {
       this._page = value;
-      this.appService.getUserApps(this._page, this.pageSize)
+      this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
         .subscribe({
           next : this.initApps.bind(this),
           error : this.logOut.bind(this)
@@ -44,7 +50,7 @@ export class AppsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.appService.getUserApps(this._page, this.pageSize)
+    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
       .subscribe({
         next : this.initApps.bind(this),
         error : this.logOut.bind(this)
@@ -54,6 +60,12 @@ export class AppsComponent implements OnInit {
         next : this.initPageAmount.bind(this),
         error : this.logOut.bind(this)
       });
+  }
+
+  ngAfterViewInit() {
+    const elems = document.querySelectorAll('.dropdown-trigger');
+    // @ts-ignore
+    const instances = M.Dropdown.init(elems, {});
   }
 
   private initApps(apps: App[]) {
@@ -70,7 +82,7 @@ export class AppsComponent implements OnInit {
   }
 
   public updateApps() {
-    this.appService.getUserApps(this._page, this.pageSize)
+    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
       .subscribe({
         next : this.initApps.bind(this),
         error : this.logOut.bind(this)
@@ -82,7 +94,34 @@ export class AppsComponent implements OnInit {
       });
   }
 
+  public getSortedApps(sortField: string) {
+    this._page = 1;
+    this.sortField = sortField;
+    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
+      .subscribe({
+        next : this.initApps.bind(this),
+        error : this.logOut.bind(this)
+      });
+  }
+
+  public changeDescending(){
+    this.descending = !this.descending;
+    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
+      .subscribe({
+        next : this.initApps.bind(this),
+        error : this.logOut.bind(this)
+      });
+  }
+
   public createApp() {
     this.router.navigate(['/app/create']);
+  }
+
+  public closePanel() {
+    this.isSearchPanelShown = false;
+  }
+
+  public openPanel() {
+    this.isSearchPanelShown = true;
   }
 }

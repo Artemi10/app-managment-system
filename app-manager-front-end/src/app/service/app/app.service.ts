@@ -14,8 +14,8 @@ export class AppService {
     this.api = '/apps';
   }
 
-  public getUserApps(page: number, pageSize: number): Observable<App[]> {
-    const param = {params: {page, pageSize}};
+  public getUserApps(page: number, pageSize: number, value: string, descending: boolean): Observable<App[]> {
+    const param = {params: {page, pageSize, value, descending}};
     return this.http.get<App[]>(`${environment.url}${this.api}`, param);
   }
 

@@ -26,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public Token showEmailPage(@RequestBody Token token){
+    public Token refreshToken(@RequestBody Token token){
         return authService.refresh(token);
     }
 }

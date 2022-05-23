@@ -45,6 +45,8 @@ import {UpdateNotConfirmedUserGuard} from "./guard/update-not-confirmed-user/upd
 import { CodeFieldComponent } from './components/auth/components/code-field/code-field.component';
 import { SendAgainLinkComponent } from './components/auth/components/send-again-link/send-again-link.component';
 import { CounterComponent } from './components/auth/components/counter/counter.component';
+import { DropdownComponent } from './components/apps/dropdown/dropdown.component';
+import { SearchPanelComponent } from './components/apps/search-panel/search-panel.component';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -96,7 +98,9 @@ const appRoutes: Routes = [
     ConfirmResetComponent,
     CodeFieldComponent,
     SendAgainLinkComponent,
-    CounterComponent
+    CounterComponent,
+    DropdownComponent,
+    SearchPanelComponent
   ],
   imports: [
     BrowserModule,
