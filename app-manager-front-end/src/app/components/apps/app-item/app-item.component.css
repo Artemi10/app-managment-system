@@ -3,6 +3,9 @@
   background-color: #ffffff;
 }
 .apps__list__table__app__title{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   margin: 0;
   font-size: 25px;
   font-weight: bold;

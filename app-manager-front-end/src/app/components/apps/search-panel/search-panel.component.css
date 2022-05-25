@@ -1,3 +1,6 @@
 .nav{
   background-color: #9575cd;
 }
+.search__icon{
+  cursor: pointer;
+}

@@ -17,6 +17,7 @@ export class AppsComponent implements OnInit, AfterViewInit {
   private sortField: string;
   public descending: boolean;
   public isSearchPanelShown: boolean;
+  private searchParam: string;
 
   constructor(private appService: AppService,
               private router: Router,
@@ -28,6 +29,7 @@ export class AppsComponent implements OnInit, AfterViewInit {
     this.pageAmount = 1;
     this.descending = false;
     this.isSearchPanelShown = false;
+    this.searchParam = '';
   }
 
   public get isEmpty(): boolean {
@@ -41,11 +43,20 @@ export class AppsComponent implements OnInit, AfterViewInit {
   public set page(value: number) {
     if (value > 0) {
       this._page = value;
-      this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
-        .subscribe({
-          next : this.initApps.bind(this),
-          error : this.logOut.bind(this)
-        });
+      if (this.isSearchPanelShown) {
+        this.appService.searchUserAppsByName(this._page, this.pageSize, this.searchParam)
+          .subscribe({
+            next : this.initApps.bind(this),
+            error : this.logOut.bind(this)
+          });
+      }
+      else {
+        this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
+          .subscribe({
+            next : this.initApps.bind(this),
+            error : this.logOut.bind(this)
+          });
+      }
     }
   }
 
@@ -119,9 +130,35 @@ export class AppsComponent implements OnInit, AfterViewInit {
 
   public closePanel() {
     this.isSearchPanelShown = false;
+    this._page = 1;
+    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
+      .subscribe({
+        next : this.initApps.bind(this),
+        error : this.logOut.bind(this)
+      });
+    this.appService.getPageAmount(this.pageSize)
+      .subscribe({
+        next : this.initPageAmount.bind(this),
+        error : this.logOut.bind(this)
+      });
   }
 
   public openPanel() {
     this.isSearchPanelShown = true;
+  }
+
+  public searchApps(searchParam: string) {
+    this._page = 1;
+    this.searchParam = searchParam;
+    this.appService.searchUserAppsByName(this._page, this.pageSize, searchParam)
+      .subscribe({
+        next : this.initApps.bind(this),
+        error : this.logOut.bind(this)
+      });
+    this.appService.getSearchedAppsPageAmount(this.pageSize, searchParam)
+      .subscribe({
+        next : this.initPageAmount.bind(this),
+        error : this.logOut.bind(this)
+      });
   }
 }

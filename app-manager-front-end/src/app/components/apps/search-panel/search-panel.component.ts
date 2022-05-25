@@ -7,9 +7,13 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 })
 export class SearchPanelComponent implements OnInit {
   @Output() public closeEvent: EventEmitter<any>;
+  @Output() public searchEvent: EventEmitter<string>;
+  public appName: string;
 
   constructor() {
     this.closeEvent = new EventEmitter<any>();
+    this.searchEvent = new EventEmitter<string>();
+    this.appName = '';
   }
 
   ngOnInit(): void {
@@ -17,6 +21,12 @@ export class SearchPanelComponent implements OnInit {
 
   public closePanel() {
     this.closeEvent.emit();
+  }
+
+  public search() {
+    if (this.appName !== '') {
+      this.searchEvent.emit(this.appName);
+    }
   }
 
 

@@ -35,4 +35,14 @@ export class AppService {
   public deleteUserApp(id: number): Observable<void> {
     return this.http.delete<void>(`${environment.url}${this.api}/${id}`);
   }
+
+  public searchUserAppsByName(page: number, pageSize: number, searchParam: string): Observable<App[]> {
+    const param = {params: {page, pageSize}};
+    return this.http.get<App[]>(`${environment.url}${this.api}/name/${searchParam}`, param);
+  }
+
+  public getSearchedAppsPageAmount(pageSize: number, searchParam: string): Observable<number> {
+    const param = {params: {pageSize}};
+    return this.http.get<number>(`${environment.url}${this.api}/name/${searchParam}/count`, param);
+  }
 }

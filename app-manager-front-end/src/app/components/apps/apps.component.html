@@ -3,10 +3,11 @@
   <div class="apps__container">
     <div class="apps__list">
       <app-search-panel
-        [ngClass]="{'hidden' : !isSearchPanelShown}"
-        (closeEvent)="closePanel()">
+        *ngIf="isSearchPanelShown"
+        (closeEvent)="closePanel()"
+        (searchEvent)="searchApps($event)">
       </app-search-panel>
-      <div [ngClass]="{'hidden' : isSearchPanelShown}" class="apps__list__header">
+      <div *ngIf="!isSearchPanelShown" class="apps__list__header">
         <p class="apps__list__header__text">Apps</p>
         <p class="apps__list__header__dropdown">
           <span class="dropdown-trigger" data-target='dropdown1'>Sort by</span>
