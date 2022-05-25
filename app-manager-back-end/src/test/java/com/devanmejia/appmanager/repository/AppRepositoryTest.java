@@ -1,5 +1,6 @@
 package com.devanmejia.appmanager.repository;
 
+import com.devanmejia.appmanager.repository.app.AppRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

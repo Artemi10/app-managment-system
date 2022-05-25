@@ -2,7 +2,7 @@ package com.devanmejia.appmanager.integration;
 
 import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.entity.user.User;
-import com.devanmejia.appmanager.repository.AppRepository;
+import com.devanmejia.appmanager.repository.app.AppRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

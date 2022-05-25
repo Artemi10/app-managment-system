@@ -3,7 +3,7 @@ package com.devanmejia.appmanager.service.app;
 import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.entity.user.User;
 import com.devanmejia.appmanager.exception.EntityException;
-import com.devanmejia.appmanager.repository.AppRepository;
+import com.devanmejia.appmanager.repository.app.AppRepository;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;

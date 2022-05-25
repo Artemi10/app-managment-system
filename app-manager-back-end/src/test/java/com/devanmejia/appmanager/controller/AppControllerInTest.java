@@ -5,6 +5,7 @@ import com.devanmejia.appmanager.configuration.security.JwtAuthenticationEntryPo
 import com.devanmejia.appmanager.configuration.security.JwtAuthenticationManager;
 import com.devanmejia.appmanager.configuration.security.providers.JwtProvider;
 import com.devanmejia.appmanager.configuration.security.token.JwtService;
+import com.devanmejia.appmanager.controller.app.AppController;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.service.app.AppService;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
