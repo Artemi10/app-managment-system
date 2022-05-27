@@ -8,18 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface AppNameSearchRepository extends JpaRepository<App, Long> {
     @Query(value = """
-              SELECT app.id, app.name, app.creation_time, app.user_id
-              FROM applications app
-              LEFT JOIN users usr ON app.user_id = usr.id
-              WHERE usr.email = :email
+              SELECT id, name, creation_time, user_id
+              FROM applications
+              WHERE user_id = :userId
               AND ts @@ to_tsquery('english', :name)""", nativeQuery = true)
-    Page<App> findAllByUserEmail(String email, String name, Pageable pageable);
+    Page<App> findUserAppsByName(long userId, String name, Pageable pageable);
 
     @Query(value = """
               SELECT count(*)
-              FROM applications app
-              LEFT JOIN users usr ON app.user_id = usr.id
-              WHERE usr.email = :email
+              FROM applications
+              WHERE user_id = :userId
               AND ts @@ to_tsquery('english', :name)""", nativeQuery = true)
-    int getUserAppsAmountByName(String email, String name);
+    int getUserAppsAmountByName(long userId, String name);
 }

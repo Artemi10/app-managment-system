@@ -25,19 +25,19 @@ public class AppServiceImpl implements AppService {
     private final AppRepository appRepository;
 
     @Override
-    public AppResponseDTO findUserApp(long appId, String email) {
-        return appRepository.findUserAppById(appId, email)
+    public AppResponseDTO findUserApp(long appId, long userId) {
+        return appRepository.findUserAppById(appId, userId)
                 .map(AppResponseDTO::new)
                 .orElseThrow(() -> new EntityException("Application not found"));
     }
 
     @Override
-    public List<AppResponseDTO> findUserApps(String email, PageCriteria pageCriteria, SortCriteria sortCriteria) {
+    public List<AppResponseDTO> findUserApps(long userId, PageCriteria pageCriteria, SortCriteria sortCriteria) {
         var sort = sortCriteria.isDescending() ?
                 Sort.by(sortCriteria.getValue()).descending() : Sort.by(sortCriteria.getValue()).ascending();
         var pageable = PageRequest.of(pageCriteria.getPage() - 1, pageCriteria.getPageSize(), sort);
         try {
-            return appRepository.findAllByUserEmail(email, pageable)
+            return appRepository.findAllByUserId(userId, pageable)
                     .stream()
                     .map(AppResponseDTO::new)
                     .toList();
@@ -48,8 +48,8 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public int getPageAmount(int pageSize, String email) {
-        var noteAmount = appRepository.getUserAppsAmount(email);
+    public int getPageAmount(int pageSize, long userId) {
+        var noteAmount = appRepository.getUserAppsAmount(userId);
         if (noteAmount > 0 && noteAmount % pageSize == 0) {
             return noteAmount / pageSize;
         }
@@ -75,8 +75,8 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public AppResponseDTO updateUserApp(long appId, AppRequestDTO appDTO, String email) {
-        var app = appRepository.findUserAppById(appId, email)
+    public AppResponseDTO updateUserApp(long appId, AppRequestDTO appDTO, long userId) {
+        var app = appRepository.findUserAppById(appId, userId)
                 .orElseThrow(() -> new EntityException("Application not found"));
         app.setName(appDTO.name());
         var savedApp = appRepository.save(app);
@@ -84,12 +84,12 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public void deleteUserApp(long appId, String email) {
-        appRepository.deleteByIdAndUserEmail(appId, email);
+    public void deleteUserApp(long appId, long userId) {
+        appRepository.deleteByIdAndUserId(appId, userId);
     }
 
     @Override
-    public boolean isUserApp(long appId, String email) {
-        return appRepository.findUserAppById(appId, email).isPresent();
+    public boolean isUserApp(long appId, long userId) {
+        return appRepository.findUserAppById(appId, userId).isPresent();
     }
 }

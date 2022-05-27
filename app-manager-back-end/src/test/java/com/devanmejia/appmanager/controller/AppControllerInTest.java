@@ -53,8 +53,8 @@ public class AppControllerInTest {
     public void initMock(){
         doThrow(new EntityException("App not found"))
                 .when(appService)
-                .findUserApp(4, "lyah.artem10@mail.ru");
-        when(appService.findUserApp(1, "lyah.artem10@mail.ru"))
+                .findUserApp(4, 2);
+        when(appService.findUserApp(1, 1))
                 .thenReturn(new AppResponseDTO(1, "Simple CRUD App", "21 марта 2022 16:24:54"));
     }
 
@@ -95,7 +95,7 @@ public class AppControllerInTest {
                 .andExpect(status().isOk());
         verify(appService, times(1))
                 .findUserApps(
-                        eq("lyah.artem10@mail.ru"),
+                        eq(1L),
                         argThat(pageCriteria -> pageCriteria.getPage() == 1 && pageCriteria.getPageSize() == 3),
                         argThat(sortCriteria -> sortCriteria.getValue().equals("id") && sortCriteria.isDescending()));
     }
@@ -107,7 +107,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
         verify(appService, times(0))
-                .findUserApps(anyString(), any(), any());
+                .findUserApps(anyLong(), any(), any());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isForbidden());
         verify(appService, times(0))
-                .findUserApps(anyString(), any(), any());
+                .findUserApps(anyLong(), any(), any());
     }
 
     @Test
@@ -135,7 +135,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isOk());
         verify(appService, times(1))
-                .getPageAmount(3, "lyah.artem10@mail.ru");
+                .getPageAmount(3, 1);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
         verify(appService, times(0))
-                .getPageAmount(anyInt(), anyString());
+                .getPageAmount(anyInt(), anyLong());
     }
 
     @Test
@@ -159,7 +159,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isForbidden());
         verify(appService, times(0))
-                .findUserApps(anyString(), any(), any());
+                .findUserApps(anyLong(), any(), any());
     }
 
     @Test
@@ -245,7 +245,7 @@ public class AppControllerInTest {
                 .updateUserApp(
                         eq(1L),
                         argThat(appDTO -> requestBody.name().equals(appDTO.name())),
-                        eq("lyah.artem10@mail.ru"));
+                        eq(1L));
     }
 
     @Test
@@ -258,7 +258,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
         verify(appService, times(0))
-                .updateUserApp(anyLong(), any(AppRequestDTO.class), anyString());
+                .updateUserApp(anyLong(), any(AppRequestDTO.class), anyLong());
     }
 
     @Test
@@ -275,7 +275,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isForbidden());
         verify(appService, times(0))
-                .updateUserApp(anyLong(), any(AppRequestDTO.class), anyString());
+                .updateUserApp(anyLong(), any(AppRequestDTO.class), anyLong());
     }
 
     @Test
@@ -292,7 +292,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnprocessableEntity());
         verify(appService, times(0))
-                .updateUserApp(anyLong(), any(AppRequestDTO.class), anyString());
+                .updateUserApp(anyLong(), any(AppRequestDTO.class), anyLong());
     }
 
     @Test
@@ -306,7 +306,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isOk());
         verify(appService, times(1))
-                .deleteUserApp(1, "lyah.artem10@mail.ru");
+                .deleteUserApp(1, 1);
     }
 
     @Test
@@ -316,7 +316,7 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
         verify(appService, times(0))
-                .findUserApps(anyString(), any(), any());
+                .findUserApps(anyLong(), any(), any());
     }
 
     @Test
@@ -330,6 +330,6 @@ public class AppControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isForbidden());
         verify(appService, times(0))
-                .findUserApps(anyString(), any(), any());
+                .findUserApps(anyLong(), any(), any());
     }
 }

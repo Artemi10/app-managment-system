@@ -67,14 +67,14 @@ public class EventServiceImplTest {
                         .build()
         );
 
-        when(eventRepository.findEventsByApp(eq(1L), eq("lyah.artem10@mail.ru")))
+        when(eventRepository.findEventsByApp(eq(1L), eq(1L)))
                 .thenReturn(events);
-        when(eventRepository.findEventsByApp(eq(2L), eq("lyah.artem@mail.ru")))
+        when(eventRepository.findEventsByApp(eq(2L), eq(3L)))
                 .thenReturn(new ArrayList<>());
 
-        when(appService.isUserApp(eq(1L), eq("lyah.artem10@mail.ru")))
+        when(appService.isUserApp(eq(1L), eq(1L)))
                 .thenReturn(true);
-        when(appService.isUserApp(eq(2L), eq("lyah.artem@mail.ru")))
+        when(appService.isUserApp(eq(2L), eq(3L)))
                 .thenReturn(false);
         when(eventRepository.save(any(Event.class)))
                 .thenAnswer(answer -> {
@@ -91,30 +91,30 @@ public class EventServiceImplTest {
 
     @Test
     public void findAppEvents_Test(){
-        var actual = eventService.findAppEvents(1, "lyah.artem10@mail.ru");
+        var actual = eventService.findAppEvents(1, 1);
         assertEquals(4, actual.size());
         verify(eventRepository, times(1))
-                .findEventsByApp(1, "lyah.artem10@mail.ru");
+                .findEventsByApp(1, 1);
     }
 
     @Test
     public void return_Empty_List_If_Events_Do_Not_Exist(){
-        var actual = eventService.findAppEvents(2, "lyah.artem@mail.ru");
+        var actual = eventService.findAppEvents(2, 3);
         assertTrue(actual.isEmpty());
         verify(eventRepository, times(1))
-                .findEventsByApp(2, "lyah.artem@mail.ru");
+                .findEventsByApp(2, 3);
     }
 
     @Test
     public void addEvent_When_App_Exists(){
         var requestBody = new EventRequestDTO("New event", "Description");
-        Assertions.assertDoesNotThrow(() -> eventService.addEvent(1, requestBody, "lyah.artem10@mail.ru"));
+        Assertions.assertDoesNotThrow(() -> eventService.addEvent(1, requestBody, 1));
         verify(eventRepository, times(1))
                 .save(argThat(event -> event.getName().equals(requestBody.name())
                                 && event.getExtraInformation().equals(requestBody.extraInformation())
                                 && event.getApp().getId() == 1));
         verify(appService, times(1))
-                .isUserApp(1, "lyah.artem10@mail.ru");
+                .isUserApp(1, 1);
     }
 
     @Test
@@ -122,9 +122,9 @@ public class EventServiceImplTest {
         var requestBody = new EventRequestDTO("New event", "Description");
         var exception = assertThrows(
                 EntityException.class,
-                () -> eventService.addEvent(2, requestBody, "lyah.artem@mail.ru"));
+                () -> eventService.addEvent(2, requestBody, 3));
         assertEquals("Application not found", exception.getMessage());
         verify(appService, times(1))
-                .isUserApp(2, "lyah.artem@mail.ru");
+                .isUserApp(2, 3);
     }
 }

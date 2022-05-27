@@ -55,7 +55,7 @@ public class StatControllerInTest {
     public void initMocks(){
         doThrow(EntityException.class)
                 .when(monthStatService)
-                .createStats(eq(2L), anyString());
+                .createStats(eq(2L), anyLong());
         doThrow(EntityException.class)
                 .when(monthStatService)
                 .createStats(eq(2L), any(StatRequestDTO.class));
@@ -96,7 +96,7 @@ public class StatControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isOk());
         verify(dayStatService, times(1))
-                .createStats(eq(1L), anyString());
+                .createStats(eq(1L), anyLong());
     }
 
     @Test
@@ -110,7 +110,7 @@ public class StatControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isOk());
         verify(hourStatService, times(1))
-                .createStats(eq(1L), anyString());
+                .createStats(eq(1L), anyLong());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class StatControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isOk());
         verify(monthStatService, times(1))
-                .createStats(eq(1L), anyString());
+                .createStats(eq(1L), anyLong());
     }
 
     @Test
@@ -148,7 +148,7 @@ public class StatControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
         verify(monthStatService, times(0))
-                .createStats(anyLong(), anyString());
+                .createStats(anyLong(), anyLong());
     }
 
     @Test
@@ -162,7 +162,7 @@ public class StatControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isForbidden());
         verify(monthStatService, times(0))
-                .createStats(anyLong(), anyString());
+                .createStats(anyLong(), anyLong());
     }
 
     @Test
@@ -176,7 +176,7 @@ public class StatControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isOk());
         verify(monthStatService, times(1))
-                .createStats(eq(2L), anyString());
+                .createStats(eq(2L), anyLong());
     }
 
     @Test

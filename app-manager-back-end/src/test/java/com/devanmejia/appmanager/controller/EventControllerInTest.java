@@ -88,7 +88,7 @@ public class EventControllerInTest {
                         eq(1L),
                         argThat(eventDTO -> eventDTO.name().equals(requestBody.name())
                                 && eventDTO.extraInformation().equals(requestBody.extraInformation())),
-                        eq("lyah.artem10@mail.ru"));
+                        eq(1L));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isForbidden());
         verify(eventService, times(0))
-                .addEvent(anyLong(), any(EventRequestDTO.class), anyString());
+                .addEvent(anyLong(), any(EventRequestDTO.class), anyLong());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
         verify(eventService, times(0))
-                .addEvent(anyLong(), any(EventRequestDTO.class), anyString());
+                .addEvent(anyLong(), any(EventRequestDTO.class), anyLong());
     }
 
     @Test
@@ -135,6 +135,6 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnprocessableEntity());
         verify(eventService, times(0))
-                .addEvent(anyLong(), any(EventRequestDTO.class), anyString());
+                .addEvent(anyLong(), any(EventRequestDTO.class), anyLong());
     }
 }

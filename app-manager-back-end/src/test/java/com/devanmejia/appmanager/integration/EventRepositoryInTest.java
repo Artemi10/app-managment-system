@@ -60,42 +60,42 @@ public class EventRepositoryInTest {
     @Test
     @Order(2)
     public void findEventsByApp_If_User_Has_App() {
-        var actual = eventRepository.findEventsByApp(2, "lyah.artem10@mail.ru");
+        var actual = eventRepository.findEventsByApp(2, 1);
         assertEquals(4, actual.size());
     }
 
     @Test
     @Order(3)
     public void return_Empty_List_When_FindEventsByApp_If_User_Does_Not_Have_App() {
-        var actual = eventRepository.findEventsByApp(2, "d10@gmail.com");
+        var actual = eventRepository.findEventsByApp(2, 3);
         assertTrue(actual.isEmpty());
     }
 
     @Test
     @Order(4)
     public void return_Empty_List_When_FindEventsByApp_If_App_Does_Not_Exist() {
-        var actual = eventRepository.findEventsByApp(12, "lyah.artem10@mail.ru");
+        var actual = eventRepository.findEventsByApp(12, 1);
         assertTrue(actual.isEmpty());
     }
 
     @Test
     @Order(5)
     public void return_Empty_List_When_FindEventsByApp_If_User_Does_Not_Exist() {
-        var actual = eventRepository.findEventsByApp(2, "n@mail.ru");
+        var actual = eventRepository.findEventsByApp(2, 6);
         assertTrue(actual.isEmpty());
     }
 
     @Test
     @Order(6)
     public void return_Empty_List_When_FindEventsByApp_If_App_Does_Not_Have_Events() {
-        var actual = eventRepository.findEventsByApp(1, "lyah.artem10@mail.ru");
+        var actual = eventRepository.findEventsByApp(1, 1);
         assertTrue(actual.isEmpty());
     }
 
     @Test
     @Order(7)
     public void save_If_App_Exists() {
-        var actualBefore = eventRepository.findEventsByApp(2, "lyah.artem10@mail.ru");
+        var actualBefore = eventRepository.findEventsByApp(2, 1);
         assertEquals(4, actualBefore.size());
         var time = new Timestamp(new Date().getTime());
         var app = App.builder()
@@ -108,7 +108,7 @@ public class EventRepositoryInTest {
                 .app(app)
                 .build();
         eventRepository.save(event);
-        var actualAfter = eventRepository.findEventsByApp(2, "lyah.artem10@mail.ru");
+        var actualAfter = eventRepository.findEventsByApp(2, 1);
         assertEquals(5, actualAfter.size());
     }
 }

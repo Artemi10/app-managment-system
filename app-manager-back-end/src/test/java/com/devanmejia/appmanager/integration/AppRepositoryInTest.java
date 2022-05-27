@@ -64,17 +64,17 @@ public class AppRepositoryInTest {
     public void findAllByUserEmail_By_Pages_Test(){
         var sort = Sort.by("id").descending();
         var actualFullPage = appRepository
-                .findAllByUserEmail("lyah.artem10@mail.ru", PageRequest.of(0, 4, sort))
+                .findAllByUserId(1, PageRequest.of(0, 4, sort))
                 .toList();
         assertEquals(4, actualFullPage.size());
         assertEquals(4, actualFullPage.get(0).getId());
         var actualFirstPagePart = appRepository
-                .findAllByUserEmail("lyah.artem10@mail.ru", PageRequest.of(0, 3, sort))
+                .findAllByUserId(1, PageRequest.of(0, 3, sort))
                 .toList();
         assertEquals(3, actualFirstPagePart.size());
         assertEquals(4, actualFirstPagePart.get(0).getId());
         var actualSecondPagePart = appRepository
-                .findAllByUserEmail("lyah.artem10@mail.ru", PageRequest.of(1, 3, sort))
+                .findAllByUserId(1, PageRequest.of(1, 3, sort))
                 .toList();
         assertEquals(1, actualSecondPagePart.size());
         assertEquals(1, actualSecondPagePart.get(0).getId());
@@ -84,7 +84,7 @@ public class AppRepositoryInTest {
     @Order(3)
     public void findAllByUserEmail_By_Pages_When_UserApps_Is_Empty_Test(){
         var actualFullPage = appRepository
-                .findAllByUserEmail("lyah.artem10@gmail.com", PageRequest.of(0, 4))
+                .findAllByUserId(2, PageRequest.of(0, 4))
                 .toList();
         assertTrue(actualFullPage.isEmpty());
     }
@@ -92,21 +92,21 @@ public class AppRepositoryInTest {
     @Test
     @Order(4)
     public void getUserAppsAmount_When_UserApps_Is_Not_Empty_Test(){
-        var actual = appRepository.getUserAppsAmount("lyah.artem10@mail.ru");
+        var actual = appRepository.getUserAppsAmount(1);
         assertEquals(4, actual);
     }
 
     @Test
     @Order(5)
     public void getUserAppsAmount_When_UserApps_Is_Empty_Test(){
-        var actual = appRepository.getUserAppsAmount("lyah.artem10@gmail.com");
+        var actual = appRepository.getUserAppsAmount(2);
         assertEquals(0, actual);
     }
 
     @Test
     @Order(6)
     public void findUserAppById_When_App_Exists_Test(){
-        var actual = appRepository.findUserAppById(1, "lyah.artem10@mail.ru");
+        var actual = appRepository.findUserAppById(1, 1);
         assertTrue(actual.isPresent());
         assertEquals(1, actual.get().getId());
     }
@@ -114,37 +114,37 @@ public class AppRepositoryInTest {
     @Test
     @Order(7)
     public void return_Empty_Optional_If_FindUserAppById_WhenApp_Exists_Test(){
-        var actual = appRepository.findUserAppById(10, "lyah.artem10@mail.ru");
+        var actual = appRepository.findUserAppById(10, 1);
         assertTrue(actual.isEmpty());
     }
 
     @Test
     @Order(8)
     public void return_Empty_Optional_If_FindUserAppById_When_User_Does_Not_Have_App_Test(){
-        var actual = appRepository.findUserAppById(1, "lyah.artem10@gmail.com");
+        var actual = appRepository.findUserAppById(1, 2);
         assertTrue(actual.isEmpty());
     }
 
     @Test
     @Order(9)
     public void do_Not_DeleteByIdAndUserEmail_If_User_Does_Not_Have_App_Test(){
-        appRepository.deleteByIdAndUserEmail(1, "lyah.artem10@gmail.com");
-        var actual = appRepository.findUserAppById(1, "lyah.artem10@mail.ru");
+        appRepository.deleteByIdAndUserId(1, 2);
+        var actual = appRepository.findUserAppById(1, 1);
         assertTrue(actual.isPresent());
     }
 
     @Test
     @Order(10)
     public void deleteByIdAndUserEmail_If_User_Has_App_Test(){
-        appRepository.deleteByIdAndUserEmail(1, "lyah.artem10@mail.ru");
-        var actual = appRepository.findUserAppById(1, "lyah.artem10@mail.ru");
+        appRepository.deleteByIdAndUserId(1, 1);
+        var actual = appRepository.findUserAppById(1, 1);
         assertTrue(actual.isEmpty());
     }
 
     @Test
     @Order(11)
     public void save_New_App_Test(){
-        var actualBefore = appRepository.findUserAppById(5, "lyah.artem10@mail.ru");
+        var actualBefore = appRepository.findUserAppById(5, 1);
         assertTrue(actualBefore.isEmpty());
         var app = App.builder()
                 .name("ToDoLIst app")
@@ -152,7 +152,7 @@ public class AppRepositoryInTest {
                 .user(User.builder().id(1).build())
                 .build();
         appRepository.save(app);
-        var actualAfter = appRepository.findUserAppById(5, "lyah.artem10@mail.ru");
+        var actualAfter = appRepository.findUserAppById(5, 1);
         assertTrue(actualAfter.isPresent());
     }
 
@@ -160,7 +160,7 @@ public class AppRepositoryInTest {
     @Order(12)
     public void update_App_Test(){
         var actualBefore = appRepository
-                .findUserAppById(2, "lyah.artem10@mail.ru");
+                .findUserAppById(2, 1);
         assertTrue(actualBefore.isPresent());
         assertEquals("Todo list", actualBefore.get().getName());
         var app = App.builder()
@@ -170,7 +170,7 @@ public class AppRepositoryInTest {
                 .user(User.builder().id(1).build())
                 .build();
         appRepository.save(app);
-        var actualAfter = appRepository.findUserAppById(2, "lyah.artem10@mail.ru");
+        var actualAfter = appRepository.findUserAppById(2, 1);
         assertTrue(actualAfter.isPresent());
         assertEquals("Devanmejia Todo list", actualAfter.get().getName());
     }

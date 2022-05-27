@@ -86,27 +86,26 @@ public class AppServiceImplTest {
 
     @BeforeEach
     public void initMock() {
-        when(appRepository.findAllByUserEmail(
-                eq("lyah.artem10@gmail.com"),
+        when(appRepository.findAllByUserId(
+                eq(2L),
                 argThat(pageable -> pageable.getPageNumber() == 0)))
                 .thenReturn(new PageImpl<>(fullPageUserApps));
-        when(appRepository.findAllByUserEmail(
-                eq("lyah.artem10@gmail.com"),
+        when(appRepository.findAllByUserId(
+                eq(2L),
                 argThat(pageable -> pageable.getPageNumber() == 1)))
                 .thenReturn(Page.empty());
         doThrow(new InvalidDataAccessApiUsageException("invalid data"))
                 .when(appRepository)
-                .findAllByUserEmail(eq("lyah.artem100@gmail.com"), any());
-        when(appRepository.getUserAppsAmount("lyah.artem10@gmail.com"))
+                .findAllByUserId(eq(4L), any());
+        when(appRepository.getUserAppsAmount(2))
                 .thenReturn(fullPageUserApps.size());
-        when(appRepository.getUserAppsAmount("lyah.artem10@mail.ru"))
+        when(appRepository.getUserAppsAmount(1))
                 .thenReturn(userApps.size());
-        when(appRepository.getUserAppsAmount(
-                argThat(email -> !email.equals("lyah.artem10@mail.ru") && !email.equals("lyah.artem10@gmail.com"))))
+        when(appRepository.getUserAppsAmount(6))
                 .thenReturn(0);
-        when(appRepository.findUserAppById(1, "lyah.artem10@mail.ru"))
+        when(appRepository.findUserAppById(1, 1))
                 .thenReturn(Optional.of(userApps.get(0)));
-        when(appRepository.findUserAppById(anyInt(), argThat(email -> !email.equals("lyah.artem10@mail.ru"))))
+        when(appRepository.findUserAppById(anyInt(), eq(7)))
                 .thenReturn(Optional.empty());
         when(appRepository.save(any(App.class)))
                 .thenAnswer(answer -> {
@@ -125,7 +124,7 @@ public class AppServiceImplTest {
     public void findUserApps_First_Page_Test(){
         var pageCriteria = new PageCriteria(1, 3);
         var expected = appService
-                .findUserApps("lyah.artem10@gmail.com", pageCriteria, new SortCriteria());
+                .findUserApps(2, pageCriteria, new SortCriteria());
         assertEquals(3, expected.size());
     }
 
@@ -133,7 +132,7 @@ public class AppServiceImplTest {
     public void findUserApps_Second_Page_Test(){
         var pageCriteria = new PageCriteria(2, 3);
         var expected = appService
-                .findUserApps("lyah.artem10@gmail.com", pageCriteria, new SortCriteria());
+                .findUserApps(2, pageCriteria, new SortCriteria());
         assertTrue(expected.isEmpty());
     }
 
@@ -143,30 +142,27 @@ public class AppServiceImplTest {
         var pageCriteria = new PageCriteria(1, 3);
         var exception= assertThrows(
                 EntityException.class,
-                () -> appService.findUserApps("lyah.artem100@gmail.com", pageCriteria, sortCriteria)
+                () -> appService.findUserApps(4, pageCriteria, sortCriteria)
         );
         assertEquals("Sorting param is invalid. Field amount does not exist.", exception.getMessage());
     }
 
     @Test
     public void getPageAmount_From_Full_PageUser_Apps_Test() {
-        assertEquals(1, appService.getPageAmount(3, "lyah.artem10@gmail.com"));
-        verify(appRepository, times(1))
-                .getUserAppsAmount("lyah.artem10@gmail.com");
+        assertEquals(1, appService.getPageAmount(3, 2));
+        verify(appRepository, times(1)).getUserAppsAmount(2);
     }
 
     @Test
     public void getPageAmount_From_User_Apps_Test() {
-        assertEquals(2, appService.getPageAmount(3, "lyah.artem10@mail.ru"));
-        verify(appRepository, times(1))
-                .getUserAppsAmount("lyah.artem10@mail.ru");
+        assertEquals(2, appService.getPageAmount(3, 1));
+        verify(appRepository, times(1)).getUserAppsAmount(1);
     }
 
     @Test
     public void getPageAmount_From_Empty_User_Apps_Test() {
-        assertEquals(1, appService.getPageAmount(3, "lyah.artem10@gmail.com"));
-        verify(appRepository, times(1))
-                .getUserAppsAmount("lyah.artem10@gmail.com");
+        assertEquals(1, appService.getPageAmount(3, 2));
+        verify(appRepository, times(1)).getUserAppsAmount(2);
     }
 
     @Test
@@ -184,68 +180,68 @@ public class AppServiceImplTest {
     @Test
     public void find_User_App_If_Exists() {
         var appId = 1;
-        var email = "lyah.artem10@mail.ru";
-        var response = assertDoesNotThrow(() -> appService.findUserApp(appId, email));
+        var userId = 1;
+        var response = assertDoesNotThrow(() -> appService.findUserApp(appId, userId));
         assertEquals(appId, response.id());
         assertEquals("Simple CRUD App", response.name());
-        verify(appRepository, times(1)).findUserAppById(appId, email);
+        verify(appRepository, times(1)).findUserAppById(appId, userId);
     }
 
     @Test
     public void throw_Exception_When_Find_Not_Existent_App() {
         var exception = assertThrows(EntityException.class,
-                () -> appService.findUserApp(1, "lyah.artem03@mail.ru"));
+                () -> appService.findUserApp(1, 6));
         assertEquals("Application not found", exception.getMessage());
-        verify(appRepository, times(1)).findUserAppById(1, "lyah.artem03@mail.ru");
+        verify(appRepository, times(1)).findUserAppById(1, 6);
         exception = assertThrows(EntityException.class,
-                () -> appService.findUserApp(10, "lyah.artem03@mail.ru"));
+                () -> appService.findUserApp(7, 6));
         assertEquals("Application not found", exception.getMessage());
-        verify(appRepository, times(1)).findUserAppById(10, "lyah.artem03@mail.ru");
+        verify(appRepository, times(1)).findUserAppById(7, 6);
     }
 
     @Test
     public void update_User_App_If_Exists() {
         var appId = 1;
-        var email = "lyah.artem10@mail.ru";
+        var userId = 1;
         var appDTO = new AppRequestDTO("TODO List app");
-        assertDoesNotThrow(() -> appService.updateUserApp(appId, appDTO, email));
+        assertDoesNotThrow(() -> appService.updateUserApp(appId, appDTO, userId));
         verify(appRepository, times(1))
-                .save(argThat(app -> app.getId() == appId
-                        && app.getName().equals(appDTO.name()))
-                );
+                .save(argThat(app -> app.getId() == appId && app.getName().equals(appDTO.name())));
     }
 
     @Test
     public void throw_Exception_When_Update_Not_Existent_App() {
         var appDTO = new AppRequestDTO("TODO List app");
         var exception = assertThrows(EntityException.class,
-                () -> appService.updateUserApp(1, appDTO, "lyah.artem03@mail.ru"));
+                () -> appService.updateUserApp(1, appDTO, 6));
         assertEquals("Application not found", exception.getMessage());
-        verify(appRepository, times(1)).findUserAppById(1, "lyah.artem03@mail.ru");
+        verify(appRepository, times(1))
+                .findUserAppById(1, 6);
         exception = assertThrows(EntityException.class,
-                () -> appService.updateUserApp(10, appDTO, "lyah.artem03@mail.ru"));
+                () -> appService.updateUserApp(7, appDTO, 6));
         assertEquals("Application not found", exception.getMessage());
-        verify(appRepository, times(1)).findUserAppById(10, "lyah.artem03@mail.ru");
+        verify(appRepository, times(1))
+                .findUserAppById(7, 6);
     }
 
     @Test
     public void deleteUserApp_Test(){
-        appService.deleteUserApp(1, "lyah.artem10@mail.ru");
+        appService.deleteUserApp(1, 1);
         verify(appRepository, times(1))
-                .deleteByIdAndUserEmail(1, "lyah.artem10@mail.ru");
+                .deleteByIdAndUserId(1, 1);
     }
 
     @Test
     public void return_True_When_User_Has_App(){
-        assertTrue(appService.isUserApp(1, "lyah.artem10@mail.ru"));
+        assertTrue(appService.isUserApp(1, 1));
         verify(appRepository, times(1))
-                .findUserAppById(1, "lyah.artem10@mail.ru");
+                .findUserAppById(1, 1);
     }
 
     @Test
-    public void return_False_When_User_Does_Not_Have_App(){
-        assertFalse(appService.isUserApp(1, "d@mail.ru"));
+    public void return_False_When_User_Does_Not_Have_App() {
+        assertFalse(appService.isUserApp(1, 6));
         verify(appRepository, times(1))
-                .findUserAppById(1, "d@mail.ru");
+                .findUserAppById(1, 6);
     }
 }

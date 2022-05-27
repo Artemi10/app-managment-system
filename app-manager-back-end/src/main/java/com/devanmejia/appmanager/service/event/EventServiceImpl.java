@@ -22,8 +22,8 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
 
     @Override
-    public EventResponseDTO addEvent(long appId, EventRequestDTO requestDTO, String email) {
-        if (!appService.isUserApp(appId, email)){
+    public EventResponseDTO addEvent(long appId, EventRequestDTO requestDTO, long userId) {
+        if (!appService.isUserApp(appId, userId)){
             throw new EntityException("Application not found");
         }
         var time = new Timestamp(new Date().getTime());
@@ -41,8 +41,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventResponseDTO> findAppEvents(long appId, String email) {
-        return eventRepository.findEventsByApp(appId, email)
+    public List<EventResponseDTO> findAppEvents(long appId, long userId) {
+        return eventRepository.findEventsByApp(appId, userId)
                 .stream()
                 .map(event -> new EventResponseDTO(appId, event))
                 .toList();

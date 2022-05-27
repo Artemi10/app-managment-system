@@ -14,23 +14,23 @@ public interface AppRepository extends JpaRepository<App, Long> {
     @Query(value = """
               SELECT app
               FROM App app
-              WHERE app.user.email = :email""")
-    Page<App> findAllByUserEmail(String email, Pageable pageable);
+              WHERE app.user.id = :userId""")
+    Page<App> findAllByUserId(long userId, Pageable pageable);
 
     @Query("""
               SELECT count(app)
               FROM App app
-              WHERE app.user.email = :email""")
-    int getUserAppsAmount(String email);
+              WHERE app.user.id = :userId""")
+    int getUserAppsAmount(long userId);
 
     @Query("""
               SELECT app
               FROM App app
-              WHERE app.user.email = :email
+              WHERE app.user.id = :userId
               AND app.id = :appId""")
-    Optional<App> findUserAppById(long appId, String email);
+    Optional<App> findUserAppById(long appId, long userId);
 
     @Modifying
     @Transactional
-    void deleteByIdAndUserEmail(long appId, String email);
+    void deleteByIdAndUserId(long appId, long userId);
 }

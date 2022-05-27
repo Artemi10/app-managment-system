@@ -56,9 +56,9 @@ public class HourStatServiceTest {
         ).thenReturn(Map.of(
                 "12:00 07.04.2022", 1,
                 "15:00 07.04.2022", 8));
-        when(appService.isUserApp(2L, "lyah.artem10@mail.ru"))
+        when(appService.isUserApp(2L, 1))
                 .thenReturn(true);
-        when(appService.isUserApp(2L, "d@mail.ru"))
+        when(appService.isUserApp(2L, 4))
                 .thenReturn(false);
     }
 
@@ -66,7 +66,7 @@ public class HourStatServiceTest {
     public void createStats_Test() throws ParseException {
         var from = new Timestamp(FORMATTER.parse("12:00 07.04.2022").getTime());
         var to = new Timestamp(FORMATTER.parse("15:00 07.04.2022").getTime());
-        var statistic = new StatRequestDTO("lyah.artem10@mail.ru", from, to);
+        var statistic = new StatRequestDTO(1, from, to);
         var expected = hourStatService.createStats(2, statistic);
         assertEquals(4, expected.size());
         assertEquals("12:00 07.04.2022", expected.get(0).date());
@@ -81,7 +81,7 @@ public class HourStatServiceTest {
 
     @Test
     public void create_Basic_Stats_Test() {
-        var expected = hourStatService.createStats(2, "lyah.artem10@mail.ru");
+        var expected = hourStatService.createStats(2, 1);
         verify(statsRepository, times(1))
                 .getRawApplicationStatsByHours(eq(2L), any(), any());
     }
@@ -90,7 +90,7 @@ public class HourStatServiceTest {
     public void throw_Exception_When_CreateStats_If_User_Does_Not_Have_App_Test() throws ParseException {
         var from = new Timestamp(FORMATTER.parse("12:00 07.04.2022").getTime());
         var to = new Timestamp(FORMATTER.parse("15:00 07.04.2022").getTime());
-        var statistic = new StatRequestDTO("d@mail.ru", from, to);
+        var statistic = new StatRequestDTO(4, from, to);
         var exception = assertThrows(EntityException.class, () -> hourStatService.createStats(2, statistic));
         assertEquals("Application not found", exception.getMessage());
     }

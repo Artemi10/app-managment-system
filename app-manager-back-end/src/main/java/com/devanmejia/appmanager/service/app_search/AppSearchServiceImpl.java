@@ -15,18 +15,20 @@ public class AppSearchServiceImpl implements AppSearchService{
     private final AppNameSearchRepository appNameSearchRepository;
 
     @Override
-    public List<AppResponseDTO> findUserApps(String searchParam, String email, PageCriteria pageCriteria) {
+    public List<AppResponseDTO> findUserApps(long userId, String searchParam, PageCriteria pageCriteria) {
         var pageable = PageRequest.of(pageCriteria.getPage() - 1, pageCriteria.getPageSize());
+        var name = searchParam + ":*";
         return appNameSearchRepository
-                .findAllByUserEmail(email, searchParam + ":*", pageable)
+                .findUserAppsByName(userId, name, pageable)
                 .stream()
                 .map(AppResponseDTO::new)
                 .toList();
     }
 
     @Override
-    public int getPageAmount(int pageSize, String searchParam, String email) {
-        var noteAmount = appNameSearchRepository.getUserAppsAmountByName(email, searchParam + ":*");
+    public int getPageAmount(long userId, int pageSize, String searchParam) {
+        var name = searchParam + ":*";
+        var noteAmount = appNameSearchRepository.getUserAppsAmountByName(userId, name);
         if (noteAmount > 0 && noteAmount % pageSize == 0) {
             return noteAmount / pageSize;
         }

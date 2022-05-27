@@ -22,25 +22,25 @@ public class EventRepositoryTest {
 
     @Test
     public void findEventsByApp_Test(){
-        var actual = eventRepository.findEventsByApp(2, "lyah.artem10@mail.ru");
+        var actual = eventRepository.findEventsByApp(2, 1);
         assertEquals(4, actual.size());
     }
 
     @Test
     public void return_Empty_List_If_User_Does_Not_Have_App(){
-        var actual = eventRepository.findEventsByApp(2, "d10@mail.ru");
+        var actual = eventRepository.findEventsByApp(2, 3);
         assertTrue(actual.isEmpty());
     }
 
     @Test
     public void return_Empty_List_If_App_Does_Not_Exist(){
-        var actual = eventRepository.findEventsByApp(24, "lyah.artem10@mail.ru");
+        var actual = eventRepository.findEventsByApp(24, 1);
         assertTrue(actual.isEmpty());
     }
 
     @Test
     public void return_Empty_List_If_App_Does_Not_Have_Events(){
-        var actual = eventRepository.findEventsByApp(1, "lyah.artem10@mail.ru");
+        var actual = eventRepository.findEventsByApp(1, 1);
         assertTrue(actual.isEmpty());
     }
 }

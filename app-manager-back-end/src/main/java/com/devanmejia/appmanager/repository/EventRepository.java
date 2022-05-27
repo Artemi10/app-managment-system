@@ -11,7 +11,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
               SELECT event
               FROM Event event
               WHERE event.app.id = :appId
-              AND event.app.user.email = :email""")
-    List<Event> findEventsByApp(long appId, String email);
+              AND event.app.user.id = :userId""")
+    List<Event> findEventsByApp(long appId, long userId);
 
 }

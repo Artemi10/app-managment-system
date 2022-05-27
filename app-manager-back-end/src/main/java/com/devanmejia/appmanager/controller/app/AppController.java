@@ -24,14 +24,14 @@ public class AppController {
             @AuthenticationPrincipal UserPrincipal principal,
             @Valid PageCriteria pageCriteria,
             @Valid SortCriteria sortCriteria) {
-        return appService.findUserApps(principal.email(), pageCriteria, sortCriteria);
+        return appService.findUserApps(principal.id(), pageCriteria, sortCriteria);
     }
 
     @GetMapping("/count")
     public int getPageAmount(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(defaultValue = "1") int pageSize) {
-        return appService.getPageAmount(pageSize, principal.email());
+        return appService.getPageAmount(pageSize, principal.id());
     }
 
     @PostMapping
@@ -46,13 +46,13 @@ public class AppController {
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable long appId,
             @RequestBody @Valid AppRequestDTO requestBody) {
-        return appService.updateUserApp(appId, requestBody, principal.email());
+        return appService.updateUserApp(appId, requestBody, principal.id());
     }
 
     @DeleteMapping("/{appId}")
     public void deleteUserApp(
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable long appId) {
-        appService.deleteUserApp(appId, principal.email());
+        appService.deleteUserApp(appId, principal.id());
     }
 }

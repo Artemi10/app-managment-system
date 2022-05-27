@@ -21,6 +21,6 @@ public class EventController {
             @PathVariable long appId,
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody @Valid EventRequestDTO request){
-        return eventService.addEvent(appId, request, principal.email());
+        return eventService.addEvent(appId, request, principal.id());
     }
 }

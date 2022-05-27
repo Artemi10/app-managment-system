@@ -20,18 +20,18 @@ public class HourStatService implements StatService {
     private final StatsRepository statsRepository;
 
     @Override
-    public List<StatResponseDTO> createStats(long appId, String email) {
+    public List<StatResponseDTO> createStats(long appId, long userId) {
         var to = new Timestamp(new Date().getTime());
         var calendar = new GregorianCalendar();
         calendar.setTime(to);
         calendar.add(Calendar.DAY_OF_MONTH, -1);
-        var statistics = new StatRequestDTO(email, new Timestamp(calendar.getTime().getTime()), to);
+        var statistics = new StatRequestDTO(userId, new Timestamp(calendar.getTime().getTime()), to);
         return createStats(appId, statistics);
     }
 
     @Override
     public List<StatResponseDTO> createStats(long appId, StatRequestDTO statistics) {
-        if (!appService.isUserApp(appId, statistics.email())){
+        if (!appService.isUserApp(appId, statistics.userId())){
             throw new EntityException("Application not found");
         }
         var rowResult =  statsRepository

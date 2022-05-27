@@ -32,7 +32,7 @@ public class StatController {
         List<StatResponseDTO> stats;
         if (!from.isBlank() && !to.isBlank()) {
             try {
-                var requestDTO = new StatRequestDTO(principal.email(), from, to);
+                var requestDTO = new StatRequestDTO(principal.id(), from, to);
                 stats = statServices.containsKey(type) ?
                         statServices.get(type).createStats(appId, requestDTO) : Collections.emptyList();
             } catch (ParseException | EntityException exception) {
@@ -42,7 +42,7 @@ public class StatController {
         else {
             try {
                 stats = statServices.containsKey(type) ?
-                        statServices.get(type).createStats(appId, principal.email()) : Collections.emptyList();
+                        statServices.get(type).createStats(appId, principal.id()) : Collections.emptyList();
             } catch (EntityException exception) {
                     stats = Collections.emptyList();
             }

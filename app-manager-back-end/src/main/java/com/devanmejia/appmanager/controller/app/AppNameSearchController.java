@@ -22,7 +22,7 @@ public class AppNameSearchController {
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable String searchParam,
             @Valid PageCriteria pageCriteria) {
-        return appSearchService.findUserApps(searchParam, principal.email(), pageCriteria);
+        return appSearchService.findUserApps(principal.id(), searchParam, pageCriteria);
     }
 
     @GetMapping("/name/{searchParam}/count")
@@ -30,6 +30,6 @@ public class AppNameSearchController {
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable String searchParam,
             @RequestParam(defaultValue = "1") int pageSize) {
-        return appSearchService.getPageAmount(pageSize, searchParam, principal.email());
+        return appSearchService.getPageAmount(principal.id(), pageSize, searchParam);
     }
 }
