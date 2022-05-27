@@ -3,7 +3,7 @@
         (click)="selectPreviousPage()"
         [ngClass]="{'invisible' : isFirstPage}">&laquo;</span>
   <span class="pagination__element"
-        *ngFor="let page of pages"
+        *ngFor="let page of firstPages"
         (click)="selectPage(page)"
         [ngClass]="{'active' : isCurrentPage(page)}">{{page}}</span>
   <span class="pagination__element"
