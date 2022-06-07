@@ -7,6 +7,7 @@
 * [General Info](#general-info)
 * [Technologies Used](#technologies-used)
 * [Features](#features)
+* [Documentation](#documentation)
 * [Testing](#testing)
 * [Deployment](#deployment)
 * [Contact](#contact)
@@ -51,11 +52,17 @@
 
 ![Main page](images/app.png "Main page")
 
+## Documentation
+- Documentation contains information about REST endpoints of back-end application.
+- Documentation link: https://app-manager-back-end.herokuapp.com/swagger-ui/
+
+![Documentation](images/documentation.png "Documentation")
+
 ## Testing
 - The application was tested by writing unit, mock and integration test with JUnit, Mockito, Spring Test and Testcontainers.
 - Total code Coverage.
 
-![CodeCoverage](images/coverage.png "Code coverage")
+![CodeCoverage](images/documentation.png "Code coverage")
 
 ## Deployment
 - The application was deployed to heroku.
