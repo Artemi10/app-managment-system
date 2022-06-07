@@ -3,11 +3,17 @@ package com.devanmejia.appmanager.controller;
 import com.devanmejia.appmanager.configuration.TestUserDetailsService;
 import com.devanmejia.appmanager.configuration.security.JwtAuthenticationEntryPoint;
 import com.devanmejia.appmanager.configuration.security.JwtAuthenticationManager;
+import com.devanmejia.appmanager.configuration.security.SecurityConfig;
+import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationFailureHandler;
+import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationSuccessHandler;
+import com.devanmejia.appmanager.configuration.security.oauth.OAuth2RequestRepository;
+import com.devanmejia.appmanager.configuration.security.oauth.cookie.CookieService;
 import com.devanmejia.appmanager.configuration.security.providers.JwtProvider;
 import com.devanmejia.appmanager.configuration.security.token.JwtService;
 import com.devanmejia.appmanager.controller.app.AppController;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.service.app.AppService;
+import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,13 +26,17 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.util.List;
 
@@ -80,6 +90,21 @@ public class AppControllerInTest {
         @Bean
         public ObjectMapper objectMapper() {
             return new ObjectMapper();
+        }
+
+        @Bean("testAuthenticationSuccessHandler")
+        public AuthenticationSuccessHandler testAuthenticationSuccessHandler(){
+            return new OAuth2AuthenticationSuccessHandler(spy(CookieService.class), spy(AuthService.class));
+        }
+
+        @Bean("testAuthenticationFailureHandler")
+        public AuthenticationFailureHandler testAuthenticationFailureHandler(){
+            return new OAuth2AuthenticationFailureHandler(spy(CookieService.class));
+        }
+
+        @Bean("testOAuth2RequestRepository")
+        public OAuth2RequestRepository testOAuth2RequestRepository(){
+            return new OAuth2RequestRepository(spy(CookieService.class));
         }
     }
 

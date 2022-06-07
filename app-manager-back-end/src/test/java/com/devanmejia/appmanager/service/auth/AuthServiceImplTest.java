@@ -48,8 +48,17 @@ class AuthServiceImplTest {
                 .refreshToken("7b69ab6d-4767-48d8-a20f-25a2340e1405")
                 .authority(Authority.ACTIVE)
                 .build();
+        var newUser = User.builder()
+                .id(2)
+                .email("lyah.artem10@gmail.com")
+                .password("$2a$10$3kVWnJcACqfBKzhiA//1MeJ/ex1PylaWC7esjmVwSzePHGW6AQmhu")
+                .refreshToken("7b69ab6d-4767-48d8-a20f-25a2340e1405")
+                .authority(Authority.ACTIVE)
+                .build();
         when(userRepository.findByEmail("lyah.artem10@mail.ru"))
                 .thenReturn(Optional.of(user));
+        when(userRepository.save(argThat(userToCreate -> userToCreate.getEmail().equals("lyah.artem10@gmail.com"))))
+                .thenReturn(newUser);
         when(userRepository.findByEmail("lyah.artem10@gmail.com"))
                 .thenReturn(Optional.empty());
         when(accessTokenService.createAccessToken("lyah.artem10@mail.ru", Authority.ACTIVE))
@@ -94,6 +103,8 @@ class AuthServiceImplTest {
         assertDoesNotThrow(() -> authService.signUp(signUpDTO));
         verify(userRepository, times(1))
                 .findByEmail("lyah.artem10@gmail.com");
+        verify(userRepository, times(1))
+                .save(argThat(newUser -> newUser.getEmail().equals("lyah.artem10@gmail.com")));
     }
 
     @Test

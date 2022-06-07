@@ -6,7 +6,8 @@ create table if not exists users
     password    varchar(255) not null,
     authority   varchar(20)   not null,
     reset_token varchar(8),
-    refresh_token varchar(128) not null
+    refresh_token varchar(128) not null,
+    oauth_enter_token varchar(128)
 );
 
 create table if not exists applications
