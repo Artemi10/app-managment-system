@@ -1,0 +1,13 @@
+.auth__form__oauth2{
+  margin: 20px 0 0 0;
+  display: flex;
+  justify-content: space-around;
+}
+.auth__form__oauth2__container{
+  text-transform: none
+}
+.auth__form__oauth2__google-icon {
+  margin-top:7px;
+  margin-right:8px;
+  width: 20px;
+}

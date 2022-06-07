@@ -17,3 +17,7 @@ export interface Token {
 export interface AccessToken {
   accessToken: string
 }
+
+export interface EnterToken {
+  enterToken: string
+}

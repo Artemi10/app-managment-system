@@ -20,10 +20,9 @@ import { RePasswordFieldComponent } from './components/auth/components/re-passwo
 import { UpdateComponent } from './components/auth/update/update.component';
 import { ResetEmailComponent } from './components/auth/reset-email/reset-email.component';
 import { AppsComponent } from "./components/apps/apps.component";
-import {interceptorProviders} from "./interceptor/interceptor.providers";
 import {ActiveUserGuard} from "./guard/active-user/active-user.guard";
 import {UnAuthUserGuard} from "./guard/unauth-user/un-auth-user.guard";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import { AppItemComponent } from './components/apps/app-item/app-item.component';
 import { PaginationComponent } from './components/apps/pagination/pagination.component';
 import { CreateAppFormComponent } from './components/apps/forms/create-app/create-app-form/create-app-form.component';
@@ -47,6 +46,9 @@ import { SendAgainLinkComponent } from './components/auth/components/send-again-
 import { CounterComponent } from './components/auth/components/counter/counter.component';
 import { DropdownComponent } from './components/apps/dropdown/dropdown.component';
 import { SearchPanelComponent } from './components/apps/search-panel/search-panel.component';
+import { GoogleOauthButtonComponent } from './components/auth/components/google-oauth-button/google-oauth-button.component';
+import {RefreshTokenInterceptor} from "./interceptor/refresh-token/refresh-token.interceptor";
+import {AccessTokenInterceptor} from "./interceptor/access-token/access-token.interceptor";
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -100,7 +102,8 @@ const appRoutes: Routes = [
     SendAgainLinkComponent,
     CounterComponent,
     DropdownComponent,
-    SearchPanelComponent
+    SearchPanelComponent,
+    GoogleOauthButtonComponent
   ],
   imports: [
     BrowserModule,
@@ -109,7 +112,17 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     ReactiveFormsModule
   ],
-  providers: interceptorProviders,
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RefreshTokenInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AccessTokenInterceptor,
+      multi: true
+    }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

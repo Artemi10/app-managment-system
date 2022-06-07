@@ -16,6 +16,6 @@ export class EventService {
   }
 
   public addAppEvent(appId: number, eventToAdd: EventToAdd): Observable<Event> {
-    return this.http.post<Event>(`${environment.url}${this.api}/${appId}/event`, eventToAdd);
+    return this.http.post<Event>(`${environment.backEndURL}${this.api}/${appId}/event`, eventToAdd);
   }
 }

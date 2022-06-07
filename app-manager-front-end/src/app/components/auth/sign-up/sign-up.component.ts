@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {getErrorMessage} from "../../../service/utils/error.utils";
-import {AuthService} from "../../../service/auth/auth.service";
+import {UserAuthService} from "../../../service/auth/user-auth.service";
 import {TokenService} from "../../../service/token/token.service";
 import {Router} from "@angular/router";
 import {SignUpModel, Token} from "../../../model/auth.models";
@@ -16,7 +16,7 @@ export class SignUpComponent {
   public _errorMessage: string;
 
   constructor(private formBuilder: FormBuilder,
-              private authService: AuthService,
+              private authService: UserAuthService,
               private tokenService: TokenService,
               private router: Router) {
     this._errorMessage = '';

@@ -16,6 +16,6 @@ export class StatService {
 
   public createStats(appId: number, type: string, from: string = '', to: string = ''): Observable<StatData[]> {
     const param = {params: {type, from, to}};
-    return this.http.get<StatData[]>(`${environment.url}${this.api}/${appId}/stat`, param);
+    return this.http.get<StatData[]>(`${environment.backEndURL}${this.api}/${appId}/stat`, param);
   }
 }

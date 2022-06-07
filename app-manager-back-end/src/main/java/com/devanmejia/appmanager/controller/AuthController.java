@@ -3,6 +3,7 @@ package com.devanmejia.appmanager.controller;
 import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.transfer.auth.LogInDTO;
 import com.devanmejia.appmanager.transfer.auth.SignUpDTO;
+import com.devanmejia.appmanager.transfer.auth.token.EnterToken;
 import com.devanmejia.appmanager.transfer.auth.token.Token;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,11 @@ public class AuthController {
         return authService.logIn(logInDTO);
     }
 
+    @PostMapping("/log-in/token")
+    public Token logInViaEnterToken(@RequestBody EnterToken enterToken){
+        return authService.logInViaEnterToken(enterToken);
+    }
+
     @PostMapping("/sign-up")
     public Token signUp(@RequestBody @Valid SignUpDTO signUpDTO){
         return authService.signUp(signUpDTO);
@@ -29,4 +35,5 @@ public class AuthController {
     public Token refreshToken(@RequestBody Token token){
         return authService.refresh(token);
     }
+
 }

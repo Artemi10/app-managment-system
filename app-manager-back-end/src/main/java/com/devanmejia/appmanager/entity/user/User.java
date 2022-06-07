@@ -27,6 +27,8 @@ public class User {
     private Authority authority;
     @Column(name = "reset_token")
     private String resetToken;
+    @Column(name = "oauth_enter_token")
+    private String oauthEnterToken;
     @Column(name = "refresh_token")
     private String refreshToken;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

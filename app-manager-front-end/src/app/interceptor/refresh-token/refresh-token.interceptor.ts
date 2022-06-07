@@ -7,7 +7,7 @@ import {
 } from '@angular/common/http';
 import {catchError, Observable, switchMap, throwError} from 'rxjs';
 import { TokenService } from 'src/app/service/token/token.service';
-import { AuthService } from 'src/app/service/auth/auth.service';
+import { UserAuthService } from 'src/app/service/auth/user-auth.service';
 import {isAccessTokenRequired} from "../util.interceptor";
 import {isAuthorizationError} from "../../service/utils/error.utils";
 
@@ -15,7 +15,7 @@ import {isAuthorizationError} from "../../service/utils/error.utils";
 export class RefreshTokenInterceptor implements HttpInterceptor {
 
   constructor(private tokenService: TokenService,
-              private authService: AuthService) {}
+              private authService: UserAuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.tokenService.getToken();

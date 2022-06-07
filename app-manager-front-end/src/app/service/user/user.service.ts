@@ -16,20 +16,20 @@ export class UserService {
   }
 
   public updateUser(user: UserToUpdate): Observable<void> {
-    return this.http.patch<void>(`${environment.url}${this.api}`, user);
+    return this.http.patch<void>(`${environment.backEndURL}${this.api}`, user);
   }
 
   public resetUser(email: string): Observable<AccessToken> {
     const request = { email };
-    return this.http.post<AccessToken>(`${environment.url}${this.api}/reset`, request);
+    return this.http.post<AccessToken>(`${environment.backEndURL}${this.api}/reset`, request);
   }
 
   public resetUserAgain(): Observable<void> {
-    return this.http.post<void>(`${environment.url}${this.api}/reset/again`, {});
+    return this.http.post<void>(`${environment.backEndURL}${this.api}/reset/again`, {});
   }
 
   public confirmResetUser(resetToken: string): Observable<AccessToken> {
     const request = { resetToken };
-    return this.http.post<AccessToken>(`${environment.url}${this.api}/reset/confirm`, request);
+    return this.http.post<AccessToken>(`${environment.backEndURL}${this.api}/reset/confirm`, request);
   }
 }

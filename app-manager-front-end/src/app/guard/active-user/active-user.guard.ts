@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import {TokenService} from "../../service/token/token.service";
 import {Authority} from "../../model/user.model";
-import {AuthService} from "../../service/auth/auth.service";
+import {UserAuthService} from "../../service/auth/user-auth.service";
 import {Token} from "../../model/auth.models";
 
 @Injectable({
@@ -11,7 +11,7 @@ import {Token} from "../../model/auth.models";
 export class ActiveUserGuard implements CanActivate {
 
   constructor(private tokenService: TokenService,
-              private authService: AuthService,
+              private authService: UserAuthService,
               private router: Router) {
   }
 

@@ -1,5 +1,6 @@
 package com.devanmejia.appmanager.configuration.security;
 
+import com.devanmejia.appmanager.configuration.security.oauth.OAuth2RequestRepository;
 import com.devanmejia.appmanager.entity.user.Authority;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,9 +10,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -22,18 +23,20 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Value("${cors.allowed.origin.pattern}")
+    private String allowedOriginPattern;
     private final OncePerRequestFilter jwtAuthenticationFilter;
     private final AuthenticationManager jwtAuthenticationManager;
     private final AuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    @Value("${cors.allowed.origin.pattern}")
-    private String allowedOriginPattern;
+    private final AuthenticationSuccessHandler successHandler;
+    private final AuthenticationFailureHandler failureHandler;
+    private final OAuth2RequestRepository authorizationRequestRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .cors().and()
                 .csrf().disable()
-                .httpBasic().disable()
                 .authenticationManager(jwtAuthenticationManager)
                 .addFilterAfter(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandlingConfig -> exceptionHandlingConfig
@@ -43,7 +46,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/api/v1/user").hasAuthority(Authority.UPDATE_CONFIRMED.name())
                         .antMatchers("/api/v1/auth/**", "/api/v1/user/reset").permitAll()
                         .antMatchers("/api/v1/apps/**", "/api/v1/app/**").hasAuthority(Authority.ACTIVE.name())
-                        .anyRequest().authenticated());
+                        .anyRequest().authenticated())
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .authorizationEndpoint(endpoint -> endpoint
+                                .baseUri("/api/v1/auth/oauth2")
+                                .authorizationRequestRepository(authorizationRequestRepository))
+                        .successHandler(successHandler)
+                        .failureHandler(failureHandler));
     }
 
     @Bean
@@ -56,10 +65,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         var configSource = new UrlBasedCorsConfigurationSource();
         configSource.registerCorsConfiguration("/**", config);
         return new CorsFilter(configSource);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
     }
 }

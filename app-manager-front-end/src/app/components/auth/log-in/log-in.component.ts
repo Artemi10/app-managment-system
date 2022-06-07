@@ -1,22 +1,24 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import { Router } from '@angular/router';
-import { AuthService } from 'src/app/service/auth/auth.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import { UserAuthService } from 'src/app/service/auth/user-auth.service';
 import { TokenService } from 'src/app/service/token/token.service';
 import { getErrorMessage } from 'src/app/service/utils/error.utils';
 import {LogInModel, Token} from "../../../model/auth.models";
+
 
 @Component({
   selector: 'app-log-in',
   templateUrl: './log-in.component.html',
   styleUrls: ['./log-in.component.css']
 })
-export class LogInComponent {
+export class LogInComponent implements OnInit {
   public logInForm: FormGroup;
   private _errorMessage: string;
 
-  constructor(private formBuilder: FormBuilder,
-              private authService: AuthService,
+  constructor(private route: ActivatedRoute,
+              private formBuilder: FormBuilder,
+              private userAuthService: UserAuthService,
               private tokenService: TokenService,
               private router: Router) {
     this._errorMessage = '';
@@ -28,6 +30,17 @@ export class LogInComponent {
         password:  new FormControl('')
       })
     });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams
+      .subscribe(params => {
+        // @ts-ignore
+        const errorMessage = params.errorMessage;
+        if (errorMessage !== undefined) {
+          this._errorMessage = errorMessage;
+        }
+      });
   }
 
   public get errorMessage(): string {
@@ -43,7 +56,7 @@ export class LogInComponent {
   }
 
   public logIn() {
-    this.authService.logIn(this.requestBody)
+    this.userAuthService.logIn(this.requestBody)
       .subscribe({
         next : this.handleLogIn.bind(this),
         error : this.handleError.bind(this)
@@ -55,7 +68,7 @@ export class LogInComponent {
     this.router.navigate(['/']);
   }
 
-  private handleError(error: { status: number; error: { message: string; }; }) {
+  public handleError(error: { status: number; error: { message: string; }; }) {
     this._errorMessage = getErrorMessage(error);
   }
 

@@ -12,4 +12,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
               FROM User user
               WHERE user.email = :email""")
     Optional<User> findByEmail(String email);
+
+    @Query("""
+              SELECT user
+              FROM User user
+              WHERE user.oauthEnterToken = :enterToken""")
+    Optional<User> findUserByOauthEnterToken(String enterToken);
 }
