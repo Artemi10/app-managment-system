@@ -62,7 +62,7 @@
 - The application was tested by writing unit, mock and integration test with JUnit, Mockito, Spring Test and Testcontainers.
 - Total code Coverage.
 
-![CodeCoverage](images/documentation.png "Code coverage")
+![CodeCoverage](images/coverage.png "Code coverage")
 
 ## Deployment
 - The application was deployed to heroku.
