@@ -44,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests(authorizeRequestsConfig -> authorizeRequestsConfig
                         .antMatchers("/api/v1/user/reset/*").hasAuthority(Authority.UPDATE_NOT_CONFIRMED.name())
                         .antMatchers("/api/v1/user").hasAuthority(Authority.UPDATE_CONFIRMED.name())
-                        .antMatchers("/api/v1/auth/**", "/api/v1/user/reset").permitAll()
+                        .antMatchers("/api/v1/auth/**", "/api/v1/user/reset", "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs").permitAll()
                         .antMatchers("/api/v1/apps/**", "/api/v1/app/**").hasAuthority(Authority.ACTIVE.name())
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2Login -> oauth2Login
