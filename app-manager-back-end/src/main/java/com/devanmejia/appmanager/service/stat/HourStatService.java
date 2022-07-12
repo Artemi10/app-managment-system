@@ -8,6 +8,7 @@ import com.devanmejia.appmanager.transfer.stat.StatRequestDTO;
 import com.devanmejia.appmanager.transfer.stat.StatResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -30,6 +31,7 @@ public class HourStatService implements StatService {
     }
 
     @Override
+    @Transactional
     public List<StatResponseDTO> createStats(long appId, StatRequestDTO statistics) {
         if (!appService.isUserApp(appId, statistics.userId())){
             throw new EntityException("Application not found");

@@ -8,6 +8,8 @@ import java.util.List;
 
 @Service
 public interface AppSearchService {
+
     List<AppResponseDTO> findUserApps(long userId, String searchParam, PageCriteria pageCriteria);
+
     int getPageAmount(long userId, int pageSize, String searchParam);
 }

@@ -6,7 +6,6 @@ import com.devanmejia.appmanager.transfer.auth.LogInDTO;
 import com.devanmejia.appmanager.transfer.auth.SignUpDTO;
 import com.devanmejia.appmanager.transfer.auth.token.EnterToken;
 import com.devanmejia.appmanager.transfer.auth.token.Token;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;

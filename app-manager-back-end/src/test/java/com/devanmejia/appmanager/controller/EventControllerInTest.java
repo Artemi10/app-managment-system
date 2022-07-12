@@ -3,7 +3,6 @@ package com.devanmejia.appmanager.controller;
 import com.devanmejia.appmanager.configuration.TestUserDetailsService;
 import com.devanmejia.appmanager.configuration.security.JwtAuthenticationEntryPoint;
 import com.devanmejia.appmanager.configuration.security.JwtAuthenticationManager;
-import com.devanmejia.appmanager.configuration.security.SecurityConfig;
 import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationFailureHandler;
 import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationSuccessHandler;
 import com.devanmejia.appmanager.configuration.security.oauth.OAuth2RequestRepository;
@@ -23,7 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -32,7 +30,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.util.List;
 
@@ -108,7 +105,7 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isOk());
         verify(eventService, times(1))
-                .addEvent(
+                .addAppEvent(
                         eq(1L),
                         argThat(eventDTO -> eventDTO.name().equals(requestBody.name())
                                 && eventDTO.extraInformation().equals(requestBody.extraInformation())),
@@ -129,7 +126,7 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isForbidden());
         verify(eventService, times(0))
-                .addEvent(anyLong(), any(EventRequestDTO.class), anyLong());
+                .addAppEvent(anyLong(), any(EventRequestDTO.class), anyLong());
     }
 
     @Test
@@ -142,7 +139,7 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
         verify(eventService, times(0))
-                .addEvent(anyLong(), any(EventRequestDTO.class), anyLong());
+                .addAppEvent(anyLong(), any(EventRequestDTO.class), anyLong());
     }
 
     @Test
@@ -159,6 +156,6 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnprocessableEntity());
         verify(eventService, times(0))
-                .addEvent(anyLong(), any(EventRequestDTO.class), anyLong());
+                .addAppEvent(anyLong(), any(EventRequestDTO.class), anyLong());
     }
 }

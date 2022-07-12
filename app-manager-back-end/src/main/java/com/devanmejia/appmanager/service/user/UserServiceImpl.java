@@ -9,6 +9,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -17,6 +18,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public String resetUser(String email) {
         var resetToken = RandomStringUtils.randomAlphabetic(8);
         var user = userRepository.findByEmail(email)
@@ -28,6 +30,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void confirmResetUser(String email, String resetToken) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityException("User not found"));
@@ -43,6 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void activateUser(String email) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityException("User not found"));
@@ -52,6 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateUser(String email, UpdateDTO updateDTO) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityException("User not found"));

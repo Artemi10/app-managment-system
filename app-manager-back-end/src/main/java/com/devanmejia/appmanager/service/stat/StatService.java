@@ -9,6 +9,8 @@ import java.util.List;
 
 @Service
 public interface StatService {
+
     List<StatResponseDTO> createStats(long appId, StatRequestDTO statistics);
+
     List<StatResponseDTO> createStats(long appId, long userId);
 }

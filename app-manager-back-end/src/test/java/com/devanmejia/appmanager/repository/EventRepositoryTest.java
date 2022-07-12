@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -22,25 +23,25 @@ public class EventRepositoryTest {
 
     @Test
     public void findEventsByApp_Test(){
-        var actual = eventRepository.findEventsByApp(2, 1);
+        var actual = eventRepository.findEventsByApp(2, 1, PageRequest.of(0, 4));
         assertEquals(4, actual.size());
     }
 
     @Test
     public void return_Empty_List_If_User_Does_Not_Have_App(){
-        var actual = eventRepository.findEventsByApp(2, 3);
+        var actual = eventRepository.findEventsByApp(2, 3, PageRequest.of(0, 4));
         assertTrue(actual.isEmpty());
     }
 
     @Test
     public void return_Empty_List_If_App_Does_Not_Exist(){
-        var actual = eventRepository.findEventsByApp(24, 1);
+        var actual = eventRepository.findEventsByApp(24, 1, PageRequest.of(0, 4));
         assertTrue(actual.isEmpty());
     }
 
     @Test
     public void return_Empty_List_If_App_Does_Not_Have_Events(){
-        var actual = eventRepository.findEventsByApp(1, 1);
+        var actual = eventRepository.findEventsByApp(1, 1, PageRequest.of(0, 4));
         assertTrue(actual.isEmpty());
     }
 }

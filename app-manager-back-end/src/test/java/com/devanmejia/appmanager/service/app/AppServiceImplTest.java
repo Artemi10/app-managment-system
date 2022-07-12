@@ -1,6 +1,7 @@
 package com.devanmejia.appmanager.service.app;
 
 import com.devanmejia.appmanager.entity.App;
+import com.devanmejia.appmanager.entity.user.User;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.repository.app.AppRepository;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
@@ -19,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -118,6 +120,14 @@ public class AppServiceImplTest {
                             .user(app.getUser())
                             .build();
                 });
+        when(appRepository.findUserAppById(1L, 1L))
+                .thenReturn(Optional.of(
+                        App.builder()
+                                .id(1)
+                                .name("Simple CRUD App")
+                                .creationTime(new Timestamp(new Date().getTime()))
+                                .user(User.builder().id(1).build())
+                                .build()));
     }
 
     @Test
@@ -228,7 +238,7 @@ public class AppServiceImplTest {
     public void deleteUserApp_Test(){
         appService.deleteUserApp(1, 1);
         verify(appRepository, times(1))
-                .deleteByIdAndUserId(1, 1);
+                .delete(argThat(app -> app.getId() == 1 && app.getUser().getId() == 1));
     }
 
     @Test

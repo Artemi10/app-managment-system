@@ -13,6 +13,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
+    @Transactional
     public AppResponseDTO updateUserApp(long appId, AppRequestDTO appDTO, long userId) {
         var app = appRepository.findUserAppById(appId, userId)
                 .orElseThrow(() -> new EntityException("Application not found"));
@@ -84,8 +86,11 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
+    @Transactional
     public void deleteUserApp(long appId, long userId) {
-        appRepository.deleteByIdAndUserId(appId, userId);
+        var app = appRepository.findUserAppById(appId, userId)
+                .orElseThrow(() -> new EntityException("Application not found"));
+        appRepository.delete(app);
     }
 
     @Override

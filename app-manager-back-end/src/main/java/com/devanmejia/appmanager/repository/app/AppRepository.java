@@ -29,8 +29,4 @@ public interface AppRepository extends JpaRepository<App, Long> {
               WHERE app.user.id = :userId
               AND app.id = :appId""")
     Optional<App> findUserAppById(long appId, long userId);
-
-    @Modifying
-    @Transactional
-    void deleteByIdAndUserId(long appId, long userId);
 }

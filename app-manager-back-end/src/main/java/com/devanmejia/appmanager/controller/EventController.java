@@ -2,17 +2,18 @@ package com.devanmejia.appmanager.controller;
 
 import com.devanmejia.appmanager.configuration.security.details.UserPrincipal;
 import com.devanmejia.appmanager.service.event.EventService;
+import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import com.devanmejia.appmanager.transfer.event.EventResponseDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -32,6 +33,31 @@ public class EventController {
             @PathVariable long appId,
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody @Valid EventRequestDTO request){
-        return eventService.addEvent(appId, request, principal.id());
+        return eventService.addAppEvent(appId, request, principal.id());
+    }
+
+    @GetMapping("/{appId}/events")
+    public List<EventResponseDTO> getAppEvents(
+            @PathVariable long appId,
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Valid PageCriteria pageCriteria) {
+        return eventService.findAppEvents(appId, principal.id(), pageCriteria);
+    }
+
+    @DeleteMapping("/{appId}/event/{eventId}")
+    public void deleteAppEvent(
+            @PathVariable long appId,
+            @PathVariable long eventId,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        eventService.deleteAppEvent(eventId, appId, principal.id());
+    }
+
+    @PutMapping("/{appId}/event/{eventId}")
+    public EventResponseDTO updateAppEvent(
+            @PathVariable long appId,
+            @PathVariable long eventId,
+            @RequestBody @Valid EventRequestDTO request,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return eventService.updateAppEvent(appId, eventId, request, principal.id());
     }
 }

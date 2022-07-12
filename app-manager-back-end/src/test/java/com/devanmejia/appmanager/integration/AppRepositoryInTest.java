@@ -127,22 +127,6 @@ public class AppRepositoryInTest {
 
     @Test
     @Order(9)
-    public void do_Not_DeleteByIdAndUserEmail_If_User_Does_Not_Have_App_Test(){
-        appRepository.deleteByIdAndUserId(1, 2);
-        var actual = appRepository.findUserAppById(1, 1);
-        assertTrue(actual.isPresent());
-    }
-
-    @Test
-    @Order(10)
-    public void deleteByIdAndUserEmail_If_User_Has_App_Test(){
-        appRepository.deleteByIdAndUserId(1, 1);
-        var actual = appRepository.findUserAppById(1, 1);
-        assertTrue(actual.isEmpty());
-    }
-
-    @Test
-    @Order(11)
     public void save_New_App_Test(){
         var actualBefore = appRepository.findUserAppById(5, 1);
         assertTrue(actualBefore.isEmpty());
@@ -157,7 +141,7 @@ public class AppRepositoryInTest {
     }
 
     @Test
-    @Order(12)
+    @Order(10)
     public void update_App_Test(){
         var actualBefore = appRepository
                 .findUserAppById(2, 1);

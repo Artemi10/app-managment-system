@@ -1,10 +1,10 @@
 package com.devanmejia.appmanager.service.event;
 
-import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.entity.Event;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.repository.EventRepository;
 import com.devanmejia.appmanager.service.app.AppService;
+import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -67,9 +68,9 @@ public class EventServiceImplTest {
                         .build()
         );
 
-        when(eventRepository.findEventsByApp(eq(1L), eq(1L)))
+        when(eventRepository.findEventsByApp(eq(1L), eq(1L), eq(PageRequest.of(0, 4))))
                 .thenReturn(events);
-        when(eventRepository.findEventsByApp(eq(2L), eq(3L)))
+        when(eventRepository.findEventsByApp(eq(2L), eq(3L), any()))
                 .thenReturn(new ArrayList<>());
 
         when(appService.isUserApp(eq(1L), eq(1L)))
@@ -91,24 +92,24 @@ public class EventServiceImplTest {
 
     @Test
     public void findAppEvents_Test(){
-        var actual = eventService.findAppEvents(1, 1);
+        var actual = eventService.findAppEvents(1, 1, new PageCriteria(1, 4));
         assertEquals(4, actual.size());
         verify(eventRepository, times(1))
-                .findEventsByApp(1, 1);
+                .findEventsByApp(1, 1, PageRequest.of(0, 4));
     }
 
     @Test
     public void return_Empty_List_If_Events_Do_Not_Exist(){
-        var actual = eventService.findAppEvents(2, 3);
+        var actual = eventService.findAppEvents(2, 3, new PageCriteria(1, 4));
         assertTrue(actual.isEmpty());
         verify(eventRepository, times(1))
-                .findEventsByApp(2, 3);
+                .findEventsByApp(2, 3, PageRequest.of(0, 4));
     }
 
     @Test
     public void addEvent_When_App_Exists(){
         var requestBody = new EventRequestDTO("New event", "Description");
-        Assertions.assertDoesNotThrow(() -> eventService.addEvent(1, requestBody, 1));
+        Assertions.assertDoesNotThrow(() -> eventService.addAppEvent(1, requestBody, 1));
         verify(eventRepository, times(1))
                 .save(argThat(event -> event.getName().equals(requestBody.name())
                                 && event.getExtraInformation().equals(requestBody.extraInformation())
@@ -122,7 +123,7 @@ public class EventServiceImplTest {
         var requestBody = new EventRequestDTO("New event", "Description");
         var exception = assertThrows(
                 EntityException.class,
-                () -> eventService.addEvent(2, requestBody, 3));
+                () -> eventService.addAppEvent(2, requestBody, 3));
         assertEquals("Application not found", exception.getMessage());
         verify(appService, times(1))
                 .isUserApp(2, 3);

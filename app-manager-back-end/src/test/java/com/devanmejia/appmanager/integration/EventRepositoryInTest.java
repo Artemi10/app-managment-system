@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -60,42 +61,42 @@ public class EventRepositoryInTest {
     @Test
     @Order(2)
     public void findEventsByApp_If_User_Has_App() {
-        var actual = eventRepository.findEventsByApp(2, 1);
+        var actual = eventRepository.findEventsByApp(2, 1, PageRequest.of(0, 4));
         assertEquals(4, actual.size());
     }
 
     @Test
     @Order(3)
     public void return_Empty_List_When_FindEventsByApp_If_User_Does_Not_Have_App() {
-        var actual = eventRepository.findEventsByApp(2, 3);
+        var actual = eventRepository.findEventsByApp(2, 3, PageRequest.of(0, 4));
         assertTrue(actual.isEmpty());
     }
 
     @Test
     @Order(4)
     public void return_Empty_List_When_FindEventsByApp_If_App_Does_Not_Exist() {
-        var actual = eventRepository.findEventsByApp(12, 1);
+        var actual = eventRepository.findEventsByApp(12, 1, PageRequest.of(0, 4));
         assertTrue(actual.isEmpty());
     }
 
     @Test
     @Order(5)
     public void return_Empty_List_When_FindEventsByApp_If_User_Does_Not_Exist() {
-        var actual = eventRepository.findEventsByApp(2, 6);
+        var actual = eventRepository.findEventsByApp(2, 6, PageRequest.of(0, 4));
         assertTrue(actual.isEmpty());
     }
 
     @Test
     @Order(6)
     public void return_Empty_List_When_FindEventsByApp_If_App_Does_Not_Have_Events() {
-        var actual = eventRepository.findEventsByApp(1, 1);
+        var actual = eventRepository.findEventsByApp(1, 1, PageRequest.of(0, 4));
         assertTrue(actual.isEmpty());
     }
 
     @Test
     @Order(7)
     public void save_If_App_Exists() {
-        var actualBefore = eventRepository.findEventsByApp(2, 1);
+        var actualBefore = eventRepository.findEventsByApp(2, 1, PageRequest.of(0, 4));
         assertEquals(4, actualBefore.size());
         var time = new Timestamp(new Date().getTime());
         var app = App.builder()
@@ -108,7 +109,7 @@ public class EventRepositoryInTest {
                 .app(app)
                 .build();
         eventRepository.save(event);
-        var actualAfter = eventRepository.findEventsByApp(2, 1);
+        var actualAfter = eventRepository.findEventsByApp(2, 1, PageRequest.of(0, 5));
         assertEquals(5, actualAfter.size());
     }
 }

@@ -10,9 +10,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface AuthService {
+
     Token logIn(LogInDTO logInDTO);
+
     Token logInViaEnterToken(EnterToken enterToken);
+
     Token signUp(SignUpDTO signUpDTO);
+
     Token refresh(Token token);
+
     String logInWithOAuth(String email);
+
 }

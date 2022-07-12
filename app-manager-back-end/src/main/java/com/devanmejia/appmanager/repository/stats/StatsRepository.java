@@ -7,7 +7,10 @@ import java.util.Map;
 
 @Repository
 public interface StatsRepository {
+
     Map<String, Integer> getRawApplicationStatsByMonths(long appId, Timestamp from, Timestamp to);
+
     Map<String, Integer> getRawApplicationStatsByDays(long appId, Timestamp from, Timestamp to);
+
     Map<String, Integer> getRawApplicationStatsByHours(long appId, Timestamp from, Timestamp to);
 }

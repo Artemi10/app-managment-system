@@ -15,6 +15,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -27,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public Token logIn(LogInDTO logInDTO) {
         var user = userRepository
                 .findByEmail(logInDTO.email())
@@ -47,6 +49,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public Token logInViaEnterToken(EnterToken enterToken) {
         var user = userRepository.findUserByOauthEnterToken(enterToken.enterToken())
                 .orElseThrow(() -> new BadCredentialsException("Enter token is incorrect"));
@@ -58,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public Token signUp(SignUpDTO signUpDTO) {
         var userOptional = userRepository.findByEmail(signUpDTO.email());
         if (userOptional.isPresent()) {
@@ -70,6 +74,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public String logInWithOAuth(String email) {
         var userOptional = userRepository.findByEmail(email);
         User user;
@@ -99,6 +104,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public Token refresh(Token token) {
         var email = accessTokenService.getEmail(token.accessToken());
         var user = userRepository.findByEmail(email)
