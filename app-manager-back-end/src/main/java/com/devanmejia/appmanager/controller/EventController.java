@@ -25,6 +25,7 @@ public class EventController {
     @ApiOperation("Add new application event")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 401, message = "User is not authenticated"),
             @ApiResponse(code = 403, message = "Access token is invalid"),
             @ApiResponse(code = 422, message = "Request body is invalid"),
             @ApiResponse(code = 404, message = "Application not found")
@@ -40,6 +41,7 @@ public class EventController {
     @ApiOperation("Get application events")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 401, message = "User is not authenticated"),
             @ApiResponse(code = 403, message = "Access token is invalid"),
             @ApiResponse(code = 422, message = "Query params are invalid")
     })
@@ -54,7 +56,7 @@ public class EventController {
     @ApiOperation("Delete application event")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
-            @ApiResponse(code = 422, message = "Request body is invalid"),
+            @ApiResponse(code = 401, message = "User is not authenticated"),
             @ApiResponse(code = 403, message = "Access token is invalid"),
             @ApiResponse(code = 404, message = "Event not found")
     })
@@ -69,8 +71,10 @@ public class EventController {
     @ApiOperation("Update application event")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 401, message = "User is not authenticated"),
             @ApiResponse(code = 403, message = "Access token is invalid"),
-            @ApiResponse(code = 404, message = "Event not found")
+            @ApiResponse(code = 404, message = "Event not found"),
+            @ApiResponse(code = 422, message = "Query params are invalid")
     })
     public EventResponseDTO updateAppEvent(
             @PathVariable long appId,

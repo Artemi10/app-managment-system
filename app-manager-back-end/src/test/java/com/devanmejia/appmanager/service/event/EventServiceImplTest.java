@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -72,6 +73,10 @@ public class EventServiceImplTest {
                 .thenReturn(events);
         when(eventRepository.findEventsByApp(eq(2L), eq(3L), any()))
                 .thenReturn(new ArrayList<>());
+        when(eventRepository.findEvent(eq(1L), eq(1L), eq(1L)))
+                .thenReturn(Optional.of(events.get(0)));
+        when(eventRepository.findEvent(eq(2L), eq(1L), eq(1L)))
+                .thenReturn(Optional.empty());
 
         when(appService.isUserApp(eq(1L), eq(1L)))
                 .thenReturn(true);
@@ -127,5 +132,43 @@ public class EventServiceImplTest {
         assertEquals("Application not found", exception.getMessage());
         verify(appService, times(1))
                 .isUserApp(2, 3);
+    }
+
+    @Test
+    public void deleteAppEvent_If_Event_Exists_Test() {
+        assertDoesNotThrow(() -> eventService.deleteAppEvent(1, 1, 1));
+        verify(eventRepository, times(1))
+                .delete(argThat(event -> event.getId() == 1));
+    }
+
+    @Test
+    public void throw_Exception_When_deleteAppEvent_If_Event_Does_Not_Exist_Test() {
+        var exception = assertThrows(
+                EntityException.class,
+                () -> eventService.deleteAppEvent(2, 1, 1));
+        assertEquals("Event not found", exception.getMessage());
+        verify(eventRepository, times(0))
+                .delete(argThat(event -> event.getId() == 2));
+    }
+
+    @Test
+    public void updateAppEvent_If_Event_Exists_Test() {
+        var requestBody = new EventRequestDTO("New event name", "New event extra information");
+        assertDoesNotThrow(() -> eventService.updateAppEvent(1, 1, requestBody, 1));
+        verify(eventRepository, times(1))
+                .save(argThat(event -> event.getId() == 1
+                        && event.getExtraInformation().equals(requestBody.extraInformation())
+                        && event.getName().equals(requestBody.name())));
+    }
+
+    @Test
+    public void throw_Exception_When_updateAppEvent_If_Event_Does_Not_Exist_Test() {
+        var requestBody = new EventRequestDTO("New event name", "New event extra information");
+        var exception = assertThrows(
+                EntityException.class,
+                () -> eventService.updateAppEvent(2, 1, requestBody, 1));
+        assertEquals("Event not found", exception.getMessage());
+        verify(eventRepository, times(0))
+                .save(argThat(event -> event.getId() == 2));
     }
 }

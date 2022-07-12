@@ -11,6 +11,7 @@ import com.devanmejia.appmanager.configuration.security.providers.JwtProvider;
 import com.devanmejia.appmanager.configuration.security.token.JwtService;
 import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.service.event.EventService;
+import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -157,5 +159,99 @@ public class EventControllerInTest {
                 .andExpect(status().isUnprocessableEntity());
         verify(eventService, times(0))
                 .addAppEvent(anyLong(), any(EventRequestDTO.class), anyLong());
+    }
+
+    @Test
+    @WithUserDetails(
+            value = "lyah.artem10@mail.ru",
+            userDetailsServiceBeanName = "testUserDetailsService"
+    )
+    public void getAppEvents_Test() throws Exception {
+        var request = MockMvcRequestBuilders
+                .get("/api/v1/app/2/events?page=1&pageSize=4")
+                .contentType("application/json");
+        mvc.perform(request)
+                .andExpect(status().isOk());
+        verify(eventService, times(1))
+                .findAppEvents(
+                        eq(2L),
+                        eq(1L),
+                        argThat(argument -> argument.getPageSize() == 4 && argument.getPage() == 1));
+    }
+
+    @Test
+    @WithUserDetails(
+            value = "lyah.artem10@mail.ru",
+            userDetailsServiceBeanName = "testUserDetailsService"
+    )
+    public void getAppEvents_With_Default_Page_Criteria_Test() throws Exception {
+        var request = MockMvcRequestBuilders
+                .get("/api/v1/app/2/events")
+                .contentType("application/json");
+        mvc.perform(request)
+                .andExpect(status().isOk());
+        verify(eventService, times(1))
+                .findAppEvents(
+                        eq(2L),
+                        eq(1L),
+                        argThat(argument -> argument.getPageSize() == 3 && argument.getPage() == 1));
+    }
+
+    @Test
+    @WithUserDetails(
+            value = "lyah.artem10@gmail.com",
+            userDetailsServiceBeanName = "testUserDetailsService"
+    )
+    public void return_403_When_getAppEvents_If_User_Does_Not_Have_Permission() throws Exception {
+        var request = MockMvcRequestBuilders
+                .get("/api/v1/app/2/events")
+                .contentType("application/json");
+        mvc.perform(request)
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void return_401_When_getAppEvents_If_User_Is_Not_Authenticated() throws Exception {
+        var request = MockMvcRequestBuilders
+                .get("/api/v1/app/2/events")
+                .contentType("application/json");
+        mvc.perform(request)
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithUserDetails(
+            value = "lyah.artem10@mail.ru",
+            userDetailsServiceBeanName = "testUserDetailsService"
+    )
+    public void deleteAppEvent_Test() throws Exception {
+        var request = MockMvcRequestBuilders
+                .delete("/api/v1/app/1/event/1")
+                .contentType("application/json");
+        mvc.perform(request)
+                .andExpect(status().isOk());
+        verify(eventService, times(1))
+                .deleteAppEvent(eq(1L), eq(1L), eq(1L));
+    }
+
+    @Test
+    @WithUserDetails(
+            value = "lyah.artem10@mail.ru",
+            userDetailsServiceBeanName = "testUserDetailsService"
+    )
+    public void updateAppEvent_Test() throws Exception {
+        var requestBody = new EventRequestDTO("Log in failed", "User could not log in");
+        var request = MockMvcRequestBuilders
+                .put("/api/v1/app/1/event/1")
+                .content(objectMapper.writeValueAsString(requestBody))
+                .contentType("application/json");
+        mvc.perform(request)
+                .andExpect(status().isOk());
+        verify(eventService, times(1))
+                .updateAppEvent(
+                        eq(1L),
+                        eq(1L),
+                        argThat(event -> event.name().equals(requestBody.name()) && event.extraInformation().equals(requestBody.extraInformation()) ),
+                        eq(1L));
     }
 }

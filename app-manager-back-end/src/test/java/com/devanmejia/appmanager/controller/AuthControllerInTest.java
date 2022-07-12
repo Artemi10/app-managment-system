@@ -13,7 +13,9 @@ import com.devanmejia.appmanager.configuration.security.token.JwtService;
 import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.transfer.auth.LogInDTO;
 import com.devanmejia.appmanager.transfer.auth.SignUpDTO;
+import com.devanmejia.appmanager.transfer.auth.token.EnterToken;
 import com.devanmejia.appmanager.transfer.auth.token.Token;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -163,5 +165,19 @@ public class AuthControllerInTest {
         verify(authService, times(1))
                 .refresh(argThat(token -> token.accessToken().equals(requestBody.accessToken())
                         && token.refreshToken().equals(requestBody.refreshToken())));
+    }
+
+    @Test
+    public void logInViaEnterToken_Test() throws Exception {
+        var requestBody = new EnterToken(
+                "eyJhbGciOiJIUzI1NiJ.eyJzdWIiOiJseWFoLmFydGVtMTBAbWFpbC5ydSIsImF1dGhvcml0eSI6IkFDVElWRSIsImlhdCI6MTY1MTA2MzQyOCwiZXhwIjoxNjUxMDY0MTQ4fQ.p3gILyvyQ7AsAXH0t97mcqv3hLlgT1q4F9AIX3mfPD4");
+        var request = MockMvcRequestBuilders
+                .post("/api/v1/auth/log-in/token")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(requestBody));
+        mvc.perform(request)
+                .andExpect(status().isOk());
+        verify(authService, times(1))
+                .logInViaEnterToken(argThat(token -> token.enterToken().equals(requestBody.enterToken())));
     }
 }

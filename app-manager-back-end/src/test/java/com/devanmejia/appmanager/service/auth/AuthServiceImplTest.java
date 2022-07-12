@@ -7,6 +7,7 @@ import com.devanmejia.appmanager.entity.user.User;
 import com.devanmejia.appmanager.repository.UserRepository;
 import com.devanmejia.appmanager.transfer.auth.LogInDTO;
 import com.devanmejia.appmanager.transfer.auth.SignUpDTO;
+import com.devanmejia.appmanager.transfer.auth.token.EnterToken;
 import com.devanmejia.appmanager.transfer.auth.token.Token;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,11 +56,23 @@ class AuthServiceImplTest {
                 .refreshToken("7b69ab6d-4767-48d8-a20f-25a2340e1405")
                 .authority(Authority.ACTIVE)
                 .build();
+        var oAuthUser = User.builder()
+                .id(3)
+                .email("lyah.artem03@gmail.com")
+                .password("$2a$10$3kVWnJcACqfBKzhiA//1MeJ/ex1PylaWC7esjmVwSzePHGW6AQmhu")
+                .refreshToken("7b69ab6d-4767-48d8-a20f-25a2340e1405")
+                .oauthEnterToken("7b69ab6d-4767-48d8-a20f-25a2340e424")
+                .authority(Authority.ACTIVE)
+                .build();
         when(userRepository.findByEmail("lyah.artem10@mail.ru"))
                 .thenReturn(Optional.of(user));
         when(userRepository.save(argThat(userToCreate -> userToCreate.getEmail().equals("lyah.artem10@gmail.com"))))
                 .thenReturn(newUser);
         when(userRepository.findByEmail("lyah.artem10@gmail.com"))
+                .thenReturn(Optional.empty());
+        when(userRepository.findUserByOauthEnterToken("7b69ab6d-4767-48d8-a20f-25a2340e424"))
+                .thenReturn(Optional.of(oAuthUser));
+        when(userRepository.findUserByOauthEnterToken(argThat(token -> !token.equals("7b69ab6d-4767-48d8-a20f-25a2340e424"))))
                 .thenReturn(Optional.empty());
         when(accessTokenService.createAccessToken("lyah.artem10@mail.ru", Authority.ACTIVE))
                 .thenReturn("accessToken");
@@ -140,5 +153,44 @@ class AuthServiceImplTest {
                 BadCredentialsException.class, () -> authService.refresh(token));
         assertEquals("Tokens combination is invalid", exception.getMessage());
         verify(userRepository, times(0)).save(any(User.class));
+    }
+
+    @Test
+    public void logInViaEnterToken_Test() {
+        var enterToken = new EnterToken("7b69ab6d-4767-48d8-a20f-25a2340e424");
+        assertDoesNotThrow(() -> authService.logInViaEnterToken(enterToken));
+        verify(userRepository, times(1))
+                .save(argThat(user -> user.getId() == 3));
+        verify(accessTokenService, times(1))
+                .createAccessToken("lyah.artem03@gmail.com", Authority.ACTIVE);
+    }
+
+    @Test
+    public void throw_Exception_When_logInViaEnterToken_If_User_Not_Found_Test() {
+        var enterToken = new EnterToken("7b69ab6d-4767-48d8-a20f-25a2340e422");
+        var exception = assertThrows(BadCredentialsException.class, () -> authService.logInViaEnterToken(enterToken));
+        assertEquals("Enter token is incorrect", exception.getMessage());
+        verify(userRepository, times(0))
+                .save(any());
+        verify(accessTokenService, times(0))
+                .createAccessToken(any(), any());
+    }
+
+    @Test
+    public void logInWithOAuth_When_User_Has_Already_Been_Registered_Test() {
+        authService.logInWithOAuth("lyah.artem10@gmail.com");
+        verify(userRepository, times(1))
+                .findByEmail("lyah.artem10@gmail.com");
+        verify(userRepository, times(2))
+                .save(argThat(user -> user.getEmail().equals("lyah.artem10@gmail.com")));
+    }
+
+    @Test
+    public void logInWithOAuth_When_User_Is_New_Test() {
+        authService.logInWithOAuth("lyah.artem10@mail.ru");
+        verify(userRepository, times(1))
+                .findByEmail("lyah.artem10@mail.ru");
+        verify(userRepository, times(1))
+                .save(argThat(user -> user.getEmail().equals("lyah.artem10@mail.ru")));
     }
 }
