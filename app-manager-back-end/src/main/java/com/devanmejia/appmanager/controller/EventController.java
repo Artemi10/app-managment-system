@@ -37,6 +37,12 @@ public class EventController {
     }
 
     @GetMapping("/{appId}/events")
+    @ApiOperation("Get application events")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 403, message = "Access token is invalid"),
+            @ApiResponse(code = 422, message = "Query params are invalid")
+    })
     public List<EventResponseDTO> getAppEvents(
             @PathVariable long appId,
             @AuthenticationPrincipal UserPrincipal principal,
@@ -45,6 +51,13 @@ public class EventController {
     }
 
     @DeleteMapping("/{appId}/event/{eventId}")
+    @ApiOperation("Delete application event")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 422, message = "Request body is invalid"),
+            @ApiResponse(code = 403, message = "Access token is invalid"),
+            @ApiResponse(code = 404, message = "Event not found")
+    })
     public void deleteAppEvent(
             @PathVariable long appId,
             @PathVariable long eventId,
@@ -53,6 +66,12 @@ public class EventController {
     }
 
     @PutMapping("/{appId}/event/{eventId}")
+    @ApiOperation("Update application event")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 403, message = "Access token is invalid"),
+            @ApiResponse(code = 404, message = "Event not found")
+    })
     public EventResponseDTO updateAppEvent(
             @PathVariable long appId,
             @PathVariable long eventId,
