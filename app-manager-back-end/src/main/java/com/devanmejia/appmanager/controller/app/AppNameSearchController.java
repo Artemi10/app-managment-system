@@ -26,6 +26,7 @@ public class AppNameSearchController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
             @ApiResponse(code = 403, message = "Access token is invalid"),
+            @ApiResponse(code = 401, message = "User is unauthorized"),
             @ApiResponse(code = 422, message = "Request body is invalid")
     })
     public List<AppResponseDTO> findUserApps(
@@ -39,6 +40,7 @@ public class AppNameSearchController {
     @ApiOperation("Get filtered page amount")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 401, message = "User is unauthorized"),
             @ApiResponse(code = 403, message = "Access token is invalid")
     })
     public int getPageAmount(

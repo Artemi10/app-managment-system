@@ -31,6 +31,7 @@ public class UserController {
     @ApiOperation("Update user password")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 401, message = "User is not authorized"),
             @ApiResponse(code = 403, message = "Update is not allowed"),
             @ApiResponse(code = 422, message = "Request body is invalid"),
             @ApiResponse(code = 404, message = "User not found")
@@ -46,6 +47,7 @@ public class UserController {
     @ApiOperation("Reset user and send password recovery email")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 401, message = "User is not authorized"),
             @ApiResponse(code = 403, message = "Access token is invalid"),
             @ApiResponse(code = 422, message = "Request body is invalid"),
             @ApiResponse(code = 404, message = "User not found")
@@ -69,6 +71,7 @@ public class UserController {
     @ApiOperation("Reset user and send password recovery email again")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 401, message = "User is not authorized"),
             @ApiResponse(code = 403, message = "Access token is invalid"),
             @ApiResponse(code = 404, message = "User not found")
     })
@@ -82,6 +85,7 @@ public class UserController {
     @ApiOperation("Confirm email via reset token")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 401, message = "User is not authorized"),
             @ApiResponse(code = 403, message = "Confirmation is not allowed"),
             @ApiResponse(code = 404, message = "User not found")
     })

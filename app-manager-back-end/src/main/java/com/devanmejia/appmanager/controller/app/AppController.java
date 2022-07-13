@@ -25,7 +25,8 @@ public class AppController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok", response = AppResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 404, message = "Application not found"),
-            @ApiResponse(code = 401, message = "Access token is invalid"),
+            @ApiResponse(code = 401, message = "User is not authorized"),
+            @ApiResponse(code = 403, message = "Access token is invalid"),
             @ApiResponse(code = 422, message = "Request body is invalid")
     })
     public List<AppResponseDTO> findUserApps(
@@ -39,7 +40,8 @@ public class AppController {
     @ApiOperation("Get all page amount")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok", response = Integer.class),
-            @ApiResponse(code = 401, message = "Access token is invalid")
+            @ApiResponse(code = 401, message = "User is not authorized"),
+            @ApiResponse(code = 403, message = "Access token is invalid")
     })
     public int getPageAmount(
             @AuthenticationPrincipal UserPrincipal principal,
@@ -51,7 +53,8 @@ public class AppController {
     @ApiOperation("Create new user app")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok", response = AppResponseDTO.class),
-            @ApiResponse(code = 401, message = "Access token is invalid"),
+            @ApiResponse(code = 401, message = "User is not authorized"),
+            @ApiResponse(code = 403, message = "Access token is invalid"),
             @ApiResponse(code = 422, message = "Request body is invalid")
     })
     public AppResponseDTO createUserApp(
@@ -65,7 +68,8 @@ public class AppController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok", response = AppResponseDTO.class),
             @ApiResponse(code = 404, message = "Application not found"),
-            @ApiResponse(code = 401, message = "Access token is invalid"),
+            @ApiResponse(code = 401, message = "User is not authorized"),
+            @ApiResponse(code = 403, message = "Access token is invalid"),
             @ApiResponse(code = 422, message = "Request body is invalid")
     })
     public AppResponseDTO updateUserApp(
@@ -79,7 +83,8 @@ public class AppController {
     @ApiOperation("Delete existed user app")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
-            @ApiResponse(code = 401, message = "Access token is invalid")
+            @ApiResponse(code = 401, message = "User is not authorized"),
+            @ApiResponse(code = 403, message = "Access token is invalid")
     })
     public void deleteUserApp(
             @AuthenticationPrincipal UserPrincipal principal,

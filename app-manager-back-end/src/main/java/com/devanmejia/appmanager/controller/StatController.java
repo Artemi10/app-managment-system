@@ -28,6 +28,7 @@ public class StatController {
     @ApiOperation("Generate app event stats")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 401, message = "User is not authorized"),
             @ApiResponse(code = 403, message = "Access token is invalid"),
             @ApiResponse(code = 404, message = "Application not found")
     })
