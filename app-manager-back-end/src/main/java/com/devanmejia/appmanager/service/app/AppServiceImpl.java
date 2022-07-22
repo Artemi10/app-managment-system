@@ -7,11 +7,9 @@ import com.devanmejia.appmanager.repository.app.AppRepository;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
-import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
+import com.devanmejia.appmanager.transfer.criteria.sort.SortCriteria;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,17 +32,15 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public List<AppResponseDTO> findUserApps(long userId, PageCriteria pageCriteria, SortCriteria sortCriteria) {
-        var sort = sortCriteria.isDescending() ?
-                Sort.by(sortCriteria.getValue()).descending() : Sort.by(sortCriteria.getValue()).ascending();
-        var pageable = PageRequest.of(pageCriteria.getPage() - 1, pageCriteria.getPageSize(), sort);
+        var sort = sortCriteria.toSort();
+        var pageable = pageCriteria.toPageable(sort);
         try {
             return appRepository.findAllByUserId(userId, pageable)
                     .stream()
                     .map(AppResponseDTO::new)
                     .toList();
         } catch (InvalidDataAccessApiUsageException exception) {
-            var message = "Sorting param is invalid. Field %s does not exist.".formatted(sortCriteria.getValue());
-            throw new EntityException(message);
+            throw new EntityException("Sorting param is invalid");
         }
     }
 

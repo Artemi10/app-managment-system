@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import { Observable } from 'rxjs';
-import {App, AppToCreate} from "../../model/app.model";
+import {App, AppToCreate, OrderType} from "../../model/app.model";
 import {environment} from "../../../environments/environment";
 
 @Injectable({
@@ -14,8 +14,8 @@ export class AppService {
     this.api = '/apps';
   }
 
-  public getUserApps(page: number, pageSize: number, value: string, descending: boolean): Observable<App[]> {
-    const param = {params: {page, pageSize, value, descending}};
+  public getUserApps(page: number, pageSize: number, sortValue: string, orderType: OrderType): Observable<App[]> {
+    const param = {params: {page, pageSize, sortValue, orderType}};
     return this.http.get<App[]>(`${environment.backEndURL}${this.api}`, param);
   }
 

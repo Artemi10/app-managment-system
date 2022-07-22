@@ -16,7 +16,7 @@ public class AppSearchServiceImpl implements AppSearchService{
 
     @Override
     public List<AppResponseDTO> findUserApps(long userId, String searchParam, PageCriteria pageCriteria) {
-        var pageable = PageRequest.of(pageCriteria.getPage() - 1, pageCriteria.getPageSize());
+        var pageable = pageCriteria.toPageable();
         var name = searchParam + ":*";
         return appNameSearchRepository
                 .findUserAppsByName(userId, name, pageable)

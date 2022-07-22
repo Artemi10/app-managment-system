@@ -12,8 +12,8 @@
         <p class="apps__list__header__dropdown">
           <span class="dropdown-trigger" data-target='dropdown1'>Sort by</span>
           <span class="apps__list__header__dropdown__descending" (click)="changeDescending()">
-            <i class="material-icons" [ngClass]="{'hidden': descending}">arrow_drop_down</i>
-            <i class="material-icons" [ngClass]="{'hidden': !descending}">arrow_drop_up</i>
+            <i class="material-icons" [ngClass]="{'hidden': isDescending}">arrow_drop_down</i>
+            <i class="material-icons" [ngClass]="{'hidden': !isDescending}">arrow_drop_up</i>
           </span>
         </p>
         <div class="apps__list__header__buttons">

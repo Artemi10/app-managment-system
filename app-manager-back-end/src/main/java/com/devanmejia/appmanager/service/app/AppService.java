@@ -4,7 +4,7 @@ package com.devanmejia.appmanager.service.app;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
-import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
+import com.devanmejia.appmanager.transfer.criteria.sort.SortCriteria;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

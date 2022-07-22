@@ -2,7 +2,7 @@ import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AppService} from 'src/app/service/app/app.service';
 import {TokenService} from 'src/app/service/token/token.service';
-import {App} from "../../model/app.model";
+import {App, OrderType} from "../../model/app.model";
 
 @Component({
   selector: 'app-apps',
@@ -15,7 +15,7 @@ export class AppsComponent implements OnInit, AfterViewInit {
   public pageAmount: number;
   private readonly pageSize: number;
   private sortField: string;
-  public descending: boolean;
+  public orderType: OrderType;
   public isSearchPanelShown: boolean;
   private searchParam: string;
 
@@ -27,9 +27,13 @@ export class AppsComponent implements OnInit, AfterViewInit {
     this.pageSize = 3;
     this._page = 1;
     this.pageAmount = 1;
-    this.descending = false;
+    this.orderType = OrderType.ASC;
     this.isSearchPanelShown = false;
     this.searchParam = '';
+  }
+
+  public get isDescending(): boolean {
+    return this.orderType == OrderType.DESC;
   }
 
   public get isEmpty(): boolean {
@@ -51,7 +55,7 @@ export class AppsComponent implements OnInit, AfterViewInit {
           });
       }
       else {
-        this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
+        this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.orderType)
           .subscribe({
             next : this.initApps.bind(this),
             error : this.logOut.bind(this)
@@ -61,7 +65,7 @@ export class AppsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
+    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.orderType)
       .subscribe({
         next : this.initApps.bind(this),
         error : this.logOut.bind(this)
@@ -93,7 +97,7 @@ export class AppsComponent implements OnInit, AfterViewInit {
   }
 
   public updateApps() {
-    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
+    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.orderType)
       .subscribe({
         next : this.initApps.bind(this),
         error : this.logOut.bind(this)
@@ -108,7 +112,7 @@ export class AppsComponent implements OnInit, AfterViewInit {
   public getSortedApps(sortField: string) {
     this._page = 1;
     this.sortField = sortField;
-    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
+    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.orderType)
       .subscribe({
         next : this.initApps.bind(this),
         error : this.logOut.bind(this)
@@ -116,8 +120,8 @@ export class AppsComponent implements OnInit, AfterViewInit {
   }
 
   public changeDescending(){
-    this.descending = !this.descending;
-    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
+    this.orderType = this.orderType == OrderType.DESC ? OrderType.ASC : OrderType.DESC;
+    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.orderType)
       .subscribe({
         next : this.initApps.bind(this),
         error : this.logOut.bind(this)
@@ -131,7 +135,7 @@ export class AppsComponent implements OnInit, AfterViewInit {
   public closePanel() {
     this.isSearchPanelShown = false;
     this._page = 1;
-    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.descending)
+    this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.orderType)
       .subscribe({
         next : this.initApps.bind(this),
         error : this.logOut.bind(this)

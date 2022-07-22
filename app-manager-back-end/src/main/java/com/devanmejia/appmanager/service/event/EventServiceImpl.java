@@ -46,7 +46,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventResponseDTO> findAppEvents(long appId, long userId, PageCriteria pageCriteria) {
-        var pageable = PageRequest.of(pageCriteria.getPage() - 1, pageCriteria.getPageSize());
+        var pageable = pageCriteria.toPageable();
         return eventRepository.findEventsByApp(appId, userId, pageable)
                 .stream()
                 .map(event -> new EventResponseDTO(appId, event))

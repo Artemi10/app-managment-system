@@ -173,10 +173,7 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isOk());
         verify(eventService, times(1))
-                .findAppEvents(
-                        eq(2L),
-                        eq(1L),
-                        argThat(argument -> argument.getPageSize() == 4 && argument.getPage() == 1));
+                .findAppEvents(eq(2L), eq(1L), eq(new PageCriteria(1, 4)));
     }
 
     @Test
@@ -191,10 +188,7 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isOk());
         verify(eventService, times(1))
-                .findAppEvents(
-                        eq(2L),
-                        eq(1L),
-                        argThat(argument -> argument.getPageSize() == 3 && argument.getPage() == 1));
+                .findAppEvents(eq(2L), eq(1L), eq(new PageCriteria(1, 3)));
     }
 
     @Test

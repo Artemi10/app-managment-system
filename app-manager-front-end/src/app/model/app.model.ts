@@ -7,3 +7,8 @@ export interface App {
 export interface AppToCreate {
   name: string
 }
+
+export enum OrderType {
+  ASC = "ASC",
+  DESC = "DESC"
+}
