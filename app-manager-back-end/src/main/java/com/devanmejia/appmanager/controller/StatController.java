@@ -42,10 +42,10 @@ public class StatController {
         List<StatResponseDTO> stats;
         if (!from.isBlank() && !to.isBlank()) {
             try {
-                var requestDTO = new StatRequestDTO(principal.id(), from, to);
+                var requestDTO = StatRequestDTO.from(principal.id(), from, to);
                 stats = statServices.containsKey(type) ?
                         statServices.get(type).createStats(appId, requestDTO) : Collections.emptyList();
-            } catch (ParseException | EntityException exception) {
+            } catch (EntityException exception) {
                 stats = Collections.emptyList();
             }
         }

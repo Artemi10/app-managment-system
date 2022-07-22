@@ -9,7 +9,9 @@ public record AppResponseDTO(long id, String name, String creationTime) {
     private static final SimpleDateFormat DATE_FORMAT
             = new SimpleDateFormat("dd.MM.yyyy HH:mm:s");
 
-    public AppResponseDTO(App app) {
-        this(app.getId(), app.getName(), DATE_FORMAT.format(app.getCreationTime()));
+    public static AppResponseDTO from(App app) {
+        var dateString = DATE_FORMAT.format(app.getCreationTime());
+        return new AppResponseDTO(app.getId(), app.getName(), dateString);
     }
+
 }

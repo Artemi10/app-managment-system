@@ -26,7 +26,7 @@ public class AppServiceImpl implements AppService {
     @Override
     public AppResponseDTO findUserApp(long appId, long userId) {
         return appRepository.findUserAppById(appId, userId)
-                .map(AppResponseDTO::new)
+                .map(AppResponseDTO::from)
                 .orElseThrow(() -> new EntityException("Application not found"));
     }
 
@@ -37,7 +37,7 @@ public class AppServiceImpl implements AppService {
         try {
             return appRepository.findAllByUserId(userId, pageable)
                     .stream()
-                    .map(AppResponseDTO::new)
+                    .map(AppResponseDTO::from)
                     .toList();
         } catch (InvalidDataAccessApiUsageException exception) {
             throw new EntityException("Sorting param is invalid");
@@ -68,7 +68,7 @@ public class AppServiceImpl implements AppService {
                 .events(new ArrayList<>())
                 .build();
         var savedApp = appRepository.save(app);
-        return new AppResponseDTO(savedApp);
+        return AppResponseDTO.from(savedApp);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class AppServiceImpl implements AppService {
                 .orElseThrow(() -> new EntityException("Application not found"));
         app.setName(appDTO.name());
         var savedApp = appRepository.save(app);
-        return new AppResponseDTO(savedApp);
+        return AppResponseDTO.from(savedApp);
     }
 
     @Override

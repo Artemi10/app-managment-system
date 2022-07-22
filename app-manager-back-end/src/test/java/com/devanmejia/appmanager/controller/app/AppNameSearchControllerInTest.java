@@ -1,23 +1,18 @@
-package com.devanmejia.appmanager.controller;
+package com.devanmejia.appmanager.controller.app;
 
 import com.devanmejia.appmanager.configuration.TestUserDetailsService;
 import com.devanmejia.appmanager.configuration.security.JwtAuthenticationEntryPoint;
 import com.devanmejia.appmanager.configuration.security.JwtAuthenticationManager;
-import com.devanmejia.appmanager.configuration.security.SecurityConfig;
 import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationFailureHandler;
 import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationSuccessHandler;
 import com.devanmejia.appmanager.configuration.security.oauth.OAuth2RequestRepository;
 import com.devanmejia.appmanager.configuration.security.oauth.cookie.CookieService;
 import com.devanmejia.appmanager.configuration.security.providers.JwtProvider;
 import com.devanmejia.appmanager.configuration.security.token.JwtService;
-import com.devanmejia.appmanager.exception.EntityException;
+import com.devanmejia.appmanager.service.app_search.AppSearchService;
 import com.devanmejia.appmanager.service.auth.AuthService;
-import com.devanmejia.appmanager.service.stat.DayStatService;
-import com.devanmejia.appmanager.service.stat.HourStatService;
-import com.devanmejia.appmanager.service.stat.MonthStatService;
-import com.devanmejia.appmanager.transfer.stat.StatRequestDTO;
+import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,39 +30,25 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(StatController.class)
-public class StatControllerInTest {
-    @MockBean(name = "days")
-    private DayStatService dayStatService;
-    @MockBean(name = "hours")
-    private HourStatService hourStatService;
-    @MockBean(name = "months")
-    private MonthStatService monthStatService;
+@WebMvcTest(AppNameSearchController.class)
+public class AppNameSearchControllerInTest {
+    @MockBean
+    private AppSearchService appSearchService;
     private final MockMvc mvc;
 
     @Autowired
-    public StatControllerInTest(MockMvc mvc) {
+    public AppNameSearchControllerInTest(MockMvc mvc) {
         this.mvc = mvc;
-    }
-
-    @BeforeEach
-    public void initMocks(){
-        doThrow(EntityException.class)
-                .when(monthStatService)
-                .createStats(eq(2L), anyLong());
-        doThrow(EntityException.class)
-                .when(monthStatService)
-                .createStats(eq(2L), any(StatRequestDTO.class));
     }
 
     @TestConfiguration
@@ -76,6 +57,7 @@ public class StatControllerInTest {
         public UserDetailsService testUserDetailsService(){
             return new TestUserDetailsService();
         }
+
 
         @Bean("testAuthenticationManager")
         public AuthenticationManager testAuthenticationManager(){
@@ -114,65 +96,21 @@ public class StatControllerInTest {
             value = "lyah.artem10@mail.ru",
             userDetailsServiceBeanName = "testUserDetailsService"
     )
-    public void createDaysStat_If_User_Is_Authenticated() throws Exception {
+    public void findUserApps_Test() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=days&from=&to=");
+                .get("/api/v1/apps/name/test?page=1&pageSize=4");
         mvc.perform(request)
                 .andExpect(status().isOk());
-        verify(dayStatService, times(1))
-                .createStats(eq(1L), anyLong());
+        verify(appSearchService, times(1))
+                .findUserApps(eq(1L), eq("test"), eq(new PageCriteria(1, 4)));
     }
 
     @Test
-    @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void createHoursStat_If_User_Is_Authenticated() throws Exception {
+    public void return_401_When_findUserApps_If_User_Is_Not_Authenticated() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=hours&from=&to=");
-        mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(hourStatService, times(1))
-                .createStats(eq(1L), anyLong());
-    }
-
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void createMonthStat_If_User_Is_Authenticated() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=months&from=&to=");
-        mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(monthStatService, times(1))
-                .createStats(eq(1L), anyLong());
-    }
-
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void createStatByDatePeriod_If_User_Is_Authenticated() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=days&from=22.03.2022&to=24.03.2022");
-        mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(dayStatService, times(1))
-                .createStats(eq(1L), any(StatRequestDTO.class));
-    }
-
-    @Test
-    public void return_401_When_createStat_If_User_Is_Not_Authenticated() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=months&from=&to=");
+                .get("/api/v1/apps/name/test?page=1&pageSize=4");
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
-        verify(monthStatService, times(0))
-                .createStats(anyLong(), anyLong());
     }
 
     @Test
@@ -180,13 +118,11 @@ public class StatControllerInTest {
             value = "lyah.artem10@gmail.com",
             userDetailsServiceBeanName = "testUserDetailsService"
     )
-    public void return_403_When_createStat_If_User_Does_Not_Have_Permission() throws Exception {
+    public void return_403_When_findUserApps_If_User_Does_Not_Have_Permission() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=months&from=&to=");
+                .get("/api/v1/apps/name/test?page=1&pageSize=4");
         mvc.perform(request)
                 .andExpect(status().isForbidden());
-        verify(monthStatService, times(0))
-                .createStats(anyLong(), anyLong());
     }
 
     @Test
@@ -194,40 +130,32 @@ public class StatControllerInTest {
             value = "lyah.artem10@mail.ru",
             userDetailsServiceBeanName = "testUserDetailsService"
     )
-    public void return_422_When_createStat_If_RequestBody_Is_Invalid() throws Exception {
+    public void getPageAmount_Test() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=months&from=12 July 2022&to=16 October 2022");
-        mvc.perform(request)
-                .andExpect(status().isUnprocessableEntity());
-        verify(monthStatService, times(0))
-                .createStats(anyLong(), anyLong());
-    }
-
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void createEmptyStat_If_Application_Not_Found() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/app/2/stat?type=months&from=&to=");
+                .get("/api/v1/apps/name/test/count?pageSize=4");
         mvc.perform(request)
                 .andExpect(status().isOk());
-        verify(monthStatService, times(1))
-                .createStats(eq(2L), anyLong());
+        verify(appSearchService, times(1))
+                .getPageAmount(eq(1L), eq(4), eq("test"));
+    }
+
+    @Test
+    public void return_401_When_getPageAmount_If_User_Is_Not_Authenticated() throws Exception {
+        var request = MockMvcRequestBuilders
+                .get("/api/v1/apps/name/test/count?pageSize=4");
+        mvc.perform(request)
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
+            value = "lyah.artem10@gmail.com",
             userDetailsServiceBeanName = "testUserDetailsService"
     )
-    public void createEmptyStatByDatePeriod_If_Application_Not_Found() throws Exception {
+    public void return_403_When_getPageAmount_If_User_Does_Not_Have_Permission() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/2/stat?type=months&from=22.03.2022&to=24.03.2022");
+                .get("/api/v1/apps/name/test/count?pageSize=4");
         mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(monthStatService, times(1))
-                .createStats(eq(2L), any(StatRequestDTO.class));
+                .andExpect(status().isForbidden());
     }
 }

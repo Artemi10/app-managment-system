@@ -41,7 +41,7 @@ public class EventServiceImpl implements EventService {
                 .app(app)
                 .build();
         var savedEvent = eventRepository.save(event);
-        return new EventResponseDTO(appId, savedEvent);
+        return EventResponseDTO.from(appId, savedEvent);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class EventServiceImpl implements EventService {
         var pageable = pageCriteria.toPageable();
         return eventRepository.findEventsByApp(appId, userId, pageable)
                 .stream()
-                .map(event -> new EventResponseDTO(appId, event))
+                .map(event -> EventResponseDTO.from(appId, event))
                 .toList();
     }
 
@@ -69,6 +69,6 @@ public class EventServiceImpl implements EventService {
         event.setName(requestDTO.name());
         event.setExtraInformation(requestDTO.extraInformation());
         var updatedEvent = eventRepository.save(event);
-        return new EventResponseDTO(appId, updatedEvent);
+        return EventResponseDTO.from(appId, updatedEvent);
     }
 }

@@ -8,7 +8,12 @@ public record EventResponseDTO(long id, String name, String extraInformation, St
     private static final SimpleDateFormat DATE_FORMAT
             = new SimpleDateFormat("dd.MM.yyyy HH:mm:s");
 
-    public EventResponseDTO(long id, Event event) {
-        this(event.getId(), event.getName(), event.getExtraInformation(), DATE_FORMAT.format(event.getTime()), id);
+    public static EventResponseDTO from(long appId, Event event) {
+        var dateString = DATE_FORMAT.format(event.getTime());
+        return new EventResponseDTO(
+                event.getId(),
+                event.getName(),
+                event.getExtraInformation(),
+                dateString, appId);
     }
 }

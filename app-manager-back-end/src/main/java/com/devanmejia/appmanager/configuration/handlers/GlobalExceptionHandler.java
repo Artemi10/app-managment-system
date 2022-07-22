@@ -2,6 +2,7 @@ package com.devanmejia.appmanager.configuration.handlers;
 
 import com.devanmejia.appmanager.exception.EmailException;
 import com.devanmejia.appmanager.exception.EntityException;
+import com.devanmejia.appmanager.exception.RequestBodyParseException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(RequestBodyParseException.class)
+    public ResponseEntity<ExceptionMessage> bodyParseException(RequestBodyParseException exception) {
+        var message = new ExceptionMessage(exception.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(message, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 
     @ExceptionHandler({EmailException.class, EntityException.class})
     public ResponseEntity<ExceptionMessage> resourceNotFoundException(Exception exception) {

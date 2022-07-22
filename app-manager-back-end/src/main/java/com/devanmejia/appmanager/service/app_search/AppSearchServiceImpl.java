@@ -21,7 +21,7 @@ public class AppSearchServiceImpl implements AppSearchService{
         return appNameSearchRepository
                 .findUserAppsByName(userId, name, pageable)
                 .stream()
-                .map(AppResponseDTO::new)
+                .map(AppResponseDTO::from)
                 .toList();
     }
 
