@@ -7,7 +7,7 @@ import com.devanmejia.appmanager.repository.app.AppRepository;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
-import com.devanmejia.appmanager.transfer.criteria.sort.SortCriteria;
+import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;

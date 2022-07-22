@@ -40,9 +40,4 @@ public class PageCriteria {
         PageCriteria that = (PageCriteria) o;
         return page == that.page && pageSize == that.pageSize;
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(page, pageSize);
-    }
 }

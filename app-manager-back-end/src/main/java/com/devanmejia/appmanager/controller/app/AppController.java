@@ -5,7 +5,7 @@ import com.devanmejia.appmanager.service.app.AppService;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
-import com.devanmejia.appmanager.transfer.criteria.sort.SortCriteria;
+import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

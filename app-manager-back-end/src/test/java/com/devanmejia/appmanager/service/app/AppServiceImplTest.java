@@ -6,7 +6,7 @@ import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.repository.app.AppRepository;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
-import com.devanmejia.appmanager.transfer.criteria.sort.SortCriteria;
+import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -147,7 +147,7 @@ public class AppServiceImplTest {
 
     @Test
     public void throwException_When_findUserApps_If_Sorting_Field_Does_Not_Exist_Test(){
-        var sortCriteria = new SortCriteria("amount", SortCriteria.OrderType.DESC);
+        var sortCriteria = new SortCriteria("amount", SortCriteria.OrderType.ASC);
         var pageCriteria = new PageCriteria(1, 3);
         var exception= assertThrows(
                 EntityException.class,
