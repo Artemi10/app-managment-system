@@ -27,4 +27,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
               AND event.app.user.id = :userId""")
     List<Event> findEventsByApp(long appId, long userId, Pageable pageable);
 
+    @Query("""
+              SELECT count(event)
+              FROM Event event
+              WHERE event.app.id = :appId
+              AND event.app.user.id = :userId""")
+    int getAppEventsAmount(long appId, long userId);
 }

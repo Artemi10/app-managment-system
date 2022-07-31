@@ -54,6 +54,17 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public int getPageAmount(long appId, int pageSize, long userId) {
+        var eventAmount = eventRepository.getAppEventsAmount(appId, userId);
+        if (eventAmount > 0 && eventAmount % pageSize == 0) {
+            return eventAmount / pageSize;
+        }
+        else {
+            return eventAmount / pageSize + 1;
+        }
+    }
+
+    @Override
     @Transactional
     public void deleteAppEvent(long eventId, long appId, long userId) {
         var event = eventRepository.findEvent(eventId, appId, userId)

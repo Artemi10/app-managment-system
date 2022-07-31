@@ -13,6 +13,8 @@ public interface EventService {
 
     EventResponseDTO addAppEvent(long appId, EventRequestDTO requestDTO, long userId);
 
+    int getPageAmount(long appId, int pageSize, long userId);
+
     List<EventResponseDTO> findAppEvents(long appId, long userId, PageCriteria pageCriteria);
 
     void deleteAppEvent(long eventId, long appId, long userId);

@@ -52,6 +52,20 @@ public class EventController {
         return eventService.findAppEvents(appId, principal.id(), pageCriteria);
     }
 
+    @GetMapping("/{appId}/events/count")
+    @ApiOperation("Get all page amount")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Ok", response = Integer.class),
+            @ApiResponse(code = 401, message = "User is not authorized"),
+            @ApiResponse(code = 403, message = "Access token is invalid")
+    })
+    public int getAppEventsPageAmount(
+            @PathVariable long appId,
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam(defaultValue = "1") int pageSize) {
+        return eventService.getPageAmount(appId, pageSize, principal.id());
+    }
+
     @DeleteMapping("/{appId}/event/{eventId}")
     @ApiOperation("Delete application event")
     @ApiResponses({
