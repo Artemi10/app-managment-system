@@ -77,6 +77,10 @@ public class EventServiceImplTest {
                 .thenReturn(Optional.of(events.get(0)));
         when(eventRepository.findEvent(eq(2L), eq(1L), eq(1L)))
                 .thenReturn(Optional.empty());
+        when(eventRepository.getAppEventsAmount(eq(2L), eq(1L)))
+                .thenReturn(10);
+        when(eventRepository.getAppEventsAmount(eq(2L), eq(2L)))
+                .thenReturn(0);
 
         when(appService.isUserApp(eq(1L), eq(1L)))
                 .thenReturn(true);
@@ -132,6 +136,28 @@ public class EventServiceImplTest {
         assertEquals("Application not found", exception.getMessage());
         verify(appService, times(1))
                 .isUserApp(2, 3);
+    }
+
+
+    @Test
+    public void getPageAmount_Without_Remainder_Test() {
+        assertEquals(2, eventService.getPageAmount(2, 5, 1));
+        verify(eventRepository, times(1))
+                .getAppEventsAmount(eq(2L), eq(1L));
+    }
+
+    @Test
+    public void getPageAmount_With_Remainder_Test() {
+        assertEquals(4, eventService.getPageAmount(2, 3, 1));
+        verify(eventRepository, times(1))
+                .getAppEventsAmount(eq(2L), eq(1L));
+    }
+
+    @Test
+    public void getPageAmount_If_EventsList_Is_Empty_Test() {
+        assertEquals(1, eventService.getPageAmount(2, 3, 2));
+        verify(eventRepository, times(1))
+                .getAppEventsAmount(eq(2L), eq(2L));
     }
 
     @Test
