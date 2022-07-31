@@ -20,6 +20,10 @@
             (click)="openAppChart()">
         <i class="material-icons prefix apps__list__table__app__icon">show_chart</i>
       </span>
+      <span class="apps__list__table__app__action"
+            (click)="openEventsTable()">
+        <i class="material-icons prefix apps__list__table__app__icon">grid_on</i>
+      </span>
     </div>
   </div>
   <p class="apps__list__table__app__text__time">{{app!.creationTime}}</p>

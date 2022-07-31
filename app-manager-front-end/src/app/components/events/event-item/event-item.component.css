@@ -1,0 +1,18 @@
+.event-item {
+  font-size: 17px;
+}
+.event-item__icon_delete, .event-item__icon_edit{
+  cursor: pointer;
+}
+.event-item__icon_delete {
+  margin-right: 5px;
+}
+.event-item__icon_edit {
+  margin-left: 5px;
+}
+.event-item__icon_delete:hover, .event-item__icon_edit:hover{
+  color: #9575cd;
+}
+.hidden {
+  visibility: hidden;
+}

@@ -1,0 +1,17 @@
+<div class="chart__container">
+  <app-stats-form
+    (submitForm)="submitStatsForm($event)">
+  </app-stats-form>
+  <div class="nav">
+    <span
+      (click)="openEventTable()">
+      <i class="material-icons small nav__icon">grid_on</i>
+    </span>
+    <span (click)="openCreateEventForm()">
+      <i class="material-icons small nav__icon">add</i>
+    </span>
+  </div>
+  <app-app-chart
+    [stats]="stats">
+  </app-app-chart>
+</div>

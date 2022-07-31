@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "14.17.5"
+  },
   "name": "app-manager-front-end",
   "version": "0.0.0",
   "scripts": {

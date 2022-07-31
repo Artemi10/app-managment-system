@@ -1,0 +1,6 @@
+<form class="stats__form" [formGroup]="statsForm" (submit)="submitFormListener()">
+  <app-select-field formGroupName="typeField"></app-select-field>
+  <app-date-field [name]="'From'" (dateChange)="fromDateChange($event)"></app-date-field>
+  <app-date-field [name]="'To'" (dateChange)="toDateChange($event)"></app-date-field>
+  <app-stats-button></app-stats-button>
+</form>

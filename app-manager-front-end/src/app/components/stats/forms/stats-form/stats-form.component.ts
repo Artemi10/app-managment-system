@@ -9,8 +9,6 @@ import {Stat} from "../../../../model/stat.model";
 })
 export class StatsFormComponent {
   @Output()
-  public closeForm: EventEmitter<void>;
-  @Output()
   public submitForm: EventEmitter<Stat>;
   public statsForm: FormGroup;
   public fromDate: string;
@@ -19,7 +17,6 @@ export class StatsFormComponent {
   constructor(private formBuilder: FormBuilder) {
     this.fromDate = '';
     this.toDate = '';
-    this.closeForm = new EventEmitter<void>();
     this.submitForm = new EventEmitter<Stat>();
     this.statsForm = formBuilder.group({
       typeField: this.formBuilder.group({
@@ -35,10 +32,6 @@ export class StatsFormComponent {
       to: this.toDate,
       type: formValue.typeField.type
     }
-  }
-
-  public closeFormListener() {
-    this.closeForm.emit();
   }
 
   public submitFormListener() {

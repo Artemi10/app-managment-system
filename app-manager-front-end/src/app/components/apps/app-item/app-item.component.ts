@@ -9,8 +9,10 @@ import {AppService} from 'src/app/service/app/app.service';
   styleUrls: ['./app-item.component.css']
 })
 export class AppItemComponent {
-  @Input() public app: App | undefined;
-  @Output() public deleteApp: EventEmitter<App>;
+  @Input()
+  public app: App | undefined;
+  @Output()
+  public deleteApp: EventEmitter<App>;
   public isHovered: boolean;
 
   constructor(private appService: AppService,
@@ -36,6 +38,15 @@ export class AppItemComponent {
     }
   }
 
+  public openEventsTable() {
+    if (this.app != undefined) {
+      this.router.navigate([`/app/${this.app.id}/events`]);
+    }
+    else {
+      this.router.navigate([`/`]);
+    }
+  }
+
   private handleDeleteAction() {
     this.deleteApp.emit(this.app)
   }
@@ -51,7 +62,7 @@ export class AppItemComponent {
 
   public openAppChart() {
     if (this.app != undefined) {
-      this.router.navigate([`/app/${this.app.id}/chart`]);
+      this.router.navigate([`/app/${this.app.id}/stats`]);
     }
     else {
       this.router.navigate([`/`]);

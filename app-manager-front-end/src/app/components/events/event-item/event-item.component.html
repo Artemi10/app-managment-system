@@ -1,0 +1,23 @@
+<tr
+  class="event-item"
+  (mouseenter)="showActionButtons()"
+  (mouseleave)="hideActionButtons()">
+  <td>{{event!.id}}</td>
+  <td>{{event!.name}}</td>
+  <td>{{event!.extraInformation}}</td>
+  <td>{{event!.time}}</td>
+  <td>
+    <i
+      (click)="deleteEventItem()"
+      [ngClass]="{'hidden' : isActionButtonsHidden}"
+      class="material-icons small event-item__icon_delete">delete
+    </i>
+    <i
+      (click)="updateEventItem()"
+      [ngClass]="{'hidden' : isActionButtonsHidden}"
+      class="material-icons small event-item__icon_edit">edit
+    </i>
+  </td>
+</tr>
+
+

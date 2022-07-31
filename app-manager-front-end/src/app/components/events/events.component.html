@@ -1,0 +1,42 @@
+<div class="events">
+  <div class="events__container">
+    <div class="events__list">
+      <div class="events__list__header">
+        <p class="events__list__header__text">Events</p>
+        <div class="events__list__header__buttons">
+          <div class="events__list__header__buttons__container">
+            <span class="events__list__header__buttons__chart" (click)="openChart()">
+              <i class="material-icons small">show_chart</i>
+            </span>
+            <span class="events__list__header__buttons__add" (click)="createEvent()">
+              <i class="material-icons small">add</i>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!isEmpty" class="events__list__table">
+        <table class="highlight">
+          <thead>
+          <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Extra information</th>
+            <th>Time</th>
+            <th></th>
+          </tr>
+          </thead>
+          <ng-container *ngFor="let event of events">
+            <tbody
+              app-event-item
+              (updateEventItemEvent)="updateEvent($event)"
+              (deleteEventItemEvent)="deleteEvent($event)"
+              [event]="event">
+            </tbody>
+          </ng-container>
+        </table>
+      </div>
+      <p *ngIf="isEmpty" class="events__list__table_empty">Please, add new events</p>
+    </div>
+  </div>
+</div>
+<app-pagination [(currentPage)]="page" [pageAmount]="pageAmount"></app-pagination>

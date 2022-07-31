@@ -30,14 +30,13 @@ import { CreateAppComponent } from './components/apps/forms/create-app/create-ap
 import { UpdateAppComponent } from './components/apps/forms/update-app/update-app.component';
 import { UpdateAppFormComponent } from './components/apps/forms/update-app/update-app-form/update-app-form.component';
 import { NameFieldComponent } from './components/apps/forms/components/name-field/name-field.component';
-import { AppChartComponent } from './components/apps/app-chart/app-chart.component';
-import { StatsFormComponent } from './components/apps/app-chart/stats-form/stats-form.component';
-import { DateFieldComponent } from './components/apps/app-chart/stats-form/components/date-field/date-field.component';
-import { SelectFieldComponent } from './components/apps/app-chart/stats-form/components/select-field/select-field.component';
-import { AppEventComponent } from './components/apps/app-event/app-event.component';
-import { EventFormComponent } from './components/apps/app-event/event-form/event-form.component';
-import { ExtraInfFieldComponent } from './components/apps/app-event/event-form/components/extra-inf-field/extra-inf-field.component';
-import { EventNameFieldComponent } from './components/apps/app-event/event-form/components/event-name-field/event-name-field.component';
+import { StatsFormComponent } from './components/stats/forms/stats-form/stats-form.component';
+import { DateFieldComponent } from './components/stats/forms/components/date-field/date-field.component';
+import { SelectFieldComponent } from './components/stats/forms/components/select-field/select-field.component';
+import { CreateEventComponent } from './components/events/forms/create-event/create-event.component';
+import { CreateEventFormComponent } from './components/events/forms/create-event/create-event-form/create-event-form.component';
+import { ExtraInfFieldComponent } from './components/events/forms/components/extra-inf-field/extra-inf-field.component';
+import { EventNameFieldComponent } from './components/events/forms/components/event-name-field/event-name-field.component';
 import {UpdateConfirmedUserGuard} from "./guard/update-confirmed-user/update-confirmed-user.guard";
 import { ConfirmResetComponent } from './components/auth/confirm-reset/confirm-reset.component';
 import {UpdateNotConfirmedUserGuard} from "./guard/update-not-confirmed-user/update-not-confirmed-user.guard";
@@ -49,13 +48,22 @@ import { SearchPanelComponent } from './components/apps/search-panel/search-pane
 import { GoogleOauthButtonComponent } from './components/auth/components/google-oauth-button/google-oauth-button.component';
 import {RefreshTokenInterceptor} from "./interceptor/refresh-token/refresh-token.interceptor";
 import {AccessTokenInterceptor} from "./interceptor/access-token/access-token.interceptor";
+import { StatsComponent } from './components/stats/stats.component';
+import { AppChartComponent } from './components/stats/app-chart/app-chart.component';
+import { StatsButtonComponent } from './components/stats/forms/components/stats-button/stats-button.component';
+import { EventItemComponent } from './components/events/event-item/event-item.component';
+import { EventsComponent } from './components/events/events.component';
+import { UpdateEventComponent } from './components/events/forms/update-event/update-event.component';
+import { UpdateEventFormComponent } from './components/events/forms/update-event/update-event-form/update-event-form.component';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'apps', component: AppsComponent, canActivate: [ActiveUserGuard]},
-  {path: 'app/:id/chart', component: AppChartComponent, canActivate: [ActiveUserGuard]},
+  {path: 'app/:id/stats', component: StatsComponent, canActivate: [ActiveUserGuard]},
   {path: 'app/:id/update', component: UpdateAppComponent, canActivate: [ActiveUserGuard]},
-  {path: 'app/:id/event', component: AppEventComponent, canActivate: [ActiveUserGuard]},
+  {path: 'app/:id/event/create', component: CreateEventComponent, canActivate: [ActiveUserGuard]},
+  {path: 'app/:appId/event/:eventId/update', component: UpdateEventComponent, canActivate: [ActiveUserGuard]},
+  {path: 'app/:id/events', component: EventsComponent, canActivate: [ActiveUserGuard]},
   {path: 'app/create', component: CreateAppComponent, canActivate: [ActiveUserGuard]},
   {path: 'auth/log-in', component: LogInComponent, canActivate: [UnAuthUserGuard]},
   {path: 'auth/sign-up', component: SignUpComponent, canActivate: [UnAuthUserGuard]},
@@ -89,12 +97,11 @@ const appRoutes: Routes = [
     UpdateAppComponent,
     UpdateAppFormComponent,
     NameFieldComponent,
-    AppChartComponent,
     StatsFormComponent,
     DateFieldComponent,
     SelectFieldComponent,
-    AppEventComponent,
-    EventFormComponent,
+    CreateEventComponent,
+    CreateEventFormComponent,
     ExtraInfFieldComponent,
     EventNameFieldComponent,
     ConfirmResetComponent,
@@ -103,7 +110,14 @@ const appRoutes: Routes = [
     CounterComponent,
     DropdownComponent,
     SearchPanelComponent,
-    GoogleOauthButtonComponent
+    GoogleOauthButtonComponent,
+    StatsComponent,
+    AppChartComponent,
+    StatsButtonComponent,
+    EventItemComponent,
+    EventsComponent,
+    UpdateEventComponent,
+    UpdateEventFormComponent
   ],
   imports: [
     BrowserModule,

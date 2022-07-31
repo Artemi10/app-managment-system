@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import {TokenService} from "../../../../service/token/token.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {getErrorMessage} from "../../../../service/utils/error.utils";
-import {EventToAdd, Event} from "../../../../model/event.model";
-import {EventService} from "../../../../service/event/event.service";
+import {TokenService} from "../../../../../service/token/token.service";
+import {ActivatedRoute} from "@angular/router";
+import {getErrorMessage} from "../../../../../service/utils/error.utils";
+import {EventToAdd, Event} from "../../../../../model/event.model";
+import {EventService} from "../../../../../service/event/event.service";
+import { Location } from '@angular/common';
 
 @Component({
-  selector: 'app-event-form',
-  templateUrl: './event-form.component.html',
-  styleUrls: ['./event-form.component.css']
+  selector: 'app-create-event-form',
+  templateUrl: './create-event-form.component.html',
+  styleUrls: ['./create-event-form.component.css']
 })
-export class EventFormComponent {
+export class CreateEventFormComponent {
   public createEventForm: FormGroup;
   private _errorMessage: string;
 
@@ -19,7 +20,7 @@ export class EventFormComponent {
               private eventService: EventService,
               private tokenService: TokenService,
               private activatedRoute: ActivatedRoute,
-              private router: Router) {
+              private location: Location) {
     this._errorMessage = '';
     this.createEventForm = formBuilder.group({
       eventNameField: this.formBuilder.group({
@@ -65,10 +66,7 @@ export class EventFormComponent {
   }
 
   private handleCreateEvent(event: Event) {
-    const appId = this.appId;
-    if (appId !== undefined) {
-      this.router.navigate([`/app/${appId}/chart`]);
-    }
+    this.location.back();
   }
 
   private handleError(error: { status: number; error: { message: string; }; }) {

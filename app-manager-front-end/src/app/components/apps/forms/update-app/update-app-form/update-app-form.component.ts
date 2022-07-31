@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {TokenService} from "../../../../../service/token/token.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {AppToCreate} from "../../../../../model/app.model";
+import {App, AppToCreate} from "../../../../../model/app.model";
 import {AppService} from "../../../../../service/app/app.service";
 import {getErrorMessage} from "../../../../../service/utils/error.utils";
 
