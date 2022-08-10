@@ -32,8 +32,12 @@ public class AppNameSearchController {
     public List<AppResponseDTO> findUserApps(
             @AuthenticationPrincipal UserPrincipal principal,
             @ApiParam(value = "Search application name word", required = true) @PathVariable String searchParam,
+            @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @Valid PageCriteria pageCriteria) {
-        return appSearchService.findUserApps(principal.id(), searchParam, pageCriteria);
+        return appSearchService.findUserApps(principal.id(), searchParam, pageCriteria)
+                .stream()
+                .map(app -> AppResponseDTO.from(app, timeZoneSecondsOffset))
+                .toList();
     }
 
     @GetMapping("/name/{searchParam}/count")

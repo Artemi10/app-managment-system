@@ -27,7 +27,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventResponseDTO addAppEvent(long appId, EventRequestDTO requestDTO, long userId, OffsetDateTime creationTime) {
+    public Event addAppEvent(long appId, EventRequestDTO requestDTO, long userId, OffsetDateTime creationTime) {
         if (!appService.isUserApp(appId, userId)){
             throw new EntityException("Application not found");
         }
@@ -40,16 +40,14 @@ public class EventServiceImpl implements EventService {
                 .creationTime(creationTime)
                 .app(app)
                 .build();
-        var savedEvent = eventRepository.save(event);
-        return EventResponseDTO.from(appId, savedEvent);
+        return eventRepository.save(event);
     }
 
     @Override
-    public List<EventResponseDTO> findAppEvents(long appId, long userId, PageCriteria pageCriteria) {
+    public List<Event> findAppEvents(long appId, long userId, PageCriteria pageCriteria) {
         var pageable = pageCriteria.toPageable();
         return eventRepository.findEventsByApp(appId, userId, pageable)
                 .stream()
-                .map(event -> EventResponseDTO.from(appId, event))
                 .toList();
     }
 
@@ -74,12 +72,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventResponseDTO updateAppEvent(long appId, long eventId, EventRequestDTO requestDTO, long userId) {
+    public Event updateAppEvent(long appId, long eventId, EventRequestDTO requestDTO, long userId) {
         var event = eventRepository.findEvent(eventId, appId, userId)
                 .orElseThrow(() -> new EntityException("Event not found"));
         event.setName(requestDTO.name());
         event.setExtraInformation(requestDTO.extraInformation());
-        var updatedEvent = eventRepository.save(event);
-        return EventResponseDTO.from(appId, updatedEvent);
+        return eventRepository.save(event);
     }
 }

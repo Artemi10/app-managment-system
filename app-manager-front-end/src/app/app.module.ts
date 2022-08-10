@@ -55,6 +55,7 @@ import { EventItemComponent } from './components/events/event-item/event-item.co
 import { EventsComponent } from './components/events/events.component';
 import { UpdateEventComponent } from './components/events/forms/update-event/update-event.component';
 import { UpdateEventFormComponent } from './components/events/forms/update-event/update-event-form/update-event-form.component';
+import { TimeZoneInterceptor } from './interceptor/time-zone/time-zone.interceptor';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -135,6 +136,11 @@ const appRoutes: Routes = [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AccessTokenInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TimeZoneInterceptor,
       multi: true
     }],
   bootstrap: [AppComponent]

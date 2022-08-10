@@ -5,7 +5,6 @@ import com.devanmejia.appmanager.entity.user.User;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.repository.app.AppRepository;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
-import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import lombok.AllArgsConstructor;
@@ -23,20 +22,18 @@ public class AppServiceImpl implements AppService {
     private final AppRepository appRepository;
 
     @Override
-    public AppResponseDTO findUserApp(long appId, long userId) {
+    public App findUserApp(long appId, long userId) {
         return appRepository.findUserAppById(appId, userId)
-                .map(AppResponseDTO::from)
                 .orElseThrow(() -> new EntityException("Application not found"));
     }
 
     @Override
-    public List<AppResponseDTO> findUserApps(long userId, PageCriteria pageCriteria, SortCriteria sortCriteria) {
+    public List<App> findUserApps(long userId, PageCriteria pageCriteria, SortCriteria sortCriteria) {
         var sort = sortCriteria.toSort();
         var pageable = pageCriteria.toPageable(sort);
         try {
             return appRepository.findAllByUserId(userId, pageable)
                     .stream()
-                    .map(AppResponseDTO::from)
                     .toList();
         } catch (InvalidDataAccessApiUsageException exception) {
             throw new EntityException("Sorting param is invalid");
@@ -55,7 +52,7 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public AppResponseDTO addUserApp(long userId, AppRequestDTO appDTO, OffsetDateTime creationTime) {
+    public App addUserApp(long userId, AppRequestDTO appDTO, OffsetDateTime creationTime) {
         var user = User.builder()
                 .id(userId)
                 .build();
@@ -65,18 +62,16 @@ public class AppServiceImpl implements AppService {
                 .user(user)
                 .events(new ArrayList<>())
                 .build();
-        var savedApp = appRepository.save(app);
-        return AppResponseDTO.from(savedApp);
+        return appRepository.save(app);
     }
 
     @Override
     @Transactional
-    public AppResponseDTO updateUserApp(long appId, AppRequestDTO appDTO, long userId) {
+    public App updateUserApp(long appId, AppRequestDTO appDTO, long userId) {
         var app = appRepository.findUserAppById(appId, userId)
                 .orElseThrow(() -> new EntityException("Application not found"));
         app.setName(appDTO.name());
-        var savedApp = appRepository.save(app);
-        return AppResponseDTO.from(savedApp);
+        return appRepository.save(app);
     }
 
     @Override

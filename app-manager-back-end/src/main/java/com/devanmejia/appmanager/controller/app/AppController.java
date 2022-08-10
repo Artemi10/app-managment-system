@@ -34,9 +34,14 @@ public class AppController {
     })
     public List<AppResponseDTO> findUserApps(
             @AuthenticationPrincipal UserPrincipal principal,
+            @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @Valid PageCriteria pageCriteria,
             @Valid SortCriteria sortCriteria) {
-        return appService.findUserApps(principal.id(), pageCriteria, sortCriteria);
+        return appService
+                .findUserApps(principal.id(), pageCriteria, sortCriteria)
+                .stream()
+                .map(app -> AppResponseDTO.from(app, timeZoneSecondsOffset))
+                .toList();
     }
 
     @GetMapping("/count")
@@ -65,7 +70,8 @@ public class AppController {
             @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @RequestBody @Valid AppRequestDTO requestBody) {
         var currentTime = timeService.now(timeZoneSecondsOffset);
-        return appService.addUserApp(principal.id(), requestBody, currentTime);
+        var app = appService.addUserApp(principal.id(), requestBody, currentTime);
+        return AppResponseDTO.from(app, timeZoneSecondsOffset);
     }
 
     @PutMapping("/{appId}")
@@ -79,9 +85,11 @@ public class AppController {
     })
     public AppResponseDTO updateUserApp(
             @AuthenticationPrincipal UserPrincipal principal,
+            @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @ApiParam(value = "App id to update", required = true) @PathVariable long appId,
             @RequestBody @Valid AppRequestDTO requestBody) {
-        return appService.updateUserApp(appId, requestBody, principal.id());
+        var app = appService.updateUserApp(appId, requestBody, principal.id());
+        return AppResponseDTO.from(app, timeZoneSecondsOffset);
     }
 
     @DeleteMapping("/{appId}")

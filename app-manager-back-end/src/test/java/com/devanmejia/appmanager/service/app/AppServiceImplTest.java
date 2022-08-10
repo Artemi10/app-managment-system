@@ -205,8 +205,8 @@ public class AppServiceImplTest {
         var appId = 1;
         var userId = 1;
         var response = assertDoesNotThrow(() -> appService.findUserApp(appId, userId));
-        assertEquals(appId, response.id());
-        assertEquals("Simple CRUD App", response.name());
+        assertEquals(appId, response.getId());
+        assertEquals("Simple CRUD App", response.getName());
         verify(appRepository, times(1)).findUserAppById(appId, userId);
     }
 

@@ -9,6 +9,7 @@ import com.devanmejia.appmanager.configuration.security.oauth.OAuth2RequestRepos
 import com.devanmejia.appmanager.configuration.security.oauth.cookie.CookieService;
 import com.devanmejia.appmanager.configuration.security.providers.JwtProvider;
 import com.devanmejia.appmanager.configuration.security.token.JwtService;
+import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.service.app.AppService;
 import com.devanmejia.appmanager.service.auth.AuthService;
@@ -82,7 +83,10 @@ public class AppControllerInTest {
                 .when(appService)
                 .findUserApp(4, 2);
         when(appService.findUserApp(1, 1))
-                .thenReturn(new AppResponseDTO(1, "Simple CRUD App", "21 марта 2022 16:24:54"));
+                .thenReturn(App.builder()
+                        .id(1)
+                        .name("Simple CRUD App")
+                        .build());
     }
 
     @TestConfiguration

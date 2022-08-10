@@ -38,7 +38,8 @@ public class EventController {
             @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @RequestBody @Valid EventRequestDTO request){
         var currentTime = timeService.now(timeZoneSecondsOffset);
-        return eventService.addAppEvent(appId, request, principal.id(), currentTime);
+        var event = eventService.addAppEvent(appId, request, principal.id(), currentTime);
+        return EventResponseDTO.from(appId, event, timeZoneSecondsOffset);
     }
 
     @GetMapping("/{appId}/events")
@@ -52,8 +53,12 @@ public class EventController {
     public List<EventResponseDTO> getAppEvents(
             @PathVariable long appId,
             @AuthenticationPrincipal UserPrincipal principal,
+            @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @Valid PageCriteria pageCriteria) {
-        return eventService.findAppEvents(appId, principal.id(), pageCriteria);
+        return eventService.findAppEvents(appId, principal.id(), pageCriteria)
+                .stream()
+                .map(event -> EventResponseDTO.from(appId, event, timeZoneSecondsOffset))
+                .toList();
     }
 
     @GetMapping("/{appId}/events/count")
@@ -97,8 +102,10 @@ public class EventController {
     public EventResponseDTO updateAppEvent(
             @PathVariable long appId,
             @PathVariable long eventId,
-            @RequestBody @Valid EventRequestDTO request,
-            @AuthenticationPrincipal UserPrincipal principal) {
-        return eventService.updateAppEvent(appId, eventId, request, principal.id());
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
+            @RequestBody @Valid EventRequestDTO request) {
+        var event = eventService.updateAppEvent(appId, eventId, request, principal.id());
+        return EventResponseDTO.from(appId, event, timeZoneSecondsOffset);
     }
 }
