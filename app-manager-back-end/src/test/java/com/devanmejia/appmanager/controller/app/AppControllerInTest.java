@@ -39,10 +39,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.Clock;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -82,6 +79,26 @@ public class AppControllerInTest {
         doThrow(new EntityException("App not found"))
                 .when(appService)
                 .findUserApp(4, 2);
+        var body = new AppRequestDTO("Simple CRUD application");
+        var offsetTime = NOW.withZoneSameInstant(ZoneOffset.ofTotalSeconds(14400)).toOffsetDateTime();
+        when(appService.addUserApp(eq(1L), argThat(requestBody -> requestBody.name().equals(body.name())), eq(offsetTime)))
+                .thenReturn(App.builder()
+                        .id(1)
+                        .name(body.name())
+                        .creationTime(offsetTime)
+                        .build());
+        when(appService.addUserApp(eq(1L), argThat(requestBody -> requestBody.name().equals(body.name())), eq(NOW.toOffsetDateTime())))
+                .thenReturn(App.builder()
+                        .id(1)
+                        .name(body.name())
+                        .creationTime(NOW.toOffsetDateTime())
+                        .build());
+        when(appService.updateUserApp(eq(1L), argThat(requestBody -> requestBody.name().equals(body.name())), eq(1L)))
+                .thenReturn(App.builder()
+                        .id(1)
+                        .name(body.name())
+                        .creationTime(NOW.toOffsetDateTime())
+                        .build());
         when(appService.findUserApp(1, 1))
                 .thenReturn(App.builder()
                         .id(1)

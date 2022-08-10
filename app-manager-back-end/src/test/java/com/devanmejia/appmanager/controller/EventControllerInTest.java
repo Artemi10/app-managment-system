@@ -9,13 +9,17 @@ import com.devanmejia.appmanager.configuration.security.oauth.OAuth2RequestRepos
 import com.devanmejia.appmanager.configuration.security.oauth.cookie.CookieService;
 import com.devanmejia.appmanager.configuration.security.providers.JwtProvider;
 import com.devanmejia.appmanager.configuration.security.token.JwtService;
+import com.devanmejia.appmanager.entity.App;
+import com.devanmejia.appmanager.entity.Event;
 import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.service.event.EventService;
 import com.devanmejia.appmanager.service.time.TimeService;
 import com.devanmejia.appmanager.service.time.TimeServiceImpl;
+import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +39,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.Clock;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -71,6 +72,46 @@ public class EventControllerInTest {
     public EventControllerInTest(MockMvc mvc, ObjectMapper objectMapper) {
         this.mvc = mvc;
         this.objectMapper = objectMapper;
+    }
+
+    @BeforeEach
+    public void initMocks() {
+        var body = new EventRequestDTO("Log in", "User was successfully logged in");
+        var offsetTime = NOW.withZoneSameInstant(ZoneOffset.ofTotalSeconds(14400)).toOffsetDateTime();
+        when(eventService.addAppEvent(
+                eq(1L),
+                argThat(requestBody -> requestBody.name().equals(body.name())
+                        && requestBody.extraInformation().equals(body.extraInformation())),
+                eq(1L),
+                eq(offsetTime)))
+                .thenReturn(Event.builder()
+                        .id(1)
+                        .name(body.name())
+                        .creationTime(offsetTime)
+                        .build());
+        when(eventService.addAppEvent(
+                eq(1L),
+                argThat(requestBody -> requestBody.name().equals(body.name())
+                        && requestBody.extraInformation().equals(body.extraInformation())),
+                eq(1L),
+                eq(NOW.toOffsetDateTime())))
+                .thenReturn(Event.builder()
+                        .id(1)
+                        .name(body.name())
+                        .creationTime(NOW.toOffsetDateTime())
+                        .build());
+        var bodyToUpdate = new EventRequestDTO("Log in failed", "User could not log in");
+        when(eventService.updateAppEvent(
+                eq(1L),
+                eq(1L),
+                argThat(requestBody -> requestBody.name().equals(bodyToUpdate.name())
+                        && requestBody.extraInformation().equals(bodyToUpdate.extraInformation())),
+                eq(1L)))
+                .thenReturn(Event.builder()
+                        .id(1)
+                        .name(body.name())
+                        .creationTime(NOW.toOffsetDateTime())
+                        .build());
     }
 
     @TestConfiguration
