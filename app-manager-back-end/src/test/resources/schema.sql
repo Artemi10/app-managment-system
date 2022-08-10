@@ -14,9 +14,9 @@ create table if not exists applications
 (
     id            bigint
         constraint applications_pk primary key,
-    name          varchar(255) not null,
-    creation_time timestamp    not null,
-    user_id       bigint       not null
+    name          varchar(255)                  not null,
+    creation_time timestamp without time zone      not null,
+    user_id       bigint                        not null
         constraint applications_users_id_fk
             references users
             on delete cascade
@@ -35,10 +35,10 @@ create table if not exists events
 (
     id                bigint
         constraint events_pk primary key,
-    name              varchar(50) not null,
+    name              varchar(50)                   not null,
     extra_information varchar(255),
-    time              timestamp   not null,
-    application_id    bigint      not null
+    creation_time     timestamp without time zone      not null,
+    application_id    bigint                        not null
         constraint events_applications_id_fk
             references applications
             on delete cascade

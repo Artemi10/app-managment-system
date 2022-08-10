@@ -7,6 +7,7 @@ import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 
@@ -19,7 +20,7 @@ public interface AppService {
 
     int getPageAmount(int pageSize, long userId);
 
-    AppResponseDTO addUserApp(long userId, AppRequestDTO appDTO);
+    AppResponseDTO addUserApp(long userId, AppRequestDTO appDTO, OffsetDateTime creationTime);
 
     AppResponseDTO updateUserApp(long appId, AppRequestDTO appDTO, long userId);
 

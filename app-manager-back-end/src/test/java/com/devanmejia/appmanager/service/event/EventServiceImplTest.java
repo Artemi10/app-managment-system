@@ -17,6 +17,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Timestamp;
+import java.time.Clock;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,43 +33,58 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 public class EventServiceImplTest {
+    private static final ZonedDateTime NOW = ZonedDateTime.of(
+            2022,
+            8,
+            10,
+            14,
+            22,
+            54,
+            6,
+            ZoneId.of("UTC")
+    );
     private final AppService appService;
     private final EventRepository eventRepository;
     private final EventService eventService;
+    private final Clock clock;
 
     @Autowired
     public EventServiceImplTest() {
         this.appService = spy(AppService.class);
         this.eventRepository = spy(EventRepository.class);
+        this.clock = spy(Clock.class);
         this.eventService = new EventServiceImpl(appService, eventRepository);
     }
 
     @BeforeEach
     public void initMocks(){
+        when(clock.getZone()).thenReturn(NOW.getZone());
+        when(clock.instant()).thenReturn(NOW.toInstant());
+
         var events = List.of(
                 Event.builder()
                         .id(1)
                         .name("User successfully signed up")
                         .extraInformation("Extra information")
-                        .time(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(3))
                         .build(),
                 Event.builder()
                         .id(2)
                         .name("User successfully logged in")
                         .extraInformation("Extra information")
-                        .time(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(2))
                         .build(),
                 Event.builder()
                         .id(3)
                         .name("Add new note")
                         .extraInformation("Extra information")
-                        .time(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(1))
                         .build(),
                 Event.builder()
                         .id(4)
                         .name("Update note")
                         .extraInformation("Extra information")
-                        .time(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusMinutes(30))
                         .build()
         );
 
@@ -92,7 +111,7 @@ public class EventServiceImplTest {
                     return Event.builder()
                             .id(5)
                             .name(event.getName())
-                            .time(event.getTime())
+                            .creationTime(event.getCreationTime())
                             .extraInformation(event.getExtraInformation())
                             .app(event.getApp())
                             .build();
@@ -118,11 +137,13 @@ public class EventServiceImplTest {
     @Test
     public void addEvent_When_App_Exists(){
         var requestBody = new EventRequestDTO("New event", "Description");
-        Assertions.assertDoesNotThrow(() -> eventService.addAppEvent(1, requestBody, 1));
+        var creationTime = OffsetDateTime.now(clock).minusMinutes(30);
+        Assertions.assertDoesNotThrow(() -> eventService.addAppEvent(1, requestBody, 1, creationTime));
         verify(eventRepository, times(1))
                 .save(argThat(event -> event.getName().equals(requestBody.name())
                                 && event.getExtraInformation().equals(requestBody.extraInformation())
-                                && event.getApp().getId() == 1));
+                                && event.getApp().getId() == 1
+                                && event.getCreationTime().equals(creationTime)));
         verify(appService, times(1))
                 .isUserApp(1, 1);
     }
@@ -130,9 +151,10 @@ public class EventServiceImplTest {
     @Test
     public void throw_Exception_When_Add_Event_To_Nonexistent_App(){
         var requestBody = new EventRequestDTO("New event", "Description");
+        var creationTime = OffsetDateTime.now(clock).minusMinutes(30);
         var exception = assertThrows(
                 EntityException.class,
-                () -> eventService.addAppEvent(2, requestBody, 3));
+                () -> eventService.addAppEvent(2, requestBody, 3, creationTime));
         assertEquals("Application not found", exception.getMessage());
         verify(appService, times(1))
                 .isUserApp(2, 3);

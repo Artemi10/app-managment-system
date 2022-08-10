@@ -16,6 +16,8 @@ import com.devanmejia.appmanager.exception.EmailException;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.service.email.MessageService;
+import com.devanmejia.appmanager.service.time.TimeService;
+import com.devanmejia.appmanager.service.time.TimeServiceImpl;
 import com.devanmejia.appmanager.service.user.UserService;
 import com.devanmejia.appmanager.transfer.auth.UpdateDTO;
 import com.devanmejia.appmanager.transfer.auth.token.ResetToken;
@@ -42,6 +44,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.time.Clock;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -51,6 +56,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(UserController.class)
 public class UserControllerInTest {
+    private static final ZonedDateTime NOW = ZonedDateTime.of(
+            2022,
+            8,
+            10,
+            14,
+            22,
+            54,
+            6,
+            ZoneId.of("UTC")
+    );
     @MockBean
     private AccessTokenService accessTokenService;
     @MockBean
@@ -76,7 +91,7 @@ public class UserControllerInTest {
         @Bean("testAuthenticationManager")
         public AuthenticationManager testAuthenticationManager(){
             return new JwtAuthenticationManager(
-                    List.of(new JwtProvider(testUserDetailsService(), new JwtService())));
+                    List.of(new JwtProvider(testUserDetailsService(), new JwtService(testTimeService()))));
         }
 
         @Bean("testAuthenticationEntryPoint")
@@ -102,6 +117,12 @@ public class UserControllerInTest {
         @Bean("testOAuth2RequestRepository")
         public OAuth2RequestRepository testOAuth2RequestRepository(){
             return new OAuth2RequestRepository(spy(CookieService.class));
+        }
+
+        @Bean("testTimeService")
+        public TimeService testTimeService() {
+            var clock = Clock.fixed(NOW.toInstant(), NOW.getZone());
+            return new TimeServiceImpl(clock);
         }
     }
 

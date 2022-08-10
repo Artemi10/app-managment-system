@@ -7,18 +7,18 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Timestamp;
+import java.time.Clock;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,37 +27,52 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 class AppSearchServiceImplTest {
+    private static final ZonedDateTime NOW = ZonedDateTime.of(
+            2022,
+            8,
+            10,
+            14,
+            22,
+            54,
+            6,
+            ZoneId.of("UTC")
+    );
     private final AppNameSearchRepository appNameSearchRepository;
     private final AppSearchService appSearchService;
+    private final Clock clock;
 
     @Autowired
     public AppSearchServiceImplTest() {
-        this.appNameSearchRepository = Mockito.spy(AppNameSearchRepository.class);
+        this.clock = spy(Clock.class);
+        this.appNameSearchRepository = spy(AppNameSearchRepository.class);
         this.appSearchService = new AppSearchServiceImpl(appNameSearchRepository);
     }
 
     @BeforeEach
     public void initMock() {
+        when(clock.getZone()).thenReturn(NOW.getZone());
+        when(clock.instant()).thenReturn(NOW.toInstant());
+
         var userApps = Lists.list(
                 App.builder()
                         .id(1)
                         .name("Simple CRUD App")
-                        .creationTime(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(3))
                         .build(),
                 App.builder()
                         .id(2)
                         .name("Todo list App")
-                        .creationTime(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(2))
                         .build(),
                 App.builder()
                         .id(3)
                         .name("Flight Timetable App")
-                        .creationTime(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(1))
                         .build(),
                 App.builder()
                         .id(4)
                         .name("User chat app")
-                        .creationTime(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusMinutes(30))
                         .build()
         );
 

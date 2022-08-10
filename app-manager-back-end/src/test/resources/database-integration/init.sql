@@ -19,9 +19,9 @@ create table applications
     id            bigserial
         constraint applications_pk
             primary key,
-    name          varchar(255) not null,
-    creation_time timestamp    not null,
-    user_id       bigint       not null
+    name          varchar(255)                  not null,
+    creation_time timestamp with time zone      not null,
+    user_id       bigint                        not null
         constraint applications_users_id_fk
             references users
             on delete cascade
@@ -44,10 +44,10 @@ create table events
     id                bigserial
         constraint events_pk
             primary key,
-    name              varchar(50) not null,
+    name              varchar(50)                   not null,
     extra_information varchar(255),
-    time              timestamp   not null,
-    application_id    bigint      not null
+    creation_time     timestamp with time zone      not null,
+    application_id    bigint                        not null
         constraint events_applications_id_fk
             references applications
             on delete cascade
@@ -86,15 +86,15 @@ INSERT INTO applications (name, user_id, creation_time)
 VALUES ('User chat', 1, '2022-03-16 8:14:07');
 
 
-INSERT INTO events (name, extra_information, time, application_id)
+INSERT INTO events (name, extra_information, creation_time, application_id)
 VALUES ('User successfully signed up', 'Extra information', '2022-03-14 22:14:07', 2);
 
-INSERT INTO events (name, extra_information, time, application_id)
+INSERT INTO events (name, extra_information, creation_time, application_id)
 VALUES ('User successfully logged in', 'Extra information', '2022-03-14 23:15:07', 2);
 
-INSERT INTO events (name, extra_information, time, application_id)
+INSERT INTO events (name, extra_information, creation_time, application_id)
 VALUES ('Add new note', 'Extra information', '2022-03-17 23:15:47', 2);
 
-INSERT INTO events (name, extra_information, time, application_id)
+INSERT INTO events (name, extra_information, creation_time, application_id)
 VALUES ('Update note', 'Extra information', '2022-04-14 23:39:07', 2);
 

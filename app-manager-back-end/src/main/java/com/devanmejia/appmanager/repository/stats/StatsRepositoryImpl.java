@@ -17,10 +17,10 @@ public class StatsRepositoryImpl implements StatsRepository {
     @Override
     public Map<String, Integer> getRawApplicationStatsByMonths(long appId, Timestamp from, Timestamp to) {
         var query = """
-              SELECT to_char(time, 'MM.YYYY') AS date, count(*) AS amount
+              SELECT to_char(creation_time, 'MM.YYYY') AS date, count(*) AS amount
               FROM events
               WHERE application_id = ?
-              AND time BETWEEN ? AND ?
+              AND creation_time BETWEEN ? AND ?
               GROUP BY date""";
         return jdbcTemplate
                 .query(query, new StatsRowMapper(), appId, from, to)
@@ -33,10 +33,10 @@ public class StatsRepositoryImpl implements StatsRepository {
     @Override
     public Map<String, Integer> getRawApplicationStatsByDays(long appId, Timestamp from, Timestamp to) {
         var query = """
-              SELECT to_char(time, 'DD.MM.YYYY') AS date, count(*) AS amount
+              SELECT to_char(creation_time, 'DD.MM.YYYY') AS date, count(*) AS amount
               FROM events
               WHERE application_id = ?
-              AND time BETWEEN ? AND ?
+              AND creation_time BETWEEN ? AND ?
               GROUP BY date""";
         return jdbcTemplate
                 .query(query, new StatsRowMapper(), appId, from, to)
@@ -49,10 +49,10 @@ public class StatsRepositoryImpl implements StatsRepository {
     @Override
     public Map<String, Integer> getRawApplicationStatsByHours(long appId, Timestamp from, Timestamp to) {
         var query = """
-              SELECT to_char(time, 'HH24:00 DD.MM.YYYY') AS date, count(*) AS amount
+              SELECT to_char(creation_time, 'HH24:00 DD.MM.YYYY') AS date, count(*) AS amount
               FROM events
               WHERE application_id = ?
-              AND time BETWEEN ? AND ?
+              AND creation_time BETWEEN ? AND ?
               GROUP BY date""";
         return jdbcTemplate
                 .query(query, new StatsRowMapper(), appId, from, to)

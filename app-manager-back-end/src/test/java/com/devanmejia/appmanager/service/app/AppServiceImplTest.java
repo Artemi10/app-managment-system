@@ -19,9 +19,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
+import java.time.Clock;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,62 +32,72 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 public class AppServiceImplTest {
+    private static final ZonedDateTime NOW = ZonedDateTime.of(
+            2022,
+            8,
+            10,
+            14,
+            22,
+            54,
+            6,
+            ZoneId.of("UTC")
+    );
     private final AppRepository appRepository;
     private final AppService appService;
-    private List<App> userApps;
-    private List<App> fullPageUserApps;
+    private final Clock clock;
 
     @Autowired
     public AppServiceImplTest() {
         this.appRepository = spy(AppRepository.class);
+        this.clock = spy(Clock.class);
         this.appService = new AppServiceImpl(appRepository);
     }
 
     @BeforeEach
-    public void initApps() {
-        userApps = Lists.list(
+    public void initMock() {
+        when(clock.getZone()).thenReturn(NOW.getZone());
+        when(clock.instant()).thenReturn(NOW.toInstant());
+
+        var userApps = Lists.list(
                 App.builder()
                         .id(1)
                         .name("Simple CRUD App")
-                        .creationTime(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(3))
                         .build(),
                 App.builder()
                         .id(2)
                         .name("Todo list")
-                        .creationTime(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(2))
                         .build(),
                 App.builder()
                         .id(3)
                         .name("Flight Timetable")
-                        .creationTime(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(1))
                         .build(),
                 App.builder()
                         .id(4)
                         .name("User chat")
-                        .creationTime(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusMinutes(30))
                         .build()
         );
-        fullPageUserApps = Lists.list(
+        var fullPageUserApps = Lists.list(
                 App.builder()
                         .id(1)
                         .name("Online shop")
-                        .creationTime(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(5))
                         .build(),
                 App.builder()
                         .id(2)
                         .name("Order manager")
-                        .creationTime(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(2))
                         .build(),
                 App.builder()
                         .id(3)
                         .name("Todo list App")
-                        .creationTime(new Timestamp(new Date().getTime()))
+                        .creationTime(OffsetDateTime.now(clock).minusHours(1))
                         .build()
         );
-    }
 
-    @BeforeEach
-    public void initMock() {
         when(appRepository.findAllByUserId(
                 eq(2L),
                 argThat(pageable -> pageable.getPageNumber() == 0)))
@@ -119,12 +130,13 @@ public class AppServiceImplTest {
                             .user(app.getUser())
                             .build();
                 });
+        var creationTime = OffsetDateTime.now(clock).minusHours(3);
         when(appRepository.findUserAppById(1L, 1L))
                 .thenReturn(Optional.of(
                         App.builder()
                                 .id(1)
                                 .name("Simple CRUD App")
-                                .creationTime(new Timestamp(new Date().getTime()))
+                                .creationTime(creationTime)
                                 .user(User.builder().id(1).build())
                                 .build()));
     }
@@ -178,11 +190,13 @@ public class AppServiceImplTest {
     public void add_New_User_App_When_App_Is_Valid() {
         var userId = 6;
         var correctDTO = new AppRequestDTO("ToDo List App");
-        assertDoesNotThrow(() -> appService.addUserApp(userId, correctDTO));
+        var creationTime = OffsetDateTime.now(clock).minusHours(3);
+        assertDoesNotThrow(() -> appService.addUserApp(userId, correctDTO, creationTime));
         verify(appRepository, times(1))
                 .save(argThat(app ->
                         app.getName().equals(correctDTO.name())
-                        && app.getUser().getId() == userId)
+                        && app.getUser().getId() == userId
+                        && app.getCreationTime().equals(creationTime))
                 );
     }
 

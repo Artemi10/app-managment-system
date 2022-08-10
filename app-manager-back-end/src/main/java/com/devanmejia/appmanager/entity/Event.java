@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "events")
@@ -21,8 +22,8 @@ public class Event {
     private String name;
     @Column(name = "extra_information")
     private String extraInformation;
-    @Column(name = "time")
-    private Timestamp time;
+    @Column(name = "creation_time")
+    private OffsetDateTime creationTime;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private App app;

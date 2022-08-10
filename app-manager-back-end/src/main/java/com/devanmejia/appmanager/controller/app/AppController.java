@@ -2,12 +2,14 @@ package com.devanmejia.appmanager.controller.app;
 
 import com.devanmejia.appmanager.configuration.security.details.UserPrincipal;
 import com.devanmejia.appmanager.service.app.AppService;
+import com.devanmejia.appmanager.service.time.TimeService;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ import java.util.List;
 @RequestMapping("/api/v1/apps")
 public class AppController {
     private final AppService appService;
+    private final TimeService timeService;
 
     @GetMapping
     @ApiOperation("Get user app")
@@ -59,8 +62,10 @@ public class AppController {
     })
     public AppResponseDTO createUserApp(
             @AuthenticationPrincipal UserPrincipal principal,
+            @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @RequestBody @Valid AppRequestDTO requestBody) {
-        return appService.addUserApp(principal.id(), requestBody);
+        var currentTime = timeService.now(timeZoneSecondsOffset);
+        return appService.addUserApp(principal.id(), requestBody, currentTime);
     }
 
     @PutMapping("/{appId}")

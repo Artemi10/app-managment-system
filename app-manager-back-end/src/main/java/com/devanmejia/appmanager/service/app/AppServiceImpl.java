@@ -13,9 +13,8 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -56,14 +55,13 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public AppResponseDTO addUserApp(long userId, AppRequestDTO appDTO) {
+    public AppResponseDTO addUserApp(long userId, AppRequestDTO appDTO, OffsetDateTime creationTime) {
         var user = User.builder()
                 .id(userId)
                 .build();
-        var currentTime = new Timestamp(new Date().getTime());
         var app = App.builder()
                 .name(appDTO.name())
-                .creationTime(currentTime)
+                .creationTime(creationTime)
                 .user(user)
                 .events(new ArrayList<>())
                 .build();

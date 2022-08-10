@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
 public class AppRepositoryTest {
+    private static final DateTimeFormatter DATE_FORMATTER
+            = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:s");
+
     private final AppRepository appRepository;
 
     @Autowired
@@ -81,7 +85,7 @@ public class AppRepositoryTest {
         assertTrue(actualOptional.isPresent());
         var actual = actualOptional.get();
         assertEquals("Simple CRUD App", actual.getName());
-        assertEquals("2022-03-13 03:14:07", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(actual.getCreationTime()));
+        assertEquals("13.03.2022 03:14:7", actual.getCreationTime().format(DATE_FORMATTER));
     }
 
     @Test

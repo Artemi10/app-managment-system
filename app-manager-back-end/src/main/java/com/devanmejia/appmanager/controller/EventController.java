@@ -2,6 +2,7 @@ package com.devanmejia.appmanager.controller;
 
 import com.devanmejia.appmanager.configuration.security.details.UserPrincipal;
 import com.devanmejia.appmanager.service.event.EventService;
+import com.devanmejia.appmanager.service.time.TimeService;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import com.devanmejia.appmanager.transfer.event.EventResponseDTO;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequestMapping("/api/v1/app")
 public class EventController {
     private final EventService eventService;
+    private final TimeService timeService;
 
     @PostMapping("/{appId}/event")
     @ApiOperation("Add new application event")
@@ -33,8 +35,10 @@ public class EventController {
     public EventResponseDTO addAppEvent(
             @PathVariable long appId,
             @AuthenticationPrincipal UserPrincipal principal,
+            @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @RequestBody @Valid EventRequestDTO request){
-        return eventService.addAppEvent(appId, request, principal.id());
+        var currentTime = timeService.now(timeZoneSecondsOffset);
+        return eventService.addAppEvent(appId, request, principal.id(), currentTime);
     }
 
     @GetMapping("/{appId}/events")

@@ -26,15 +26,15 @@ INSERT INTO applications (id, name, user_id, creation_time)
 VALUES (4, 'User chat', 1, '2022-03-16 8:14:07');
 
 
-INSERT INTO events (id, name, extra_information, time, application_id)
+INSERT INTO events (id, name, extra_information, creation_time, application_id)
 VALUES (1, 'User successfully signed up', 'Extra information', '2022-03-14 22:14:07', 2);
 
-INSERT INTO events (id, name, extra_information, time, application_id)
+INSERT INTO events (id, name, extra_information, creation_time, application_id)
 VALUES (2, 'User successfully logged in', 'Extra information', '2022-03-14 23:15:07', 2);
 
-INSERT INTO events (id, name, extra_information, time, application_id)
+INSERT INTO events (id, name, extra_information, creation_time, application_id)
 VALUES (3, 'Add new note', 'Extra information', '2022-03-17 23:15:47', 2);
 
-INSERT INTO events (id, name, extra_information, time, application_id)
+INSERT INTO events (id, name, extra_information, creation_time, application_id)
 VALUES (4, 'Update note', 'Extra information', '2022-04-14 23:39:07', 2);
 

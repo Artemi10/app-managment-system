@@ -6,12 +6,13 @@ import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import com.devanmejia.appmanager.transfer.event.EventResponseDTO;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
 public interface EventService {
 
-    EventResponseDTO addAppEvent(long appId, EventRequestDTO requestDTO, long userId);
+    EventResponseDTO addAppEvent(long appId, EventRequestDTO requestDTO, long userId, OffsetDateTime creationTime);
 
     int getPageAmount(long appId, int pageSize, long userId);
 

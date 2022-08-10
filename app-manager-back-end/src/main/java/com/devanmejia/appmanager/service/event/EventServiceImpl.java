@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -26,18 +27,17 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventResponseDTO addAppEvent(long appId, EventRequestDTO requestDTO, long userId) {
+    public EventResponseDTO addAppEvent(long appId, EventRequestDTO requestDTO, long userId, OffsetDateTime creationTime) {
         if (!appService.isUserApp(appId, userId)){
             throw new EntityException("Application not found");
         }
-        var time = new Timestamp(new Date().getTime());
         var app = App.builder()
                 .id(appId)
                 .build();
         var event = Event.builder()
                 .name(requestDTO.name())
                 .extraInformation(requestDTO.extraInformation())
-                .time(time)
+                .creationTime(creationTime)
                 .app(app)
                 .build();
         var savedEvent = eventRepository.save(event);

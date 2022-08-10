@@ -1,10 +1,12 @@
 package com.devanmejia.appmanager.configuration.security.token;
 
 import com.devanmejia.appmanager.entity.user.Authority;
+import com.devanmejia.appmanager.service.time.TimeService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,23 +15,25 @@ import java.util.Date;
 
 @Service
 @Setter
+@RequiredArgsConstructor
 public class JwtService implements AccessTokenService {
     @Value("${jwt.secret}")
     private String secretKey;
     @Value("${jwt.expired}")
-    private Long timeValidation;
+    private Long validTimePeriod;
+    private final TimeService timeService;
 
     @Override
     public String createAccessToken(String email, Authority authority){
         var claims = Jwts.claims()
                 .setSubject(email);
         claims.put("authority", authority.name());
-        var currentDate = new Date();
-        var validationTime = new Date(currentDate.getTime() + timeValidation);
+        var currentTime = timeService.now();
+        var expirationTime = currentTime.plusSeconds(validTimePeriod);
         return Jwts.builder()
                 .setClaims(claims)
-                .setIssuedAt(currentDate)
-                .setExpiration(validationTime)
+                .setIssuedAt(Date.from(currentTime.toInstant()))
+                .setExpiration(Date.from(expirationTime.toInstant()))
                 .signWith(SignatureAlgorithm.HS256, secretKey).compact();
     }
 
@@ -62,12 +66,14 @@ public class JwtService implements AccessTokenService {
     @Override
     public boolean isValid(String token){
         try {
+            var currentTime = timeService.now().toInstant();
             var expirationTime = Jwts.parser()
                     .setSigningKey(secretKey)
                     .parseClaimsJws(token)
                     .getBody()
-                    .getExpiration();
-            return !expirationTime.before(new Date());
+                    .getExpiration()
+                    .toInstant();
+            return !expirationTime.isBefore(currentTime);
         } catch(JwtException e){
             return false;
         }

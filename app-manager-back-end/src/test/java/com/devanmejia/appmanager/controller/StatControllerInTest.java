@@ -15,6 +15,8 @@ import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.service.stat.DayStatService;
 import com.devanmejia.appmanager.service.stat.HourStatService;
 import com.devanmejia.appmanager.service.stat.MonthStatService;
+import com.devanmejia.appmanager.service.time.TimeService;
+import com.devanmejia.appmanager.service.time.TimeServiceImpl;
 import com.devanmejia.appmanager.transfer.stat.StatRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +39,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.time.Clock;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -47,6 +52,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(StatController.class)
 public class StatControllerInTest {
+    private static final ZonedDateTime NOW = ZonedDateTime.of(
+            2022,
+            8,
+            10,
+            14,
+            22,
+            54,
+            6,
+            ZoneId.of("UTC")
+    );
     @MockBean(name = "days")
     private DayStatService dayStatService;
     @MockBean(name = "hours")
@@ -80,7 +95,7 @@ public class StatControllerInTest {
         @Bean("testAuthenticationManager")
         public AuthenticationManager testAuthenticationManager(){
             return new JwtAuthenticationManager(
-                    List.of(new JwtProvider(testUserDetailsService(), new JwtService())));
+                    List.of(new JwtProvider(testUserDetailsService(), new JwtService(testTimeService()))));
         }
 
         @Bean("testAuthenticationEntryPoint")
@@ -106,6 +121,12 @@ public class StatControllerInTest {
         @Bean("testOAuth2RequestRepository")
         public OAuth2RequestRepository testOAuth2RequestRepository(){
             return new OAuth2RequestRepository(spy(CookieService.class));
+        }
+
+        @Bean("testTimeService")
+        public TimeService testTimeService() {
+            var clock = Clock.fixed(NOW.toInstant(), NOW.getZone());
+            return new TimeServiceImpl(clock);
         }
     }
 

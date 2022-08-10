@@ -8,6 +8,10 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 @ConfigurationPropertiesScan("com.devanmejia.appmanager.configuration")
 public class AppManagerApplication {
 
+    static {
+        System.setProperty("user.timezone", "UTC");
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(AppManagerApplication.class, args);
     }

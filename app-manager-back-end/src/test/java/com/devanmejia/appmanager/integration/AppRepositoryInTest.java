@@ -3,10 +3,7 @@ package com.devanmejia.appmanager.integration;
 import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.entity.user.User;
 import com.devanmejia.appmanager.repository.app.AppRepository;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -18,21 +15,37 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.Clock;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 @Testcontainers
 @SpringBootTest
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppRepositoryInTest {
+    private static final ZonedDateTime NOW = ZonedDateTime.of(
+            2022,
+            8,
+            10,
+            14,
+            22,
+            54,
+            6,
+            ZoneId.of("UTC")
+    );
     private final AppRepository appRepository;
+    private final Clock clock;
 
     @Autowired
     public AppRepositoryInTest(AppRepository appRepository) {
         this.appRepository = appRepository;
+        this.clock = spy(Clock.class);
     }
 
     @Container
@@ -51,6 +64,12 @@ public class AppRepositoryInTest {
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
         registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQL95Dialect");
         registry.add("spring.jpa.properties.hibernate.dialect", () -> "org.hibernate.dialect.PostgreSQL95Dialect");
+    }
+
+    @BeforeEach
+    public void initMock() {
+        when(clock.getZone()).thenReturn(NOW.getZone());
+        when(clock.instant()).thenReturn(NOW.toInstant());
     }
 
     @Test
@@ -132,7 +151,7 @@ public class AppRepositoryInTest {
         assertTrue(actualBefore.isEmpty());
         var app = App.builder()
                 .name("ToDoLIst app")
-                .creationTime(new Timestamp(new Date().getTime()))
+                .creationTime(OffsetDateTime.now(clock).minusHours(3))
                 .user(User.builder().id(1).build())
                 .build();
         appRepository.save(app);
@@ -150,7 +169,7 @@ public class AppRepositoryInTest {
         var app = App.builder()
                 .id(2)
                 .name("Devanmejia Todo list")
-                .creationTime(new Timestamp(new Date().getTime()))
+                .creationTime(OffsetDateTime.now(clock).minusHours(2))
                 .user(User.builder().id(1).build())
                 .build();
         appRepository.save(app);

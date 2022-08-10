@@ -11,6 +11,8 @@ import com.devanmejia.appmanager.configuration.security.providers.JwtProvider;
 import com.devanmejia.appmanager.configuration.security.token.JwtService;
 import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.service.event.EventService;
+import com.devanmejia.appmanager.service.time.TimeService;
+import com.devanmejia.appmanager.service.time.TimeServiceImpl;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,6 +35,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.Clock;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -43,6 +50,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(EventController.class)
 public class EventControllerInTest {
+    private static final DateTimeFormatter DATE_FORMATTER
+            = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:s");
+    private static final ZonedDateTime NOW = ZonedDateTime.of(
+            2022,
+            8,
+            10,
+            14,
+            22,
+            54,
+            6,
+            ZoneId.of("UTC")
+    );
     @MockBean
     private EventService eventService;
     private final MockMvc mvc;
@@ -64,7 +83,7 @@ public class EventControllerInTest {
         @Bean("testAuthenticationManager")
         public AuthenticationManager testAuthenticationManager(){
             return new JwtAuthenticationManager(
-                    List.of(new JwtProvider(testUserDetailsService(), new JwtService())));
+                    List.of(new JwtProvider(testUserDetailsService(), new JwtService(testTimeService()))));
         }
 
         @Bean("testAuthenticationEntryPoint")
@@ -91,6 +110,12 @@ public class EventControllerInTest {
         public OAuth2RequestRepository testOAuth2RequestRepository(){
             return new OAuth2RequestRepository(spy(CookieService.class));
         }
+
+        @Bean("testTimeService")
+        public TimeService testTimeService() {
+            var clock = Clock.fixed(NOW.toInstant(), NOW.getZone());
+            return new TimeServiceImpl(clock);
+        }
     }
 
     @Test
@@ -103,6 +128,7 @@ public class EventControllerInTest {
         var request = MockMvcRequestBuilders
                 .post("/api/v1/app/1/event")
                 .contentType("application/json")
+                .header("Time-Zone-Offset", 14400)
                 .content(objectMapper.writeValueAsString(requestBody));
         mvc.perform(request)
                 .andExpect(status().isOk());
@@ -111,7 +137,30 @@ public class EventControllerInTest {
                         eq(1L),
                         argThat(eventDTO -> eventDTO.name().equals(requestBody.name())
                                 && eventDTO.extraInformation().equals(requestBody.extraInformation())),
-                        eq(1L));
+                        eq(1L),
+                        argThat(time -> time.format(DATE_FORMATTER).equals("10.08.2022 18:22:54")));
+    }
+
+    @Test
+    @WithUserDetails(
+            value = "lyah.artem10@mail.ru",
+            userDetailsServiceBeanName = "testUserDetailsService"
+    )
+    public void addAppEvent_With_Default_TimeZone_Test() throws Exception {
+        var requestBody = new EventRequestDTO("Log in", "User was successfully logged in");
+        var request = MockMvcRequestBuilders
+                .post("/api/v1/app/1/event")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(requestBody));
+        mvc.perform(request)
+                .andExpect(status().isOk());
+        verify(eventService, times(1))
+                .addAppEvent(
+                        eq(1L),
+                        argThat(eventDTO -> eventDTO.name().equals(requestBody.name())
+                                && eventDTO.extraInformation().equals(requestBody.extraInformation())),
+                        eq(1L),
+                        argThat(time -> time.format(DATE_FORMATTER).equals("10.08.2022 14:22:54")));
     }
 
     @Test
@@ -128,7 +177,7 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isForbidden());
         verify(eventService, times(0))
-                .addAppEvent(anyLong(), any(EventRequestDTO.class), anyLong());
+                .addAppEvent(anyLong(), any(EventRequestDTO.class), anyLong(), any(OffsetDateTime.class));
     }
 
     @Test
@@ -141,7 +190,7 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
         verify(eventService, times(0))
-                .addAppEvent(anyLong(), any(EventRequestDTO.class), anyLong());
+                .addAppEvent(anyLong(), any(EventRequestDTO.class), anyLong(), any(OffsetDateTime.class));
     }
 
     @Test
@@ -158,7 +207,7 @@ public class EventControllerInTest {
         mvc.perform(request)
                 .andExpect(status().isUnprocessableEntity());
         verify(eventService, times(0))
-                .addAppEvent(anyLong(), any(EventRequestDTO.class), anyLong());
+                .addAppEvent(anyLong(), any(EventRequestDTO.class), anyLong(), any(OffsetDateTime.class));
     }
 
     @Test

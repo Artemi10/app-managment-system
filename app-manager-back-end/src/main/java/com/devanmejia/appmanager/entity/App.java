@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Entity
@@ -22,7 +23,7 @@ public class App {
     @Column(name = "name")
     private String name;
     @Column(name = "creation_time")
-    private Timestamp creationTime;
+    private OffsetDateTime creationTime;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
