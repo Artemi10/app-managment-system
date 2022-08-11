@@ -1,6 +1,6 @@
 package com.devanmejia.appmanager.controller;
 
-import com.devanmejia.appmanager.configuration.security.details.UserPrincipal;
+import com.devanmejia.appmanager.security.details.UserPrincipal;
 import com.devanmejia.appmanager.service.event.EventService;
 import com.devanmejia.appmanager.service.time.TimeService;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;

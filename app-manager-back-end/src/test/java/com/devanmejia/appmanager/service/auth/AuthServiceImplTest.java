@@ -1,7 +1,6 @@
 package com.devanmejia.appmanager.service.auth;
 
-import com.devanmejia.appmanager.configuration.security.token.AccessTokenService;
-import com.devanmejia.appmanager.configuration.security.token.JwtService;
+import com.devanmejia.appmanager.security.token.AccessTokenService;
 import com.devanmejia.appmanager.entity.user.Authority;
 import com.devanmejia.appmanager.entity.user.User;
 import com.devanmejia.appmanager.repository.UserRepository;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 

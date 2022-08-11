@@ -1,7 +1,7 @@
 package com.devanmejia.appmanager.controller;
 
-import com.devanmejia.appmanager.configuration.security.details.UserPrincipal;
-import com.devanmejia.appmanager.configuration.security.token.AccessTokenService;
+import com.devanmejia.appmanager.security.details.UserPrincipal;
+import com.devanmejia.appmanager.security.token.AccessTokenService;
 import com.devanmejia.appmanager.entity.user.Authority;
 import com.devanmejia.appmanager.exception.EmailException;
 import com.devanmejia.appmanager.service.email.MessageService;

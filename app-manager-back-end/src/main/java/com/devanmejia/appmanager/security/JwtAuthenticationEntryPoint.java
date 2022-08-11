@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.configuration.security;
+package com.devanmejia.appmanager.security;
 
 import com.devanmejia.appmanager.configuration.handlers.ExceptionMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +19,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper;
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         var status = HttpStatus.UNAUTHORIZED.value();
         response.addHeader("Content-type", "application/json");
         response.setStatus(status);

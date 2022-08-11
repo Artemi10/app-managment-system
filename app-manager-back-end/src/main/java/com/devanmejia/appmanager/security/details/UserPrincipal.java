@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.configuration.security.details;
+package com.devanmejia.appmanager.security.details;
 
 import com.devanmejia.appmanager.entity.user.User;
 import org.springframework.security.core.GrantedAuthority;

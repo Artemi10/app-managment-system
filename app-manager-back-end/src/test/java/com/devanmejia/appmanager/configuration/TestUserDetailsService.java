@@ -1,6 +1,6 @@
 package com.devanmejia.appmanager.configuration;
 
-import com.devanmejia.appmanager.configuration.security.details.UserPrincipal;
+import com.devanmejia.appmanager.security.details.UserPrincipal;
 import com.devanmejia.appmanager.entity.user.Authority;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

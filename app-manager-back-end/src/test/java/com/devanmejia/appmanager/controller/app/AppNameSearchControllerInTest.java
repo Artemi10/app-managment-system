@@ -1,14 +1,14 @@
 package com.devanmejia.appmanager.controller.app;
 
 import com.devanmejia.appmanager.configuration.TestUserDetailsService;
-import com.devanmejia.appmanager.configuration.security.JwtAuthenticationEntryPoint;
-import com.devanmejia.appmanager.configuration.security.JwtAuthenticationManager;
-import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationFailureHandler;
-import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationSuccessHandler;
-import com.devanmejia.appmanager.configuration.security.oauth.OAuth2RequestRepository;
-import com.devanmejia.appmanager.configuration.security.oauth.cookie.CookieService;
-import com.devanmejia.appmanager.configuration.security.providers.JwtProvider;
-import com.devanmejia.appmanager.configuration.security.token.JwtService;
+import com.devanmejia.appmanager.security.JwtAuthenticationEntryPoint;
+import com.devanmejia.appmanager.security.JwtAuthenticationManager;
+import com.devanmejia.appmanager.security.oauth.OAuth2AuthenticationFailureHandler;
+import com.devanmejia.appmanager.security.oauth.OAuth2AuthenticationSuccessHandler;
+import com.devanmejia.appmanager.security.oauth.OAuth2RequestRepository;
+import com.devanmejia.appmanager.security.oauth.cookie.CookieService;
+import com.devanmejia.appmanager.security.providers.JwtProvider;
+import com.devanmejia.appmanager.security.token.JwtService;
 import com.devanmejia.appmanager.service.app_search.AppSearchService;
 import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.service.time.TimeService;
@@ -38,7 +38,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

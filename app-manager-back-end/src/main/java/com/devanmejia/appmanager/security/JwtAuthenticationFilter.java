@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.configuration.security;
+package com.devanmejia.appmanager.security;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

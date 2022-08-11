@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.configuration.security.token;
+package com.devanmejia.appmanager.security.token;
 
 import com.devanmejia.appmanager.entity.user.Authority;
 import org.springframework.stereotype.Service;

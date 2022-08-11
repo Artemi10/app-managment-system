@@ -1,6 +1,6 @@
 package com.devanmejia.appmanager.controller;
 
-import com.devanmejia.appmanager.configuration.security.details.UserPrincipal;
+import com.devanmejia.appmanager.security.details.UserPrincipal;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.service.stat.StatService;
 import com.devanmejia.appmanager.transfer.stat.StatRequestDTO;
@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

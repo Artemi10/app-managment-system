@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.configuration.security.oauth.cookie;
+package com.devanmejia.appmanager.security.oauth.cookie;
 
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Service;

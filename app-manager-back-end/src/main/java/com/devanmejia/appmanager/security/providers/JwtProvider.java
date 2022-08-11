@@ -1,8 +1,7 @@
-package com.devanmejia.appmanager.configuration.security.providers;
+package com.devanmejia.appmanager.security.providers;
 
-import com.devanmejia.appmanager.configuration.security.JwtAuthenticationException;
-import com.devanmejia.appmanager.configuration.security.details.UserPrincipalDetailsService;
-import com.devanmejia.appmanager.configuration.security.token.AccessTokenService;
+import com.devanmejia.appmanager.security.JwtAuthenticationException;
+import com.devanmejia.appmanager.security.token.AccessTokenService;
 import io.jsonwebtoken.JwtException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;

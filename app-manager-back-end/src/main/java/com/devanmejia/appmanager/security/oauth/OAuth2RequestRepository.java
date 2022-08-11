@@ -1,6 +1,6 @@
-package com.devanmejia.appmanager.configuration.security.oauth;
+package com.devanmejia.appmanager.security.oauth;
 
-import com.devanmejia.appmanager.configuration.security.oauth.cookie.CookieService;
+import com.devanmejia.appmanager.security.oauth.cookie.CookieService;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;

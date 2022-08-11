@@ -1,21 +1,19 @@
 package com.devanmejia.appmanager.controller;
 
 import com.devanmejia.appmanager.configuration.TestUserDetailsService;
-import com.devanmejia.appmanager.configuration.security.JwtAuthenticationEntryPoint;
-import com.devanmejia.appmanager.configuration.security.JwtAuthenticationManager;
-import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationFailureHandler;
-import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationSuccessHandler;
-import com.devanmejia.appmanager.configuration.security.oauth.OAuth2RequestRepository;
-import com.devanmejia.appmanager.configuration.security.oauth.cookie.CookieService;
-import com.devanmejia.appmanager.configuration.security.providers.JwtProvider;
-import com.devanmejia.appmanager.configuration.security.token.JwtService;
-import com.devanmejia.appmanager.entity.App;
+import com.devanmejia.appmanager.security.JwtAuthenticationEntryPoint;
+import com.devanmejia.appmanager.security.JwtAuthenticationManager;
+import com.devanmejia.appmanager.security.oauth.OAuth2AuthenticationFailureHandler;
+import com.devanmejia.appmanager.security.oauth.OAuth2AuthenticationSuccessHandler;
+import com.devanmejia.appmanager.security.oauth.OAuth2RequestRepository;
+import com.devanmejia.appmanager.security.oauth.cookie.CookieService;
+import com.devanmejia.appmanager.security.providers.JwtProvider;
+import com.devanmejia.appmanager.security.token.JwtService;
 import com.devanmejia.appmanager.entity.Event;
 import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.service.event.EventService;
 import com.devanmejia.appmanager.service.time.TimeService;
 import com.devanmejia.appmanager.service.time.TimeServiceImpl;
-import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +25,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -301,6 +298,59 @@ public class EventControllerInTest {
                 .contentType("application/json");
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithUserDetails(
+            value = "lyah.artem10@mail.ru",
+            userDetailsServiceBeanName = "testUserDetailsService"
+    )
+    public void getAppEventsPageAmount_Test() throws Exception {
+        var request = MockMvcRequestBuilders
+                .get("/api/v1/app/1/events/count")
+                .param("pageSize", "3");
+        mvc.perform(request)
+                .andExpect(status().isOk());
+        verify(eventService, times(1))
+                .getPageAmount(eq(1L), eq(3), eq(1L));
+    }
+
+    @Test
+    @WithUserDetails(
+            value = "lyah.artem10@mail.ru",
+            userDetailsServiceBeanName = "testUserDetailsService"
+    )
+    public void getAppEventsPageAmount_With_Default_Page_Size_Test() throws Exception {
+        var request = MockMvcRequestBuilders
+                .get("/api/v1/app/1/events/count");
+        mvc.perform(request)
+                .andExpect(status().isOk());
+        verify(eventService, times(1))
+                .getPageAmount(eq(1L), eq(1), eq(1L));
+    }
+
+    @Test
+    @WithUserDetails(
+            value = "lyah.artem10@gmail.com",
+            userDetailsServiceBeanName = "testUserDetailsService"
+    )
+    public void return_403_When_getAppEventsPageAmount_If_User_Does_Not_Have_Permission() throws Exception {
+        var request = MockMvcRequestBuilders
+                .get("/api/v1/app/1/events/count");
+        mvc.perform(request)
+                .andExpect(status().isForbidden());
+        verify(eventService, times(0))
+                .getPageAmount(anyLong(), anyInt(), anyLong());
+    }
+
+    @Test
+    public void return_401_When_getAppEventsPageAmount_If_User_Is_Not_Authenticated() throws Exception {
+        var request = MockMvcRequestBuilders
+                .get("/api/v1/app/1/events/count");
+        mvc.perform(request)
+                .andExpect(status().isUnauthorized());
+        verify(eventService, times(0))
+                .getPageAmount(anyLong(), anyInt(), anyLong());
     }
 
     @Test

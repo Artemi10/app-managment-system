@@ -1,6 +1,6 @@
 package com.devanmejia.appmanager.configuration.security;
 
-import com.devanmejia.appmanager.configuration.security.oauth.OAuth2RequestRepository;
+import com.devanmejia.appmanager.security.oauth.OAuth2RequestRepository;
 import com.devanmejia.appmanager.entity.user.Authority;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +10,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -66,4 +68,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configSource.registerCorsConfiguration("/**", config);
         return new CorsFilter(configSource);
     }
+
 }

@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.configuration.security.oauth;
+package com.devanmejia.appmanager.security.oauth;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

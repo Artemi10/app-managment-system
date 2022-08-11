@@ -1,7 +1,7 @@
-package com.devanmejia.appmanager.configuration.security;
+package com.devanmejia.appmanager.security;
 
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderNotFoundException;
 import org.springframework.security.core.Authentication;

@@ -1,14 +1,12 @@
 package com.devanmejia.appmanager.service.auth;
 
-import com.devanmejia.appmanager.configuration.security.token.AccessTokenService;
+import com.devanmejia.appmanager.security.token.AccessTokenService;
 import com.devanmejia.appmanager.entity.user.Authority;
 import com.devanmejia.appmanager.entity.user.User;
 import com.devanmejia.appmanager.repository.UserRepository;
 import com.devanmejia.appmanager.transfer.auth.LogInDTO;
 import com.devanmejia.appmanager.transfer.auth.SignUpDTO;
-import com.devanmejia.appmanager.transfer.auth.token.AccessToken;
 import com.devanmejia.appmanager.transfer.auth.token.EnterToken;
-import com.devanmejia.appmanager.transfer.auth.token.ResetToken;
 import com.devanmejia.appmanager.transfer.auth.token.Token;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;

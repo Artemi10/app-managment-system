@@ -1,13 +1,12 @@
-package com.devanmejia.appmanager.configuration.security.token;
+package com.devanmejia.appmanager.security.token;
 
 import com.devanmejia.appmanager.entity.user.Authority;
 import com.devanmejia.appmanager.service.time.TimeService;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.impl.FixedClock;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +40,7 @@ public class JwtService implements AccessTokenService {
     public String getEmail(String accessToken){
         try {
             return Jwts.parser()
+                    .setClock(new FixedClock(Date.from(timeService.now().toInstant())))
                     .setSigningKey(secretKey)
                     .parseClaimsJws(accessToken)
                     .getBody()
@@ -54,6 +54,7 @@ public class JwtService implements AccessTokenService {
     public String getAuthorityName(String accessToken) {
         try {
             return Jwts.parser()
+                    .setClock(new FixedClock(Date.from(timeService.now().toInstant())))
                     .setSigningKey(secretKey)
                     .parseClaimsJws(accessToken)
                     .getBody()
@@ -68,6 +69,7 @@ public class JwtService implements AccessTokenService {
         try {
             var currentTime = timeService.now().toInstant();
             var expirationTime = Jwts.parser()
+                    .setClock(new FixedClock(Date.from(timeService.now().toInstant())))
                     .setSigningKey(secretKey)
                     .parseClaimsJws(token)
                     .getBody()
@@ -78,4 +80,5 @@ public class JwtService implements AccessTokenService {
             return false;
         }
     }
+
 }

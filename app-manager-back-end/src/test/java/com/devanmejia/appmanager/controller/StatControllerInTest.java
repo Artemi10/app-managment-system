@@ -1,15 +1,14 @@
 package com.devanmejia.appmanager.controller;
 
 import com.devanmejia.appmanager.configuration.TestUserDetailsService;
-import com.devanmejia.appmanager.configuration.security.JwtAuthenticationEntryPoint;
-import com.devanmejia.appmanager.configuration.security.JwtAuthenticationManager;
-import com.devanmejia.appmanager.configuration.security.SecurityConfig;
-import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationFailureHandler;
-import com.devanmejia.appmanager.configuration.security.oauth.OAuth2AuthenticationSuccessHandler;
-import com.devanmejia.appmanager.configuration.security.oauth.OAuth2RequestRepository;
-import com.devanmejia.appmanager.configuration.security.oauth.cookie.CookieService;
-import com.devanmejia.appmanager.configuration.security.providers.JwtProvider;
-import com.devanmejia.appmanager.configuration.security.token.JwtService;
+import com.devanmejia.appmanager.security.JwtAuthenticationEntryPoint;
+import com.devanmejia.appmanager.security.JwtAuthenticationManager;
+import com.devanmejia.appmanager.security.oauth.OAuth2AuthenticationFailureHandler;
+import com.devanmejia.appmanager.security.oauth.OAuth2AuthenticationSuccessHandler;
+import com.devanmejia.appmanager.security.oauth.OAuth2RequestRepository;
+import com.devanmejia.appmanager.security.oauth.cookie.CookieService;
+import com.devanmejia.appmanager.security.providers.JwtProvider;
+import com.devanmejia.appmanager.security.token.JwtService;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.service.stat.DayStatService;
@@ -37,7 +36,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.time.Clock;
 import java.time.ZoneId;

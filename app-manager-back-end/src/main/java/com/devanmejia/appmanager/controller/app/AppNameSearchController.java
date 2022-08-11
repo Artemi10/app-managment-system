@@ -1,6 +1,6 @@
 package com.devanmejia.appmanager.controller.app;
 
-import com.devanmejia.appmanager.configuration.security.details.UserPrincipal;
+import com.devanmejia.appmanager.security.details.UserPrincipal;
 import com.devanmejia.appmanager.service.app_search.AppSearchService;
 import com.devanmejia.appmanager.transfer.app.AppResponseDTO;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;

@@ -1,6 +1,6 @@
 package com.devanmejia.appmanager.controller.app;
 
-import com.devanmejia.appmanager.configuration.security.details.UserPrincipal;
+import com.devanmejia.appmanager.security.details.UserPrincipal;
 import com.devanmejia.appmanager.service.app.AppService;
 import com.devanmejia.appmanager.service.time.TimeService;
 import com.devanmejia.appmanager.transfer.app.AppRequestDTO;
@@ -9,7 +9,6 @@ import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 

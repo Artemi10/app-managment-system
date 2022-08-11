@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.configuration.security;
+package com.devanmejia.appmanager.security;
 
 import org.springframework.security.core.AuthenticationException;
 
