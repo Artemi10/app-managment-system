@@ -108,7 +108,7 @@ public class AuthServiceImpl implements AuthService {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BadCredentialsException("Tokens combination is invalid"));
         var isRefreshCodeMatches = user.getRefreshToken().equals(token.refreshToken());
-        if (! isRefreshCodeMatches) {
+        if (!isRefreshCodeMatches) {
             throw new BadCredentialsException("Tokens combination is invalid");
         }
         var accessToken = accessTokenService.createAccessToken(user.getEmail(), user.getAuthority());
