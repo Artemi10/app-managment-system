@@ -11,5 +11,5 @@ public interface AppSearchService {
 
     List<App> findUserApps(long userId, String searchParam, PageCriteria pageCriteria);
 
-    int getPageAmount(long userId, int pageSize, String searchParam);
+    int getUserAppsAmount(long userId, String searchParam);
 }

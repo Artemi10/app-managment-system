@@ -8,15 +8,11 @@ import com.devanmejia.appmanager.repository.EventRepository;
 import com.devanmejia.appmanager.service.app.AppService;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
-import com.devanmejia.appmanager.transfer.event.EventResponseDTO;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.OffsetDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -52,14 +48,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public int getPageAmount(long appId, int pageSize, long userId) {
-        var eventAmount = eventRepository.getAppEventsAmount(appId, userId);
-        if (eventAmount > 0 && eventAmount % pageSize == 0) {
-            return eventAmount / pageSize;
-        }
-        else {
-            return eventAmount / pageSize + 1;
-        }
+    public int getEventsAmount(long appId, long userId) {
+        return eventRepository.getAppEventsAmount(appId, userId);
     }
 
     @Override

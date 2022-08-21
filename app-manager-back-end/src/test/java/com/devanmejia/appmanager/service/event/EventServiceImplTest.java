@@ -160,24 +160,16 @@ public class EventServiceImplTest {
                 .isUserApp(2, 3);
     }
 
-
     @Test
-    public void getPageAmount_Without_Remainder_Test() {
-        assertEquals(2, eventService.getPageAmount(2, 5, 1));
+    public void getEventsAmount_Test() {
+        assertEquals(10, eventService.getEventsAmount(2, 1));
         verify(eventRepository, times(1))
                 .getAppEventsAmount(eq(2L), eq(1L));
     }
 
     @Test
-    public void getPageAmount_With_Remainder_Test() {
-        assertEquals(4, eventService.getPageAmount(2, 3, 1));
-        verify(eventRepository, times(1))
-                .getAppEventsAmount(eq(2L), eq(1L));
-    }
-
-    @Test
-    public void getPageAmount_If_EventsList_Is_Empty_Test() {
-        assertEquals(1, eventService.getPageAmount(2, 3, 2));
+    public void getEventsAmount_If_EventsList_Is_Empty_Test() {
+        assertEquals(0, eventService.getEventsAmount(2, 2));
         verify(eventRepository, times(1))
                 .getAppEventsAmount(eq(2L), eq(2L));
     }

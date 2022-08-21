@@ -41,14 +41,8 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public int getPageAmount(int pageSize, long userId) {
-        var appAmount = appRepository.getUserAppsAmount(userId);
-        if (appAmount > 0 && appAmount % pageSize == 0) {
-            return appAmount / pageSize;
-        }
-        else {
-            return appAmount / pageSize + 1;
-        }
+    public int getAppsAmount(long userId) {
+        return appRepository.getUserAppsAmount(userId);
     }
 
     @Override

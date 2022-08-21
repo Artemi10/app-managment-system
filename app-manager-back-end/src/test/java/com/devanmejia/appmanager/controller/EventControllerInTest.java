@@ -42,6 +42,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
@@ -109,6 +110,7 @@ public class EventControllerInTest {
                         .name(body.name())
                         .creationTime(NOW.toOffsetDateTime())
                         .build());
+        when(eventService.getEventsAmount(eq(2L), eq(1L))).thenReturn(11);
     }
 
     @TestConfiguration
@@ -258,7 +260,10 @@ public class EventControllerInTest {
                 .get("/api/v1/app/2/events?page=1&pageSize=4")
                 .contentType("application/json");
         mvc.perform(request)
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(header().string("X-Total-Count", "11"));
+        verify(eventService, times(1))
+                .getEventsAmount(eq(2L), eq(1L));
         verify(eventService, times(1))
                 .findAppEvents(eq(2L), eq(1L), eq(new PageCriteria(1, 4)));
     }
@@ -273,7 +278,10 @@ public class EventControllerInTest {
                 .get("/api/v1/app/2/events")
                 .contentType("application/json");
         mvc.perform(request)
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(header().string("X-Total-Count", "11"));
+        verify(eventService, times(1))
+                .getEventsAmount(eq(2L), eq(1L));
         verify(eventService, times(1))
                 .findAppEvents(eq(2L), eq(1L), eq(new PageCriteria(1, 3)));
     }
@@ -288,7 +296,8 @@ public class EventControllerInTest {
                 .get("/api/v1/app/2/events")
                 .contentType("application/json");
         mvc.perform(request)
-                .andExpect(status().isForbidden());
+                .andExpect(status().isForbidden())
+                .andExpect(header().doesNotExist("X-Total-Count"));
     }
 
     @Test
@@ -297,60 +306,8 @@ public class EventControllerInTest {
                 .get("/api/v1/app/2/events")
                 .contentType("application/json");
         mvc.perform(request)
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void getAppEventsPageAmount_Test() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/events/count")
-                .param("pageSize", "3");
-        mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(eventService, times(1))
-                .getPageAmount(eq(1L), eq(3), eq(1L));
-    }
-
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void getAppEventsPageAmount_With_Default_Page_Size_Test() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/events/count");
-        mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(eventService, times(1))
-                .getPageAmount(eq(1L), eq(1), eq(1L));
-    }
-
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@gmail.com",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void return_403_When_getAppEventsPageAmount_If_User_Does_Not_Have_Permission() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/events/count");
-        mvc.perform(request)
-                .andExpect(status().isForbidden());
-        verify(eventService, times(0))
-                .getPageAmount(anyLong(), anyInt(), anyLong());
-    }
-
-    @Test
-    public void return_401_When_getAppEventsPageAmount_If_User_Is_Not_Authenticated() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/events/count");
-        mvc.perform(request)
-                .andExpect(status().isUnauthorized());
-        verify(eventService, times(0))
-                .getPageAmount(anyLong(), anyInt(), anyLong());
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().doesNotExist("X-Total-Count"));
     }
 
     @Test

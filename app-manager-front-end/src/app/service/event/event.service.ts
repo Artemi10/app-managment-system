@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {environment} from "../../../environments/environment";
 import {EventToAdd} from "../../model/event.model";
@@ -19,14 +19,10 @@ export class EventService {
     return this.http.post<Event>(`${environment.backEndURL}${this.api}/${appId}/event`, eventToAdd);
   }
 
-  public getAppEvent(appId: number, page: number, pageSize: number): Observable<Event[]> {
-    const param = {params: {page, pageSize}};
-    return this.http.get<Event[]>(`${environment.backEndURL}${this.api}/${appId}/events`, param);
-  }
-
-  public getAppEventPageAmount(appId: number, pageSize: number): Observable<number> {
-    const param = {params: {pageSize}};
-    return this.http.get<number>(`${environment.backEndURL}${this.api}/${appId}/events/count`, param);
+  public getAppEvent(appId: number, page: number, pageSize: number): Observable<HttpResponse<Event[]>> {
+    return this.http.get<Event[]>(
+      `${environment.backEndURL}${this.api}/${appId}/events`,
+      { observe: 'response', params: {page, pageSize} });
   }
 
   public deleteAppEvent(appId: number, eventId: number): Observable<void> {

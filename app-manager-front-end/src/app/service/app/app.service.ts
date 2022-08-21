@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpResponse} from "@angular/common/http";
 import { Observable } from 'rxjs';
 import {App, AppToCreate, OrderType} from "../../model/app.model";
 import {environment} from "../../../environments/environment";
@@ -14,14 +14,10 @@ export class AppService {
     this.api = '/apps';
   }
 
-  public getUserApps(page: number, pageSize: number, sortValue: string, orderType: OrderType): Observable<App[]> {
-    const param = {params: {page, pageSize, sortValue, orderType}};
-    return this.http.get<App[]>(`${environment.backEndURL}${this.api}`, param);
-  }
-
-  public getPageAmount(pageSize: number): Observable<number> {
-    const param = {params: {pageSize}};
-    return this.http.get<number>(`${environment.backEndURL}${this.api}/count`, param);
+  public getUserApps(page: number, pageSize: number, sortValue: string, orderType: OrderType): Observable<HttpResponse<App[]>> {
+    return this.http.get<App[]>(
+      `${environment.backEndURL}${this.api}`,
+      {observe: 'response', params: {page, pageSize, sortValue, orderType}});
   }
 
   public createUserApp(appToCreate: AppToCreate): Observable<App> {
@@ -36,13 +32,9 @@ export class AppService {
     return this.http.delete<void>(`${environment.backEndURL}${this.api}/${id}`);
   }
 
-  public searchUserAppsByName(page: number, pageSize: number, searchParam: string): Observable<App[]> {
-    const param = {params: {page, pageSize}};
-    return this.http.get<App[]>(`${environment.backEndURL}${this.api}/name/${searchParam}`, param);
-  }
-
-  public getSearchedAppsPageAmount(pageSize: number, searchParam: string): Observable<number> {
-    const param = {params: {pageSize}};
-    return this.http.get<number>(`${environment.backEndURL}${this.api}/name/${searchParam}/count`, param);
+  public searchUserAppsByName(page: number, pageSize: number, searchParam: string): Observable<HttpResponse<App[]>> {
+    return this.http.get<App[]>(
+      `${environment.backEndURL}${this.api}/name/${searchParam}`,
+      {observe: 'response', params: {page, pageSize}});
   }
 }

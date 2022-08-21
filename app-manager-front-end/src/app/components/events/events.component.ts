@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Event} from "../../model/event.model";
 import {EventService} from "../../service/event/event.service";
 import {TokenService} from "../../service/token/token.service";
+import {HttpResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-events',
@@ -11,7 +12,7 @@ import {TokenService} from "../../service/token/token.service";
 })
 export class EventsComponent implements OnInit {
   public _page: number;
-  public pageAmount: number;
+  private eventsAmount: number;
   private readonly pageSize: number;
   public events: Event[];
 
@@ -20,7 +21,7 @@ export class EventsComponent implements OnInit {
               private tokenService: TokenService,
               private router: Router) {
     this._page = 1;
-    this.pageAmount = 1;
+    this.eventsAmount = 0;
     this.pageSize = 6;
     this.events = [];
   }
@@ -32,11 +33,6 @@ export class EventsComponent implements OnInit {
   private updateEvents() {
     const appId = this.appId;
     if (appId != undefined) {
-      this.eventService.getAppEventPageAmount(appId, this.pageSize)
-        .subscribe({
-          next : this.initPageAmount.bind(this),
-          error : this.errorHandler.bind(this)
-        });
       this.eventService.getAppEvent(appId, this.page, this.pageSize)
         .subscribe({
           next : this.initEvents.bind(this),
@@ -61,12 +57,24 @@ export class EventsComponent implements OnInit {
     }
   }
 
-  private initPageAmount(pageAmount: number) {
-    this.pageAmount = pageAmount;
+  public get pageAmount(): number {
+    if (this.eventsAmount > 0 && this.eventsAmount % this.pageSize == 0) {
+      return Math.floor(this.eventsAmount / this.pageSize);
+    }
+    else {
+      return Math.ceil(this.eventsAmount / this.pageSize);
+    }
   }
 
-  private initEvents(events: Event[]) {
-    this.events = events;
+  private initEvents(response: HttpResponse<Event[]>) {
+    this.events = response.body ?? [];
+    const amount = Number.parseInt(response.headers.get('X-Total-Count') ?? '0');
+    if (Number.isNaN(amount)) {
+      this.eventsAmount = 0;
+    }
+    else  {
+      this.eventsAmount = amount;
+    }
   }
 
   private errorHandler() {

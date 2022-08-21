@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {AppService} from 'src/app/service/app/app.service';
 import {TokenService} from 'src/app/service/token/token.service';
 import {App, OrderType} from "../../model/app.model";
+import {HttpResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-apps',
@@ -12,7 +13,7 @@ import {App, OrderType} from "../../model/app.model";
 export class AppsComponent implements OnInit, AfterViewInit {
   public apps: App[];
   public _page: number;
-  public pageAmount: number;
+  private appsAmount: number;
   private readonly pageSize: number;
   private sortField: string;
   public orderType: OrderType;
@@ -26,7 +27,7 @@ export class AppsComponent implements OnInit, AfterViewInit {
     this.apps = [];
     this.pageSize = 3;
     this._page = 1;
-    this.pageAmount = 1;
+    this.appsAmount = 0;
     this.orderType = OrderType.ASC;
     this.isSearchPanelShown = false;
     this.searchParam = '';
@@ -64,15 +65,19 @@ export class AppsComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public get pageAmount(): number {
+    if (this.appsAmount > 0 && this.appsAmount % this.pageSize == 0) {
+      return Math.floor(this.appsAmount / this.pageSize);
+    }
+    else {
+      return Math.ceil(this.appsAmount / this.pageSize);
+    }
+  }
+
   ngOnInit() {
     this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.orderType)
       .subscribe({
         next : this.initApps.bind(this),
-        error : this.logOut.bind(this)
-      });
-    this.appService.getPageAmount(this.pageSize)
-      .subscribe({
-        next : this.initPageAmount.bind(this),
         error : this.logOut.bind(this)
       });
   }
@@ -83,12 +88,15 @@ export class AppsComponent implements OnInit, AfterViewInit {
     const instances = M.Dropdown.init(elems, {});
   }
 
-  private initApps(apps: App[]) {
-    this.apps = apps;
-  }
-
-  private initPageAmount(pageAmount: number) {
-    this.pageAmount = pageAmount;
+  private initApps(response: HttpResponse<App[]>) {
+    this.apps = response.body ?? [];
+    const amount = Number.parseInt(response.headers.get('X-Total-Count') ?? '0');
+    if (Number.isNaN(amount)) {
+      this.appsAmount = 0;
+    }
+    else  {
+      this.appsAmount = amount;
+    }
   }
 
   private logOut() {
@@ -100,11 +108,6 @@ export class AppsComponent implements OnInit, AfterViewInit {
     this.appService.getUserApps(this._page, this.pageSize, this.sortField, this.orderType)
       .subscribe({
         next : this.initApps.bind(this),
-        error : this.logOut.bind(this)
-      });
-    this.appService.getPageAmount(this.pageSize)
-      .subscribe({
-        next : this.initPageAmount.bind(this),
         error : this.logOut.bind(this)
       });
   }
@@ -140,11 +143,6 @@ export class AppsComponent implements OnInit, AfterViewInit {
         next : this.initApps.bind(this),
         error : this.logOut.bind(this)
       });
-    this.appService.getPageAmount(this.pageSize)
-      .subscribe({
-        next : this.initPageAmount.bind(this),
-        error : this.logOut.bind(this)
-      });
   }
 
   public openPanel() {
@@ -157,11 +155,6 @@ export class AppsComponent implements OnInit, AfterViewInit {
     this.appService.searchUserAppsByName(this._page, this.pageSize, searchParam)
       .subscribe({
         next : this.initApps.bind(this),
-        error : this.logOut.bind(this)
-      });
-    this.appService.getSearchedAppsPageAmount(this.pageSize, searchParam)
-      .subscribe({
-        next : this.initPageAmount.bind(this),
         error : this.logOut.bind(this)
       });
   }

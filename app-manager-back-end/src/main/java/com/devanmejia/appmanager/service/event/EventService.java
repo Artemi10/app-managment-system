@@ -14,7 +14,7 @@ public interface EventService {
 
     Event addAppEvent(long appId, EventRequestDTO requestDTO, long userId, OffsetDateTime creationTime);
 
-    int getPageAmount(long appId, int pageSize, long userId);
+    int getEventsAmount(long appId, long userId);
 
     List<Event> findAppEvents(long appId, long userId, PageCriteria pageCriteria);
 

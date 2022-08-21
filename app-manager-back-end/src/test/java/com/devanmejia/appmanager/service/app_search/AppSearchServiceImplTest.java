@@ -109,33 +109,22 @@ class AppSearchServiceImplTest {
                 .findUserAppsByName(id, searchName + ":*", PageRequest.of(7, 9));
     }
 
-
     @Test
-    public void getFullPageAmount_Test() {
+    public void getUserAppsAmount_Test() {
         var id = 1;
         var searchName = "app";
-        var actual = appSearchService.getPageAmount(id, 4, searchName);
-        assertEquals(1, actual);
+        var actual = appSearchService.getUserAppsAmount(id, searchName);
+        assertEquals(4, actual);
         verify(appNameSearchRepository, times(1))
                 .getUserAppsAmountByName(id, searchName + ":*");
     }
 
     @Test
-    public void getNotFullPageAmount_Test() {
-        var id = 1;
-        var searchName = "app";
-        var actual = appSearchService.getPageAmount(id, 3, searchName);
-        assertEquals(2, actual);
-        verify(appNameSearchRepository, times(1))
-                .getUserAppsAmountByName(id, searchName + ":*");
-    }
-
-    @Test
-    public void return_One_When_getPageAmount_If_Apps_Are_Empty_Test() {
+    public void getUserAppsAmount_If_Apps_Are_Empty_Test() {
         var id = 2;
         var searchName = "app";
-        var actual = appSearchService.getPageAmount(id, 1, searchName);
-        assertEquals(1, actual);
+        var actual = appSearchService.getUserAppsAmount(id, searchName);
+        assertEquals(0, actual);
         verify(appNameSearchRepository, times(1))
                 .getUserAppsAmountByName(id, searchName + ":*");
     }

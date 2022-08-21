@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -35,25 +36,16 @@ public class AppController {
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @Valid PageCriteria pageCriteria,
-            @Valid SortCriteria sortCriteria) {
+            @Valid SortCriteria sortCriteria,
+            HttpServletResponse response) {
+        var userId = principal.id();
+        var appsAmount = appService.getAppsAmount(userId);
+        response.addHeader("X-Total-Count", String.valueOf(appsAmount));
         return appService
-                .findUserApps(principal.id(), pageCriteria, sortCriteria)
+                .findUserApps(userId, pageCriteria, sortCriteria)
                 .stream()
                 .map(app -> AppResponseDTO.from(app, timeZoneSecondsOffset))
                 .toList();
-    }
-
-    @GetMapping("/count")
-    @ApiOperation("Get all page amount")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Ok", response = Integer.class),
-            @ApiResponse(code = 401, message = "User is not authorized"),
-            @ApiResponse(code = 403, message = "Access token is invalid")
-    })
-    public int getPageAmount(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @RequestParam(defaultValue = "1") int pageSize) {
-        return appService.getPageAmount(pageSize, principal.id());
     }
 
     @PostMapping

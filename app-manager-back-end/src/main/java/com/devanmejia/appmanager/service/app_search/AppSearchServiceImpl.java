@@ -24,14 +24,8 @@ public class AppSearchServiceImpl implements AppSearchService{
     }
 
     @Override
-    public int getPageAmount(long userId, int pageSize, String searchParam) {
+    public int getUserAppsAmount(long userId, String searchParam) {
         var name = searchParam + ":*";
-        var noteAmount = appNameSearchRepository.getUserAppsAmountByName(userId, name);
-        if (noteAmount > 0 && noteAmount % pageSize == 0) {
-            return noteAmount / pageSize;
-        }
-        else {
-            return noteAmount / pageSize + 1;
-        }
+        return appNameSearchRepository.getUserAppsAmountByName(userId, name);
     }
 }

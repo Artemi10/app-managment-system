@@ -169,21 +169,17 @@ public class AppServiceImplTest {
     }
 
     @Test
-    public void getPageAmount_From_Full_PageUser_Apps_Test() {
-        assertEquals(1, appService.getPageAmount(3, 2));
+    public void getUserAppsAmount_Test() {
+        assertEquals(3, appService.getAppsAmount(2));
         verify(appRepository, times(1)).getUserAppsAmount(2);
-    }
-
-    @Test
-    public void getPageAmount_From_User_Apps_Test() {
-        assertEquals(2, appService.getPageAmount(3, 1));
+        assertEquals(4, appService.getAppsAmount(1));
         verify(appRepository, times(1)).getUserAppsAmount(1);
     }
 
     @Test
-    public void getPageAmount_From_Empty_User_Apps_Test() {
-        assertEquals(1, appService.getPageAmount(3, 2));
-        verify(appRepository, times(1)).getUserAppsAmount(2);
+    public void getUserAppsAmount_If_User_Apps_Is_Empty_Test() {
+        assertEquals(0, appService.getAppsAmount(6));
+        verify(appRepository, times(1)).getUserAppsAmount(6);
     }
 
     @Test

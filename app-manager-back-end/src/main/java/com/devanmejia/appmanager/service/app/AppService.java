@@ -18,7 +18,7 @@ public interface AppService {
 
     List<App> findUserApps(long userId, PageCriteria pageCriteria, SortCriteria sortCriteria);
 
-    int getPageAmount(int pageSize, long userId);
+    int getAppsAmount(long userId);
 
     App addUserApp(long userId, AppRequestDTO appDTO, OffsetDateTime creationTime);
 

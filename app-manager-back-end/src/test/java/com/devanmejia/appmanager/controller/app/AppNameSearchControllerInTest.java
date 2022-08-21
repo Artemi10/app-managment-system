@@ -15,6 +15,7 @@ import com.devanmejia.appmanager.service.time.TimeService;
 import com.devanmejia.appmanager.service.time.TimeServiceImpl;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
@@ -111,6 +113,12 @@ public class AppNameSearchControllerInTest {
         }
     }
 
+    @BeforeEach
+    public void initMock() {
+        when(appSearchService.getUserAppsAmount(eq(1L), eq("test")))
+                .thenReturn(9);
+    }
+
     @Test
     @WithUserDetails(
             value = "lyah.artem10@mail.ru",
@@ -120,7 +128,10 @@ public class AppNameSearchControllerInTest {
         var request = MockMvcRequestBuilders
                 .get("/api/v1/apps/name/test?page=1&pageSize=4");
         mvc.perform(request)
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(header().string("X-Total-Count", "9"));
+        verify(appSearchService, times(1))
+                .getUserAppsAmount(eq(1L), eq("test"));
         verify(appSearchService, times(1))
                 .findUserApps(eq(1L), eq("test"), eq(new PageCriteria(1, 4)));
     }
@@ -130,7 +141,8 @@ public class AppNameSearchControllerInTest {
         var request = MockMvcRequestBuilders
                 .get("/api/v1/apps/name/test?page=1&pageSize=4");
         mvc.perform(request)
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().doesNotExist("X-Total-Count"));
     }
 
     @Test
@@ -142,40 +154,7 @@ public class AppNameSearchControllerInTest {
         var request = MockMvcRequestBuilders
                 .get("/api/v1/apps/name/test?page=1&pageSize=4");
         mvc.perform(request)
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void getPageAmount_Test() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/apps/name/test/count?pageSize=4");
-        mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(appSearchService, times(1))
-                .getPageAmount(eq(1L), eq(4), eq("test"));
-    }
-
-    @Test
-    public void return_401_When_getPageAmount_If_User_Is_Not_Authenticated() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/apps/name/test/count?pageSize=4");
-        mvc.perform(request)
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@gmail.com",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void return_403_When_getPageAmount_If_User_Does_Not_Have_Permission() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/apps/name/test/count?pageSize=4");
-        mvc.perform(request)
-                .andExpect(status().isForbidden());
+                .andExpect(status().isForbidden())
+                .andExpect(header().doesNotExist("X-Total-Count"));
     }
 }

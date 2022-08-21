@@ -44,6 +44,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
@@ -103,6 +104,8 @@ public class AppControllerInTest {
                         .id(1)
                         .name("Simple CRUD App")
                         .build());
+        when(appService.getAppsAmount(eq(1L)))
+                .thenReturn(6);
     }
 
     @TestConfiguration
@@ -160,7 +163,10 @@ public class AppControllerInTest {
         var request = MockMvcRequestBuilders
                 .get("/api/v1/apps");
         mvc.perform(request)
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(header().string("X-Total-Count", "6"));
+        verify(appService, times(1))
+                .getAppsAmount(eq(1L));
         verify(appService, times(1))
                 .findUserApps(eq(1L), eq(new PageCriteria(1, 3)), eq(new SortCriteria("id", SortCriteria.OrderType.DESC)));
     }
@@ -174,7 +180,10 @@ public class AppControllerInTest {
         var request = MockMvcRequestBuilders
                 .get("/api/v1/apps?page=2&pageSize=2&sortValue=name&orderType=ASC");
         mvc.perform(request)
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(header().string("X-Total-Count", "6"));
+        verify(appService, times(1))
+                .getAppsAmount(eq(1L));
         verify(appService, times(1))
                 .findUserApps(eq(1L), eq(new PageCriteria(2, 2)), eq(new SortCriteria("name", SortCriteria.OrderType.ASC)));
     }
@@ -184,7 +193,8 @@ public class AppControllerInTest {
         var request = MockMvcRequestBuilders
                 .get("/api/v1/apps");
         mvc.perform(request)
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().doesNotExist("X-Total-Count"));
         verify(appService, times(0))
                 .findUserApps(anyLong(), any(), any());
     }
@@ -198,33 +208,10 @@ public class AppControllerInTest {
         var request = MockMvcRequestBuilders
                 .get("/api/v1/apps");
         mvc.perform(request)
-                .andExpect(status().isForbidden());
+                .andExpect(status().isForbidden())
+                .andExpect(header().doesNotExist("X-Total-Count"));
         verify(appService, times(0))
                 .findUserApps(anyLong(), any(), any());
-    }
-
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void getPageAmount_If_User_Is_Authenticated() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/apps/count?pageSize=3");
-        mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(appService, times(1))
-                .getPageAmount(3, 1);
-    }
-
-    @Test
-    public void  return_401_When_getPageAmount_If_User_Is_Not_Authenticated() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/apps/count?pageSize=3");
-        mvc.perform(request)
-                .andExpect(status().isUnauthorized());
-        verify(appService, times(0))
-                .getPageAmount(anyInt(), anyLong());
     }
 
     @Test
@@ -236,7 +223,8 @@ public class AppControllerInTest {
         var request = MockMvcRequestBuilders
                 .get("/api/v1/apps");
         mvc.perform(request)
-                .andExpect(status().isForbidden());
+                .andExpect(status().isForbidden())
+                .andExpect(header().doesNotExist("X-Total-Count"));
         verify(appService, times(0))
                 .findUserApps(anyLong(), any(), any());
     }

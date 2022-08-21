@@ -21,6 +21,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.Filter;
+import javax.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -67,6 +70,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         var configSource = new UrlBasedCorsConfigurationSource();
         configSource.registerCorsConfiguration("/**", config);
         return new CorsFilter(configSource);
+    }
+
+    @Bean
+    public Filter corsHeaderFilter() {
+        return (request, response, chain) -> {
+            var httpResponse = (HttpServletResponse) response;
+            httpResponse.addHeader("Access-Control-Expose-Headers", "X-Total-Count");
+            chain.doFilter(request, response);
+        };
     }
 
 }
