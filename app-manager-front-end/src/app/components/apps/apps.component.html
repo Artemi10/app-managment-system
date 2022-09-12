@@ -1,7 +1,4 @@
-<app-dropdown
-  (selectedItemChange)="getSortedApps($event)"
-  [elements]="appSortElements">
-</app-dropdown>
+<app-dropdown [(sortCriteria)]="sortCriteria"></app-dropdown>
 <div class="apps">
   <div class="apps__container">
     <div class="apps__list">
@@ -15,8 +12,8 @@
         <p class="apps__list__header__dropdown">
           <span class="dropdown-trigger" data-target='dropdown1'>Sort by</span>
           <span class="apps__list__header__dropdown__descending" (click)="changeDescending()">
-            <i class="material-icons" [ngClass]="{'hidden': isDescending}">arrow_drop_down</i>
-            <i class="material-icons" [ngClass]="{'hidden': !isDescending}">arrow_drop_up</i>
+            <i class="material-icons" [ngClass]="{'hidden': sortCriteria.isDescending}">arrow_drop_down</i>
+            <i class="material-icons" [ngClass]="{'hidden': !sortCriteria.isDescending}">arrow_drop_up</i>
           </span>
         </p>
         <div class="apps__list__header__buttons">
@@ -34,11 +31,14 @@
         <app-app-item
           *ngFor="let app of apps"
           [app]="app"
-          (deleteApp)="updateApps()">
+          (deleteApp)="retrieveApps()">
         </app-app-item>
       </div>
       <p *ngIf="isEmpty" class="apps__list__table_empty">Please, add new apps</p>
     </div>
   </div>
 </div>
-<app-pagination [(currentPage)]="page" [pageAmount]="pageAmount"></app-pagination>
+<app-pagination
+  [(pageCriteria)]="pageCriteria"
+  [elementAmount]="appsAmount">
+</app-pagination>

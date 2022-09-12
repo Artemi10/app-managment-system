@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import { DropdownElement } from '../dropdown.component';
+import {DropdownElement} from "../../sort.criteria";
 
 @Component({
   selector: 'app-dropdown-element',
@@ -13,7 +13,7 @@ export class DropdownElementComponent {
   public selectItemEvent: EventEmitter<string>;
 
   constructor() {
-    this.element = new DropdownElement('id', "Id", true);
+    this.element = new DropdownElement();
     this.selectItemEvent = new EventEmitter();
   }
 

@@ -1,6 +1,6 @@
 <ul id='dropdown1' class='dropdown-content'>
   <app-dropdown-element
-    *ngFor="let element of elements"
+    *ngFor="let element of sortCriteria.sortElements"
     [element]="element"
     (selectItemEvent)=selectItem($event)>
   </app-dropdown-element>

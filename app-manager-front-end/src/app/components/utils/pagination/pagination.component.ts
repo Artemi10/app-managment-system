@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import { PageCriteria } from './page.criteria';
 
 @Component({
   selector: 'app-pagination',
@@ -6,22 +7,26 @@ import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '
   styleUrls: ['./pagination.component.css']
 })
 export class PaginationComponent implements OnChanges {
-  @Input() public pageAmount: number;
-  @Input() public currentPage: number;
-  @Output() public currentPageChange: EventEmitter<number>;
+  @Input()
+  public elementAmount: number;
+  @Input()
+  public pageCriteria: PageCriteria;
+  @Output()
+  public pageCriteriaChange: EventEmitter<PageCriteria>;
   public firstPages: number[];
 
   constructor() {
-    this.pageAmount = 1;
-    this.currentPage = 1;
-    this.currentPageChange = new EventEmitter<number>();
+    this.elementAmount = 0;
+    this.pageCriteria = new PageCriteria();
+    this.pageCriteriaChange = new EventEmitter<PageCriteria>();
     this.firstPages = [1];
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.currentPage === 1) {
-      if (this.pageAmount <= 10) {
-        this.firstPages = Array(this.pageAmount)
+    if (this.pageCriteria.page === 1) {
+      const pageAmount = this.pageAmount;
+      if (pageAmount <= 10) {
+        this.firstPages = Array(pageAmount)
           .fill(0)
           .map((x, i)=> i + 1);
       }
@@ -33,24 +38,28 @@ export class PaginationComponent implements OnChanges {
     }
   }
 
+  private get pageAmount(): number {
+    return this.pageCriteria.pageAmount(this.elementAmount)
+  }
+
   public get isFirstPage(): boolean {
-    return this.currentPage == 1;
+    return this.pageCriteria.page == 1;
   }
 
   public get isLastPage(): boolean {
-    return this.currentPage == this.pageAmount;
+    return this.pageCriteria.page == this.pageAmount;
   }
 
   public isCurrentPage(page: number): boolean {
-    return page == this.currentPage;
+    return page == this.pageCriteria.page;
   }
 
   public selectPreviousPage() {
     if (!this.isFirstPage) {
-      this.currentPage--;
-      this.currentPageChange.emit(this.currentPage);
+      this.pageCriteria.page--;
+      this.pageCriteriaChange.emit(this.pageCriteria);
       const firstValue = this.firstPages[0];
-      if (this.currentPage + 1 == firstValue && firstValue > 1) {
+      if (this.pageCriteria.page + 1 == firstValue && firstValue > 1) {
         this.firstPages.splice(this.firstPages.length - 1, 1);
         this.firstPages.unshift(firstValue - 1);
       }
@@ -58,16 +67,19 @@ export class PaginationComponent implements OnChanges {
   }
 
   public selectPage(page: number) {
-    this.currentPage = page;
-    this.currentPageChange.emit(this.currentPage);
+    const lastValue = this.firstPages[this.firstPages.length - 1];
+    if (page > 0 && lastValue >= page) {
+      this.pageCriteria.page = page;
+      this.pageCriteriaChange.emit(this.pageCriteria);
+    }
   }
 
   public selectNextPage() {
     if (!this.isLastPage) {
-      this.currentPage++;
-      this.currentPageChange.emit(this.currentPage);
+      this.pageCriteria.page++;
+      this.pageCriteriaChange.emit(this.pageCriteria);
       const lastValue = this.firstPages[this.firstPages.length - 1];
-      if (lastValue + 1 === this.currentPage && lastValue < this.pageAmount) {
+      if (lastValue + 1 === this.pageCriteria.page && lastValue < this.pageAmount) {
         this.firstPages.splice(0, 1);
         this.firstPages.push(lastValue + 1);
       }

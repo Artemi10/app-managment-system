@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
 import { Observable } from 'rxjs';
-import {App, AppToCreate, OrderType} from "../../model/app.model";
+import {App, AppToCreate} from "../../model/app.model";
 import {environment} from "../../../environments/environment";
+import { PageCriteria } from 'src/app/components/utils/pagination/page.criteria';
+import {SortCriteria} from "../../components/utils/sorting/sort.criteria";
 
 @Injectable({
   providedIn: 'root'
@@ -14,10 +16,16 @@ export class AppService {
     this.api = '/apps';
   }
 
-  public getUserApps(page: number, pageSize: number, sortValue: string, orderType: OrderType): Observable<HttpResponse<App[]>> {
+  public getUserApps(pageCriteria: PageCriteria, sortCriteria: SortCriteria): Observable<HttpResponse<App[]>> {
+    const params = {
+      page : pageCriteria.page,
+      pageSize : pageCriteria.pageSize,
+      sortValue : sortCriteria.sortField,
+      orderType : sortCriteria.orderType
+    };
     return this.http.get<App[]>(
       `${environment.backEndURL}${this.api}`,
-      {observe: 'response', params: {page, pageSize, sortValue, orderType}});
+      {observe: 'response', params: params});
   }
 
   public createUserApp(appToCreate: AppToCreate): Observable<App> {
@@ -32,9 +40,13 @@ export class AppService {
     return this.http.delete<void>(`${environment.backEndURL}${this.api}/${id}`);
   }
 
-  public searchUserAppsByName(page: number, pageSize: number, searchParam: string): Observable<HttpResponse<App[]>> {
+  public searchUserAppsByName(pageCriteria: PageCriteria, searchParam: string): Observable<HttpResponse<App[]>> {
+    const params = {
+      page : pageCriteria.page,
+      pageSize : pageCriteria.pageSize
+    };
     return this.http.get<App[]>(
       `${environment.backEndURL}${this.api}/name/${searchParam}`,
-      {observe: 'response', params: {page, pageSize}});
+      {observe: 'response', params: params});
   }
 }

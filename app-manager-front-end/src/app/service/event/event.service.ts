@@ -4,7 +4,8 @@ import {Observable} from "rxjs";
 import {environment} from "../../../environments/environment";
 import {EventToAdd} from "../../model/event.model";
 import {Event} from "../../model/event.model";
-import {OrderType} from "../../model/app.model";
+import {PageCriteria} from "../../components/utils/pagination/page.criteria";
+import {SortCriteria} from "../../components/utils/sorting/sort.criteria";
 
 @Injectable({
   providedIn: 'root'
@@ -20,10 +21,16 @@ export class EventService {
     return this.http.post<Event>(`${environment.backEndURL}${this.api}/${appId}/event`, eventToAdd);
   }
 
-  public getAppEvent(appId: number, page: number, pageSize: number, sortValue: string, orderType: OrderType): Observable<HttpResponse<Event[]>> {
+  public getAppEvent(appId: number, pageCriteria: PageCriteria, sortCriteria: SortCriteria): Observable<HttpResponse<Event[]>> {
+    const params = {
+      page : pageCriteria.page,
+      pageSize : pageCriteria.pageSize,
+      sortValue : sortCriteria.sortField,
+      orderType : sortCriteria.orderType
+    };
     return this.http.get<Event[]>(
       `${environment.backEndURL}${this.api}/${appId}/events`,
-      { observe: 'response', params: {page, pageSize, sortValue, orderType}});
+      { observe: 'response', params: params});
   }
 
   public deleteAppEvent(appId: number, eventId: number): Observable<void> {

@@ -43,7 +43,7 @@ import {UpdateNotConfirmedUserGuard} from "./guard/update-not-confirmed-user/upd
 import { CodeFieldComponent } from './components/auth/components/code-field/code-field.component';
 import { SendAgainLinkComponent } from './components/auth/components/send-again-link/send-again-link.component';
 import { CounterComponent } from './components/auth/components/counter/counter.component';
-import { DropdownComponent } from './components/utils/dropdown/dropdown.component';
+import { DropdownComponent } from './components/utils/sorting/dropdown/dropdown.component';
 import { SearchPanelComponent } from './components/apps/search-panel/search-panel.component';
 import { GoogleOauthButtonComponent } from './components/auth/components/google-oauth-button/google-oauth-button.component';
 import {RefreshTokenInterceptor} from "./interceptor/refresh-token/refresh-token.interceptor";
@@ -56,7 +56,7 @@ import { EventsComponent } from './components/events/events.component';
 import { UpdateEventComponent } from './components/events/forms/update-event/update-event.component';
 import { UpdateEventFormComponent } from './components/events/forms/update-event/update-event-form/update-event-form.component';
 import { TimeZoneInterceptor } from './interceptor/time-zone/time-zone.interceptor';
-import { DropdownElementComponent } from './components/utils/dropdown/dropdown-element/dropdown-element.component';
+import { DropdownElementComponent } from './components/utils/sorting/dropdown/dropdown-element/dropdown-element.component';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
