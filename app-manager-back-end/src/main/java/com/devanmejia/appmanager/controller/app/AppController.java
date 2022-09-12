@@ -37,7 +37,8 @@ public class AppController {
             @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @Valid PageCriteria pageCriteria,
             @Valid SortCriteria sortCriteria,
-            HttpServletResponse response) {
+            HttpServletResponse response
+    ) {
         var userId = principal.id();
         var appsAmount = appService.getAppsAmount(userId);
         response.addHeader("X-Total-Count", String.valueOf(appsAmount));
@@ -59,7 +60,8 @@ public class AppController {
     public AppResponseDTO createUserApp(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
-            @RequestBody @Valid AppRequestDTO requestBody) {
+            @RequestBody @Valid AppRequestDTO requestBody
+    ) {
         var currentTime = timeService.now(timeZoneSecondsOffset);
         var app = appService.addUserApp(principal.id(), requestBody, currentTime);
         return AppResponseDTO.from(app, timeZoneSecondsOffset);
@@ -78,7 +80,8 @@ public class AppController {
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @ApiParam(value = "App id to update", required = true) @PathVariable long appId,
-            @RequestBody @Valid AppRequestDTO requestBody) {
+            @RequestBody @Valid AppRequestDTO requestBody
+    ) {
         var app = appService.updateUserApp(appId, requestBody, principal.id());
         return AppResponseDTO.from(app, timeZoneSecondsOffset);
     }
@@ -92,7 +95,8 @@ public class AppController {
     })
     public void deleteUserApp(
             @AuthenticationPrincipal UserPrincipal principal,
-            @ApiParam(value = "App id to delete", required = true) @PathVariable long appId) {
+            @ApiParam(value = "App id to delete", required = true) @PathVariable long appId
+    ) {
         appService.deleteUserApp(appId, principal.id());
     }
 }

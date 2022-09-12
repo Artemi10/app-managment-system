@@ -38,7 +38,8 @@ public class UserController {
     })
     public void updateUser(
             @RequestBody @Valid UpdateDTO requestBody,
-            @AuthenticationPrincipal UserPrincipal userPrincipal){
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+    ){
         var email = userPrincipal.email();
         userService.updateUser(email, requestBody);
     }
@@ -52,8 +53,7 @@ public class UserController {
             @ApiResponse(code = 422, message = "Request body is invalid"),
             @ApiResponse(code = 404, message = "User not found")
     })
-    public AccessToken resetUser(
-            @RequestBody @Valid EmailRequestDTO requestBody) {
+    public AccessToken resetUser(@RequestBody @Valid EmailRequestDTO requestBody) {
         var email = requestBody.email();
         try {
             var resetToken = userService.resetUser(email);
@@ -91,7 +91,8 @@ public class UserController {
     })
     public AccessToken confirmResetUser(
             @RequestBody ResetToken token,
-            @AuthenticationPrincipal UserPrincipal principal) {
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
         var email = principal.email();
         userService.confirmResetUser(email, token.resetToken());
         var accessToken = accessTokenService

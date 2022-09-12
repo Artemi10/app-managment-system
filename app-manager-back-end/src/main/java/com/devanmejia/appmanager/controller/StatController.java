@@ -36,8 +36,8 @@ public class StatController {
             @RequestParam String type,
             @RequestParam String from,
             @RequestParam String to,
-            @AuthenticationPrincipal UserPrincipal principal) {
-
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
         List<StatResponseDTO> stats;
         if (!from.isBlank() && !to.isBlank()) {
             try {

@@ -35,7 +35,8 @@ public class AppNameSearchController {
             @ApiParam(value = "Search application name word", required = true) @PathVariable String searchParam,
             @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @Valid PageCriteria pageCriteria,
-            HttpServletResponse response) {
+            HttpServletResponse response
+    ) {
         var userId = principal.id();
         var appsAmount = appSearchService.getUserAppsAmount(userId, searchParam);
         response.addHeader("X-Total-Count", String.valueOf(appsAmount));
