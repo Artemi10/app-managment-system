@@ -46,6 +46,13 @@
   margin: 0;
   padding: 0;
 }
+.events__list__header__dropdown{
+  margin: 0;
+  padding: 0;
+}
+.events__list__header__dropdown__descending{
+  cursor: pointer;
+}
 .events__list__header__buttons{
   margin: 0;
   padding: 0;
@@ -85,4 +92,7 @@
 .events__list__header__buttons__chart:hover{
   cursor: pointer;
   color: #d1c4e9;
+}
+.hidden{
+  display: none;
 }

@@ -3,6 +3,7 @@ package com.devanmejia.appmanager.service.event;
 
 import com.devanmejia.appmanager.entity.Event;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
+import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ public interface EventService {
 
     int getEventsAmount(long appId, long userId);
 
-    List<Event> findAppEvents(long appId, long userId, PageCriteria pageCriteria);
+    List<Event> findAppEvents(long appId, long userId, PageCriteria pageCriteria, SortCriteria sortCriteria);
 
     void deleteAppEvent(long eventId, long appId, long userId);
 

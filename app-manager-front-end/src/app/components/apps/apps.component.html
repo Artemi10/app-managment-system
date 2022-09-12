@@ -1,4 +1,7 @@
-<app-dropdown (selectedItemChange)="getSortedApps($event)"></app-dropdown>
+<app-dropdown
+  (selectedItemChange)="getSortedApps($event)"
+  [elements]="appSortElements">
+</app-dropdown>
 <div class="apps">
   <div class="apps__container">
     <div class="apps__list">

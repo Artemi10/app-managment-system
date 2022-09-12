@@ -7,6 +7,7 @@ import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.repository.EventRepository;
 import com.devanmejia.appmanager.service.app.AppService;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
+import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> findAppEvents(long appId, long userId, PageCriteria pageCriteria) {
-        var pageable = pageCriteria.toPageable();
+    public List<Event> findAppEvents(long appId, long userId, PageCriteria pageCriteria, SortCriteria sortCriteria) {
+        var sort = sortCriteria.toSort();
+        var pageable = pageCriteria.toPageable(sort);
         return eventRepository.findEventsByApp(appId, userId, pageable)
                 .stream()
                 .toList();

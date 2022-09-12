@@ -1,8 +1,19 @@
+<app-dropdown
+  (selectedItemChange)="getSortedEvents($event)"
+  [elements]="eventSortElements">
+</app-dropdown>
 <div class="events">
   <div class="events__container">
     <div class="events__list">
       <div class="events__list__header">
         <p class="events__list__header__text">Events</p>
+        <p class="events__list__header__dropdown">
+          <span class="dropdown-trigger" data-target='dropdown1'>Sort by</span>
+          <span class="events__list__header__dropdown__descending" (click)="changeDescending()">
+            <i class="material-icons" [ngClass]="{'hidden': isDescending}">arrow_drop_down</i>
+            <i class="material-icons" [ngClass]="{'hidden': !isDescending}">arrow_drop_up</i>
+          </span>
+        </p>
         <div class="events__list__header__buttons">
           <div class="events__list__header__buttons__container">
             <span class="events__list__header__buttons__chart" (click)="openChart()">

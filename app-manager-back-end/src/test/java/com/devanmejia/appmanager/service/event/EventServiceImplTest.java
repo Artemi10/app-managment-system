@@ -5,6 +5,7 @@ import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.repository.EventRepository;
 import com.devanmejia.appmanager.service.app.AppService;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
+import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,8 +89,12 @@ public class EventServiceImplTest {
                         .build()
         );
 
-        when(eventRepository.findEventsByApp(eq(1L), eq(1L), eq(PageRequest.of(0, 4))))
-                .thenReturn(events);
+        var defaultSortCriteria = new SortCriteria("id", SortCriteria.OrderType.DESC);
+        when(eventRepository.findEventsByApp(
+                eq(1L),
+                eq(1L),
+                eq(PageRequest.of(0, 4, defaultSortCriteria.toSort())))
+        ).thenReturn(events);
         when(eventRepository.findEventsByApp(eq(2L), eq(3L), any()))
                 .thenReturn(new ArrayList<>());
         when(eventRepository.findEvent(eq(1L), eq(1L), eq(1L)))
@@ -120,18 +125,30 @@ public class EventServiceImplTest {
 
     @Test
     public void findAppEvents_Test(){
-        var actual = eventService.findAppEvents(1, 1, new PageCriteria(1, 4));
+        var sortCriteria = new SortCriteria("id", SortCriteria.OrderType.DESC);
+        var actual = eventService.findAppEvents(
+                1,
+                1,
+                new PageCriteria(1, 4),
+                sortCriteria
+        );
         assertEquals(4, actual.size());
         verify(eventRepository, times(1))
-                .findEventsByApp(1, 1, PageRequest.of(0, 4));
+                .findEventsByApp(1, 1, PageRequest.of(0, 4, sortCriteria.toSort()));
     }
 
     @Test
     public void return_Empty_List_If_Events_Do_Not_Exist(){
-        var actual = eventService.findAppEvents(2, 3, new PageCriteria(1, 4));
+        var sortCriteria = new SortCriteria("id", SortCriteria.OrderType.DESC);
+        var actual = eventService.findAppEvents(
+                2,
+                3,
+                new PageCriteria(1, 4),
+                sortCriteria
+        );
         assertTrue(actual.isEmpty());
         verify(eventRepository, times(1))
-                .findEventsByApp(2, 3, PageRequest.of(0, 4));
+                .findEventsByApp(2, 3, PageRequest.of(0, 4, sortCriteria.toSort()));
     }
 
     @Test

@@ -24,7 +24,7 @@ import {ActiveUserGuard} from "./guard/active-user/active-user.guard";
 import {UnAuthUserGuard} from "./guard/unauth-user/un-auth-user.guard";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import { AppItemComponent } from './components/apps/app-item/app-item.component';
-import { PaginationComponent } from './components/apps/pagination/pagination.component';
+import { PaginationComponent } from './components/utils/pagination/pagination.component';
 import { CreateAppFormComponent } from './components/apps/forms/create-app/create-app-form/create-app-form.component';
 import { CreateAppComponent } from './components/apps/forms/create-app/create-app.component';
 import { UpdateAppComponent } from './components/apps/forms/update-app/update-app.component';
@@ -43,7 +43,7 @@ import {UpdateNotConfirmedUserGuard} from "./guard/update-not-confirmed-user/upd
 import { CodeFieldComponent } from './components/auth/components/code-field/code-field.component';
 import { SendAgainLinkComponent } from './components/auth/components/send-again-link/send-again-link.component';
 import { CounterComponent } from './components/auth/components/counter/counter.component';
-import { DropdownComponent } from './components/apps/dropdown/dropdown.component';
+import { DropdownComponent } from './components/utils/dropdown/dropdown.component';
 import { SearchPanelComponent } from './components/apps/search-panel/search-panel.component';
 import { GoogleOauthButtonComponent } from './components/auth/components/google-oauth-button/google-oauth-button.component';
 import {RefreshTokenInterceptor} from "./interceptor/refresh-token/refresh-token.interceptor";
@@ -56,6 +56,7 @@ import { EventsComponent } from './components/events/events.component';
 import { UpdateEventComponent } from './components/events/forms/update-event/update-event.component';
 import { UpdateEventFormComponent } from './components/events/forms/update-event/update-event-form/update-event-form.component';
 import { TimeZoneInterceptor } from './interceptor/time-zone/time-zone.interceptor';
+import { DropdownElementComponent } from './components/utils/dropdown/dropdown-element/dropdown-element.component';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -118,7 +119,8 @@ const appRoutes: Routes = [
     EventItemComponent,
     EventsComponent,
     UpdateEventComponent,
-    UpdateEventFormComponent
+    UpdateEventFormComponent,
+    DropdownElementComponent
   ],
   imports: [
     BrowserModule,

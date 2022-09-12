@@ -4,6 +4,7 @@ import com.devanmejia.appmanager.security.details.UserPrincipal;
 import com.devanmejia.appmanager.service.event.EventService;
 import com.devanmejia.appmanager.service.time.TimeService;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
+import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import com.devanmejia.appmanager.transfer.event.EventResponseDTO;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +38,8 @@ public class EventController {
             @PathVariable long appId,
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
-            @RequestBody @Valid EventRequestDTO request){
+            @RequestBody @Valid EventRequestDTO request
+    ){
         var currentTime = timeService.now(timeZoneSecondsOffset);
         var event = eventService.addAppEvent(appId, request, principal.id(), currentTime);
         return EventResponseDTO.from(appId, event, timeZoneSecondsOffset);
@@ -56,11 +58,13 @@ public class EventController {
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
             @Valid PageCriteria pageCriteria,
-            HttpServletResponse response) {
+            @Valid SortCriteria sortCriteria,
+            HttpServletResponse response
+    ) {
         var userId = principal.id();
         var eventsAmount = eventService.getEventsAmount(appId, userId);
         response.addHeader("X-Total-Count", String.valueOf(eventsAmount));
-        return eventService.findAppEvents(appId, userId, pageCriteria)
+        return eventService.findAppEvents(appId, userId, pageCriteria, sortCriteria)
                 .stream()
                 .map(event -> EventResponseDTO.from(appId, event, timeZoneSecondsOffset))
                 .toList();
@@ -77,7 +81,8 @@ public class EventController {
     public void deleteAppEvent(
             @PathVariable long appId,
             @PathVariable long eventId,
-            @AuthenticationPrincipal UserPrincipal principal) {
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
         eventService.deleteAppEvent(eventId, appId, principal.id());
     }
 
@@ -95,7 +100,8 @@ public class EventController {
             @PathVariable long eventId,
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestHeader(value = "Time-Zone-Offset", defaultValue = "0") int timeZoneSecondsOffset,
-            @RequestBody @Valid EventRequestDTO request) {
+            @RequestBody @Valid EventRequestDTO request
+    ) {
         var event = eventService.updateAppEvent(appId, eventId, request, principal.id());
         return EventResponseDTO.from(appId, event, timeZoneSecondsOffset);
     }

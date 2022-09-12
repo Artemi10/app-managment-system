@@ -15,6 +15,7 @@ import com.devanmejia.appmanager.service.event.EventService;
 import com.devanmejia.appmanager.service.time.TimeService;
 import com.devanmejia.appmanager.service.time.TimeServiceImpl;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
+import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
 import com.devanmejia.appmanager.transfer.event.EventRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -257,7 +258,7 @@ public class EventControllerInTest {
     )
     public void getAppEvents_Test() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/2/events?page=1&pageSize=4")
+                .get("/api/v1/app/2/events?page=1&pageSize=4&sortValue=name&orderType=ASC")
                 .contentType("application/json");
         mvc.perform(request)
                 .andExpect(status().isOk())
@@ -265,7 +266,12 @@ public class EventControllerInTest {
         verify(eventService, times(1))
                 .getEventsAmount(eq(2L), eq(1L));
         verify(eventService, times(1))
-                .findAppEvents(eq(2L), eq(1L), eq(new PageCriteria(1, 4)));
+                .findAppEvents(
+                        eq(2L),
+                        eq(1L),
+                        eq(new PageCriteria(1, 4)),
+                        eq(new SortCriteria("name", SortCriteria.OrderType.ASC))
+                );
     }
 
     @Test
@@ -283,7 +289,12 @@ public class EventControllerInTest {
         verify(eventService, times(1))
                 .getEventsAmount(eq(2L), eq(1L));
         verify(eventService, times(1))
-                .findAppEvents(eq(2L), eq(1L), eq(new PageCriteria(1, 3)));
+                .findAppEvents(
+                        eq(2L),
+                        eq(1L),
+                        eq(new PageCriteria(1, 3)),
+                        eq(new SortCriteria("id", SortCriteria.OrderType.DESC))
+                );
     }
 
     @Test

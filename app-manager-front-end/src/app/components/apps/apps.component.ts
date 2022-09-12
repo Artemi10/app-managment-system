@@ -4,6 +4,7 @@ import {AppService} from 'src/app/service/app/app.service';
 import {TokenService} from 'src/app/service/token/token.service';
 import {App, OrderType} from "../../model/app.model";
 import {HttpResponse} from "@angular/common/http";
+import {DropdownElement} from "../utils/dropdown/dropdown.component";
 
 @Component({
   selector: 'app-apps',
@@ -11,6 +12,7 @@ import {HttpResponse} from "@angular/common/http";
   styleUrls: ['./apps.component.css']
 })
 export class AppsComponent implements OnInit, AfterViewInit {
+  public appSortElements: DropdownElement[];
   public apps: App[];
   public _page: number;
   private appsAmount: number;
@@ -31,6 +33,11 @@ export class AppsComponent implements OnInit, AfterViewInit {
     this.orderType = OrderType.ASC;
     this.isSearchPanelShown = false;
     this.searchParam = '';
+    this.appSortElements = [
+      new DropdownElement('id', 'Id', true),
+      new DropdownElement('name', 'Name', false),
+      new DropdownElement('creationTime', 'Creation Time', false)
+    ];
   }
 
   public get isDescending(): boolean {
