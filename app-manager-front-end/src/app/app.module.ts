@@ -57,6 +57,8 @@ import { UpdateEventComponent } from './components/events/forms/update-event/upd
 import { UpdateEventFormComponent } from './components/events/forms/update-event/update-event-form/update-event-form.component';
 import { TimeZoneInterceptor } from './interceptor/time-zone/time-zone.interceptor';
 import { DropdownElementComponent } from './components/utils/sorting/dropdown/dropdown-element/dropdown-element.component';
+import { AppNavigationComponent } from './components/apps/app-navigation/app-navigation.component';
+import { EventNavigationComponent } from './components/events/event-navigation/event-navigation.component';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -120,7 +122,9 @@ const appRoutes: Routes = [
     EventsComponent,
     UpdateEventComponent,
     UpdateEventFormComponent,
-    DropdownElementComponent
+    DropdownElementComponent,
+    AppNavigationComponent,
+    EventNavigationComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AppService} from 'src/app/service/app/app.service';
 import {TokenService} from 'src/app/service/token/token.service';
@@ -12,7 +12,7 @@ import {DropdownElement, SortCriteria} from "../utils/sorting/sort.criteria";
   templateUrl: './apps.component.html',
   styleUrls: ['./apps.component.css']
 })
-export class AppsComponent implements OnInit, AfterViewInit {
+export class AppsComponent implements OnInit {
   public _pageCriteria: PageCriteria;
   public _sortCriteria: SortCriteria;
   public apps: App[];
@@ -40,12 +40,6 @@ export class AppsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.retrieveApps();
-  }
-
-  ngAfterViewInit() {
-    const elems = document.querySelectorAll('.dropdown-trigger');
-    // @ts-ignore
-    const instances = M.Dropdown.init(elems, {});
   }
 
   public get isEmpty(): boolean {
@@ -78,15 +72,6 @@ export class AppsComponent implements OnInit, AfterViewInit {
   public getSortedApps() {
     this.pageCriteria.page = 1;
     this.retrieveApps();
-  }
-
-  public changeDescending(){
-    this.sortCriteria.changeOrderType();
-    this.retrieveApps();
-  }
-
-  public createApp() {
-    this.router.navigate(['/app/create']);
   }
 
   public closePanel() {

@@ -1,4 +1,3 @@
-<app-dropdown [(sortCriteria)]="sortCriteria"></app-dropdown>
 <div class="apps">
   <div class="apps__container">
     <div class="apps__list">
@@ -7,26 +6,11 @@
         (closeEvent)="closePanel()"
         (searchEvent)="searchApps($event)">
       </app-search-panel>
-      <div *ngIf="!isSearchPanelShown" class="apps__list__header">
-        <p class="apps__list__header__text">Apps</p>
-        <p class="apps__list__header__dropdown">
-          <span class="dropdown-trigger" data-target='dropdown1'>Sort by</span>
-          <span class="apps__list__header__dropdown__descending" (click)="changeDescending()">
-            <i class="material-icons" [ngClass]="{'hidden': sortCriteria.isDescending}">arrow_drop_down</i>
-            <i class="material-icons" [ngClass]="{'hidden': !sortCriteria.isDescending}">arrow_drop_up</i>
-          </span>
-        </p>
-        <div class="apps__list__header__buttons">
-          <div class="apps__list__header__buttons__container">
-            <span class="apps__list__header__buttons__search" (click)="openPanel()">
-            <i class="material-icons small">search</i>
-          </span>
-            <span class="apps__list__header__buttons__add" (click)="createApp()">
-            <i class="material-icons small">add</i>
-          </span>
-          </div>
-        </div>
-      </div>
+      <app-app-navigation
+        *ngIf="!isSearchPanelShown"
+        [(_sortCriteria)]="sortCriteria"
+        (openPanelEvent)="openPanel()">
+      </app-app-navigation>
       <div *ngIf="!isEmpty" class="apps__list__table">
         <app-app-item
           *ngFor="let app of apps"

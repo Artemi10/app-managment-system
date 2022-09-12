@@ -47,7 +47,7 @@ export class PaginationComponent implements OnChanges {
   }
 
   public get isLastPage(): boolean {
-    return this.pageCriteria.page == this.pageAmount;
+    return this.pageCriteria.page == this.pageAmount || this.pageAmount == 0;
   }
 
   public isCurrentPage(page: number): boolean {

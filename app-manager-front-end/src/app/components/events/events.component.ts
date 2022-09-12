@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit } from '@angular/core';
+import {Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Event} from "../../model/event.model";
 import {EventService} from "../../service/event/event.service";
@@ -13,16 +13,18 @@ import {PageCriteria} from "../utils/pagination/page.criteria";
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.css']
 })
-export class EventsComponent implements OnInit, AfterViewInit {
-  public _pageCriteria: PageCriteria;
-  public _sortCriteria: SortCriteria;
+export class EventsComponent implements OnInit {
+  private _pageCriteria: PageCriteria;
+  private _sortCriteria: SortCriteria;
   public eventsAmount: number;
   public events: Event[];
 
-  constructor(private activatedRoute: ActivatedRoute,
-              private eventService: EventService,
-              private tokenService: TokenService,
-              private router: Router) {
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private eventService: EventService,
+    private tokenService: TokenService,
+    private router: Router
+  ) {
     this.eventsAmount = 0;
     this.events = [];
     this._pageCriteria = new PageCriteria(1, 6);
@@ -39,12 +41,6 @@ export class EventsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.retrieveEvents();
-  }
-
-  ngAfterViewInit() {
-    const elems = document.querySelectorAll('.dropdown-trigger');
-    // @ts-ignore
-    const instances = M.Dropdown.init(elems, {});
   }
 
   public get pageCriteria(): PageCriteria {
@@ -65,16 +61,11 @@ export class EventsComponent implements OnInit, AfterViewInit {
     this.retrieveEvents();
   }
 
-  public changeDescending(){
-    this.sortCriteria.changeOrderType();
-    this.retrieveEvents();
-  }
-
   public get isEmpty(): boolean {
     return this.events.length === 0;
   }
 
-  private get appId(): number | undefined {
+  public get appId(): number | undefined {
     const appIdStr = this.activatedRoute.snapshot.paramMap.get('id');
     if (appIdStr !== null) {
       return parseInt(appIdStr);
@@ -91,14 +82,6 @@ export class EventsComponent implements OnInit, AfterViewInit {
 
   public updateEvent(event: Event) {
     this.router.navigate([`/app/${this.appId}/event/${event.id}/update`]);
-  }
-
-  public createEvent() {
-    this.router.navigate([`/app/${this.appId}/event/create`]);
-  }
-
-  public openChart() {
-    this.router.navigate([`/app/${this.appId}/stats`]);
   }
 
   public deleteEvent(event: Event) {

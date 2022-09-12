@@ -1,0 +1,21 @@
+<app-dropdown [(sortCriteria)]="sortCriteria"></app-dropdown>
+<div class="navigation">
+  <p class="navigation__text">Apps</p>
+  <p class="navigation__dropdown">
+    <span class="dropdown-trigger" data-target='dropdown1'>Sort by</span>
+    <span class="navigation__dropdown__descending" (click)="changeDescending()">
+      <i class="material-icons" [ngClass]="{'hidden': sortCriteria.isDescending}">arrow_drop_down</i>
+      <i class="material-icons" [ngClass]="{'hidden': !sortCriteria.isDescending}">arrow_drop_up</i>
+    </span>
+  </p>
+  <div class="navigation__buttons">
+    <div class="navigation__buttons__container">
+      <span class="navigation__buttons__search" (click)="openPanel()">
+        <i class="material-icons small">search</i>
+      </span>
+      <span class="navigation__buttons__add" (click)="createApp()">
+        <i class="material-icons small">add</i>
+      </span>
+    </div>
+  </div>
+</div>

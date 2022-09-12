@@ -1,27 +1,10 @@
-<app-dropdown [(sortCriteria)]="sortCriteria"></app-dropdown>
 <div class="events">
   <div class="events__container">
     <div class="events__list">
-      <div class="events__list__header">
-        <p class="events__list__header__text">Events</p>
-        <p class="events__list__header__dropdown">
-          <span class="dropdown-trigger" data-target='dropdown1'>Sort by</span>
-          <span class="events__list__header__dropdown__descending" (click)="changeDescending()">
-            <i class="material-icons" [ngClass]="{'hidden': sortCriteria.isDescending}">arrow_drop_down</i>
-            <i class="material-icons" [ngClass]="{'hidden': !sortCriteria.isDescending}">arrow_drop_up</i>
-          </span>
-        </p>
-        <div class="events__list__header__buttons">
-          <div class="events__list__header__buttons__container">
-            <span class="events__list__header__buttons__chart" (click)="openChart()">
-              <i class="material-icons small">show_chart</i>
-            </span>
-            <span class="events__list__header__buttons__add" (click)="createEvent()">
-              <i class="material-icons small">add</i>
-            </span>
-          </div>
-        </div>
-      </div>
+      <app-event-navigation
+        [(_sortCriteria)]="sortCriteria"
+        [appId]="appId">
+      </app-event-navigation>
       <div *ngIf="!isEmpty" class="events__list__table">
         <table class="highlight">
           <thead>
