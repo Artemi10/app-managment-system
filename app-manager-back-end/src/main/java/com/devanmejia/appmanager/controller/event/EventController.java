@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.controller;
+package com.devanmejia.appmanager.controller.event;
 
 import com.devanmejia.appmanager.security.details.UserPrincipal;
 import com.devanmejia.appmanager.service.event.EventService;

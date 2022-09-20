@@ -4,7 +4,7 @@
       <app-search-panel
         *ngIf="isSearchPanelShown"
         (closeEvent)="closePanel()"
-        (searchEvent)="searchApps($event)">
+        [(searchName)]="searchParam">
       </app-search-panel>
       <app-app-navigation
         *ngIf="!isSearchPanelShown"

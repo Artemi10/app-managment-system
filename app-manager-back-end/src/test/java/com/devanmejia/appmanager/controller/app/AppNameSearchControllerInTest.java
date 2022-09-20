@@ -9,7 +9,7 @@ import com.devanmejia.appmanager.security.oauth.OAuth2RequestRepository;
 import com.devanmejia.appmanager.security.oauth.cookie.CookieService;
 import com.devanmejia.appmanager.security.providers.JwtProvider;
 import com.devanmejia.appmanager.security.token.JwtService;
-import com.devanmejia.appmanager.service.app_search.AppSearchService;
+import com.devanmejia.appmanager.service.app.app_search.AppSearchService;
 import com.devanmejia.appmanager.service.auth.AuthService;
 import com.devanmejia.appmanager.service.time.TimeService;
 import com.devanmejia.appmanager.service.time.TimeServiceImpl;

@@ -18,6 +18,8 @@ export class EventsComponent implements OnInit {
   private _sortCriteria: SortCriteria;
   public eventsAmount: number;
   public events: Event[];
+  public isSearchPanelShown: boolean;
+  private _searchParam: string;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -37,10 +39,22 @@ export class EventsComponent implements OnInit {
         new DropdownElement('creationTime', 'Creation Time', false),
         new DropdownElement('extraInformation', 'Extra information', false)
       ]);
+    this.isSearchPanelShown = false;
+    this._searchParam = '';
   }
 
   ngOnInit(): void {
     this.retrieveEvents();
+  }
+
+  public get searchParam(): string {
+    return this._searchParam;
+  }
+
+  public set searchParam(value: string){
+    this._searchParam = value;
+    this.pageCriteria.page = 1;
+    this.retrieveEventsByName();
   }
 
   public get pageCriteria(): PageCriteria {
@@ -49,7 +63,12 @@ export class EventsComponent implements OnInit {
 
   public set pageCriteria(value: PageCriteria) {
     this._pageCriteria = value;
-    this.retrieveEvents();
+    if (this.isSearchPanelShown) {
+      this.retrieveEventsByName();
+    }
+    else {
+      this.retrieveEvents();
+    }
   }
 
   public get sortCriteria(): SortCriteria {
@@ -75,6 +94,16 @@ export class EventsComponent implements OnInit {
     }
   }
 
+  public closePanel() {
+    this.isSearchPanelShown = false;
+    this.pageCriteria.page = 1;
+    this.retrieveEvents();
+  }
+
+  public openPanel() {
+    this.isSearchPanelShown = true;
+  }
+
   public getSortedEvents() {
     this.pageCriteria.page = 1;
     this.retrieveEvents();
@@ -98,6 +127,16 @@ export class EventsComponent implements OnInit {
   public retrieveEvents() {
     if (this.appId !== undefined) {
       this.eventService.getAppEvent(this.appId, this.pageCriteria, this.sortCriteria)
+        .subscribe({
+          next : this.initEvents.bind(this),
+          error : this.errorHandler.bind(this)
+        });
+    }
+  }
+
+  public retrieveEventsByName() {
+    if (this.appId !== undefined) {
+      this.eventService.searchAppEventsByName(this.appId, this.searchParam, this.pageCriteria)
         .subscribe({
           next : this.initEvents.bind(this),
           error : this.errorHandler.bind(this)

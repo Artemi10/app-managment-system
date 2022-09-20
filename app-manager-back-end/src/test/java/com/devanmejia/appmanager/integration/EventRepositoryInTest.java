@@ -2,7 +2,7 @@ package com.devanmejia.appmanager.integration;
 
 import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.entity.Event;
-import com.devanmejia.appmanager.repository.EventRepository;
+import com.devanmejia.appmanager.repository.event.EventRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,12 +14,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.spy;

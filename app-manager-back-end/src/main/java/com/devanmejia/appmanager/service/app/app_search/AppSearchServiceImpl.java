@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.service.app_search;
+package com.devanmejia.appmanager.service.app.app_search;
 
 import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.repository.app.AppNameSearchRepository;
@@ -15,12 +15,9 @@ public class AppSearchServiceImpl implements AppSearchService{
 
     @Override
     public List<App> findUserApps(long userId, String searchParam, PageCriteria pageCriteria) {
-        var pageable = pageCriteria.toPageable();
         var name = searchParam + ":*";
         return appNameSearchRepository
-                .findUserAppsByName(userId, name, pageable)
-                .stream()
-                .toList();
+                .findUserAppsByName(userId, name, pageCriteria.getLimit(), pageCriteria.getOffset());
     }
 
     @Override

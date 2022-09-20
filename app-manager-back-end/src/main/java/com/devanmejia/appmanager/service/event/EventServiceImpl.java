@@ -4,7 +4,7 @@ package com.devanmejia.appmanager.service.event;
 import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.entity.Event;
 import com.devanmejia.appmanager.exception.EntityException;
-import com.devanmejia.appmanager.repository.EventRepository;
+import com.devanmejia.appmanager.repository.event.EventRepository;
 import com.devanmejia.appmanager.service.app.AppService;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.criteria.SortCriteria;

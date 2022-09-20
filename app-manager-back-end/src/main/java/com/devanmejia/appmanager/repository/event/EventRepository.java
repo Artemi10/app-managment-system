@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.repository;
+package com.devanmejia.appmanager.repository.event;
 
 import com.devanmejia.appmanager.entity.Event;
 import org.springframework.data.domain.Pageable;

@@ -2,7 +2,7 @@ package com.devanmejia.appmanager.service.event;
 
 import com.devanmejia.appmanager.entity.Event;
 import com.devanmejia.appmanager.exception.EntityException;
-import com.devanmejia.appmanager.repository.EventRepository;
+import com.devanmejia.appmanager.repository.event.EventRepository;
 import com.devanmejia.appmanager.service.app.AppService;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
 import com.devanmejia.appmanager.transfer.criteria.SortCriteria;
@@ -17,13 +17,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 

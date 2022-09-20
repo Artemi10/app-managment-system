@@ -1,6 +1,7 @@
-package com.devanmejia.appmanager.controller;
+package com.devanmejia.appmanager.controller.event;
 
 import com.devanmejia.appmanager.configuration.TestUserDetailsService;
+import com.devanmejia.appmanager.controller.event.EventController;
 import com.devanmejia.appmanager.security.JwtAuthenticationEntryPoint;
 import com.devanmejia.appmanager.security.JwtAuthenticationManager;
 import com.devanmejia.appmanager.security.oauth.OAuth2AuthenticationFailureHandler;

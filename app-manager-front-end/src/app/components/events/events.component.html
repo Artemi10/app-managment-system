@@ -1,9 +1,16 @@
 <div class="events">
   <div class="events__container">
     <div class="events__list">
+      <app-search-panel
+        *ngIf="isSearchPanelShown"
+        (closeEvent)="closePanel()"
+        [(searchName)]="searchParam">
+      </app-search-panel>
       <app-event-navigation
+        *ngIf="!isSearchPanelShown"
         [(_sortCriteria)]="sortCriteria"
-        [appId]="appId">
+        [appId]="appId"
+        (openPanelEvent)="openPanel()">
       </app-event-navigation>
       <div *ngIf="!isEmpty" class="events__list__table">
         <table class="highlight">

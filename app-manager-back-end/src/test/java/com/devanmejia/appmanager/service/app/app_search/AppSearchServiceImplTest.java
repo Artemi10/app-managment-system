@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.service.app_search;
+package com.devanmejia.appmanager.service.app.app_search;
 
 import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.repository.app.AppNameSearchRepository;
@@ -76,11 +76,11 @@ class AppSearchServiceImplTest {
                         .build()
         );
 
-        when(appNameSearchRepository.findUserAppsByName(eq(1L), eq("app:*"), any()))
-                .thenReturn(new PageImpl<>(userApps));
+        when(appNameSearchRepository.findUserAppsByName(1L, "app:*", 4, 0L))
+                .thenReturn(userApps);
 
-        when(appNameSearchRepository.findUserAppsByName(eq(2L), any(), any()))
-                .thenReturn(new PageImpl<>(new ArrayList<>()));
+        when(appNameSearchRepository.findUserAppsByName(eq(2L), anyString(), anyInt(), anyLong()))
+                .thenReturn(new ArrayList<>());
 
         when(appNameSearchRepository.getUserAppsAmountByName(1, "app:*"))
                 .thenReturn(userApps.size());
@@ -90,23 +90,23 @@ class AppSearchServiceImplTest {
     }
 
     @Test
-    public void findUserApps_If_Apps_Exists() {
-        var id = 1;
+    public void findUserApps_If_Apps_Exist() {
+        var id = 1L;
         var searchName = "app";
         var actual = appSearchService.findUserApps(id, searchName, new PageCriteria(1, 4));
         assertEquals(4, actual.size());
         verify(appNameSearchRepository, times(1))
-                .findUserAppsByName(id, searchName + ":*", PageRequest.of(0, 4));
+                .findUserAppsByName(id, searchName + ":*", 4, 0L);
     }
 
     @Test
-    public void returnEmptyList_When_findUserApps_If_Apps_Does_Not_Exist() {
+    public void returnEmptyList_When_findUserApps_If_Apps_Do_Not_Exist() {
         var id = 2;
         var searchName = "app";
         var actual = appSearchService.findUserApps(id, searchName, new PageCriteria(8, 9));
         assertEquals(0, actual.size());
         verify(appNameSearchRepository, times(1))
-                .findUserAppsByName(id, searchName + ":*", PageRequest.of(7, 9));
+                .findUserAppsByName(id, searchName + ":*", 9, 63);
     }
 
     @Test

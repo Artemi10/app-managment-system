@@ -24,8 +24,12 @@ public class PageCriteria {
         this.pageSize = pageSize;
     }
 
-    public Pageable toPageable() {
-        return PageRequest.of(page - 1, pageSize);
+    public int getLimit() {
+        return pageSize;
+    }
+
+    public long getOffset() {
+        return (long) (page - 1) * (long) pageSize;
     }
 
     public Pageable toPageable(Sort sort) {

@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.repository;
+package com.devanmejia.appmanager.repository.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

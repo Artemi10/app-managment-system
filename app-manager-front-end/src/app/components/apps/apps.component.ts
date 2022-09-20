@@ -18,7 +18,7 @@ export class AppsComponent implements OnInit {
   public apps: App[];
   public appsAmount: number;
   public isSearchPanelShown: boolean;
-  private searchParam: string;
+  private _searchParam: string;
 
   constructor(private appService: AppService,
               private router: Router,
@@ -35,11 +35,21 @@ export class AppsComponent implements OnInit {
         new DropdownElement('creationTime', 'Creation Time', false)
       ]);
     this.isSearchPanelShown = false;
-    this.searchParam = '';
+    this._searchParam = '';
   }
 
   ngOnInit() {
     this.retrieveApps();
+  }
+
+  public get searchParam(): string {
+    return this._searchParam;
+  }
+
+  public set searchParam(value: string){
+    this._searchParam = value;
+    this.pageCriteria.page = 1;
+    this.retrieveAppsByName();
   }
 
   public get isEmpty(): boolean {
@@ -53,7 +63,7 @@ export class AppsComponent implements OnInit {
   public set pageCriteria(value: PageCriteria) {
     this._pageCriteria = value;
     if (this.isSearchPanelShown) {
-      this.retrieveAppsByName(this.searchParam);
+      this.retrieveAppsByName();
     }
     else {
       this.retrieveApps();
@@ -77,17 +87,11 @@ export class AppsComponent implements OnInit {
   public closePanel() {
     this.isSearchPanelShown = false;
     this.pageCriteria.page = 1;
-   this.retrieveApps();
+    this.retrieveApps();
   }
 
   public openPanel() {
     this.isSearchPanelShown = true;
-  }
-
-  public searchApps(searchParam: string) {
-    this.pageCriteria.page = 1;
-    this.searchParam = searchParam;
-    this.retrieveAppsByName(searchParam);
   }
 
   public retrieveApps() {
@@ -98,8 +102,8 @@ export class AppsComponent implements OnInit {
       });
   }
 
-  private retrieveAppsByName(searchParam: string) {
-    this.appService.searchUserAppsByName(this.pageCriteria, searchParam)
+  private retrieveAppsByName() {
+    this.appService.searchUserAppsByName(this.pageCriteria, this.searchParam)
       .subscribe({
         next : this.initApps.bind(this),
         error : this.logOut.bind(this)

@@ -33,6 +33,16 @@ export class EventService {
       { observe: 'response', params: params});
   }
 
+  public searchAppEventsByName(appId: number, searchParam: string, pageCriteria: PageCriteria): Observable<HttpResponse<Event[]>> {
+    const params = {
+      page : pageCriteria.page,
+      pageSize : pageCriteria.pageSize
+    };
+    return this.http.get<Event[]>(
+      `${environment.backEndURL}${this.api}/${appId}/events/name/${searchParam}`,
+      {observe: 'response', params: params});
+  }
+
   public deleteAppEvent(appId: number, eventId: number): Observable<void> {
     return this.http.delete<void>(`${environment.backEndURL}${this.api}/${appId}/event/${eventId}`);
   }

@@ -44,7 +44,7 @@ import { CodeFieldComponent } from './components/auth/components/code-field/code
 import { SendAgainLinkComponent } from './components/auth/components/send-again-link/send-again-link.component';
 import { CounterComponent } from './components/auth/components/counter/counter.component';
 import { DropdownComponent } from './components/utils/sorting/dropdown/dropdown.component';
-import { SearchPanelComponent } from './components/apps/search-panel/search-panel.component';
+import { SearchPanelComponent } from './components/utils/search-panel/search-panel.component';
 import { GoogleOauthButtonComponent } from './components/auth/components/google-oauth-button/google-oauth-button.component';
 import {RefreshTokenInterceptor} from "./interceptor/refresh-token/refresh-token.interceptor";
 import {AccessTokenInterceptor} from "./interceptor/access-token/access-token.interceptor";

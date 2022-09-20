@@ -14,11 +14,14 @@ export class EventNavigationComponent implements AfterViewInit {
   public _sortCriteria: SortCriteria;
   @Output()
   public _sortCriteriaChange: EventEmitter<SortCriteria>;
+  @Output()
+  public openPanelEvent: EventEmitter<any>;
 
   constructor(private router: Router) {
     this.appId = 0;
     this._sortCriteria = new SortCriteria();
     this._sortCriteriaChange = new EventEmitter<SortCriteria>();
+    this.openPanelEvent = new EventEmitter();
   }
 
   ngAfterViewInit() {
@@ -51,6 +54,10 @@ export class EventNavigationComponent implements AfterViewInit {
     if (this.appId !== undefined) {
       this.router.navigate([`/app/${this.appId}/stats`]);
     }
+  }
+
+  public openPanel() {
+    this.openPanelEvent.emit();
   }
 
 }

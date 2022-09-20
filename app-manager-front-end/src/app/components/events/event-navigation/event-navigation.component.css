@@ -58,6 +58,18 @@
   cursor: pointer;
   color: #d1c4e9;
 }
+.navigation__buttons__search{
+  margin-right: 5px;
+  display: block;
+  color: #ffffff;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+}
+.navigation__buttons__search:hover{
+  cursor: pointer;
+  color: #d1c4e9;
+}
 .hidden{
   display: none;
 }

@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.service.app_search;
+package com.devanmejia.appmanager.service.app.app_search;
 
 import com.devanmejia.appmanager.entity.App;
 import com.devanmejia.appmanager.transfer.criteria.PageCriteria;
