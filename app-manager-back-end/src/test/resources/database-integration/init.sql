@@ -59,6 +59,15 @@ alter table events
 create unique index events_id_uindex
     on events (id);
 
+alter table applications add column ts tsvector
+    generated always as(to_tsvector('english', name)) stored;
+
+alter table events add column name_ts tsvector
+    generated always as(to_tsvector('english', name)) stored;
+
+alter table events add column extra_information_ts tsvector
+    generated always as(to_tsvector('english', extra_information)) stored;
+
 
 INSERT INTO users (email, password, authority, refresh_token)
 VALUES ('lyah.artem10@mail.ru', '$2y$10$ZPgg5k.SQaJIxjGF7AU15.GNVF2U7MVJJWgMxkyuXjW550XIEEK52', 'ACTIVE', 'f49a1380-4e9b-4a81-b5ee-735c59f35fed');

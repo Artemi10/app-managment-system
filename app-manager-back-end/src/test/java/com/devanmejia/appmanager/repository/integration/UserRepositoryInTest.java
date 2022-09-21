@@ -1,4 +1,4 @@
-package com.devanmejia.appmanager.integration;
+package com.devanmejia.appmanager.repository.integration;
 
 import com.devanmejia.appmanager.entity.user.Authority;
 import com.devanmejia.appmanager.entity.user.User;
