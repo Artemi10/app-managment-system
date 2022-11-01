@@ -38,7 +38,7 @@ export class AppsComponent implements OnInit {
     this._searchParam = '';
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.retrieveApps();
   }
 

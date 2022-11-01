@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Stat, StatData, StatType} from "../../model/stat.model";
 import {StatService} from "../../service/stat/stat.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -19,16 +19,6 @@ export class StatsComponent implements OnInit {
     this.stats = [];
   }
 
-  public get appId(): number | undefined {
-    const appIdStr = this.activatedRoute.snapshot.paramMap.get('id');
-    if (appIdStr !== null) {
-      return parseInt(appIdStr);
-    }
-    else {
-      return undefined;
-    }
-  }
-
   ngOnInit(): void {
     if (this.appId != undefined) {
       this.statService.createStats(this.appId, StatType.MONTH)
@@ -36,6 +26,16 @@ export class StatsComponent implements OnInit {
           next: this.initStats.bind(this),
           error: this.handleError.bind(this)
         });
+    }
+  }
+
+  public get appId(): number | undefined {
+    const appIdStr = this.activatedRoute.snapshot.paramMap.get('id');
+    if (appIdStr !== null) {
+      return parseInt(appIdStr);
+    }
+    else {
+      return undefined;
     }
   }
 
