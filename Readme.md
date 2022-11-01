@@ -31,6 +31,8 @@
     * Mockito
     * Testcontainers
 - Postgresql
+- Flyway
+- Swagger
 
 ### Front-end
 - TypeScript
