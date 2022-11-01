@@ -53,8 +53,7 @@ public class AppRepositoryInTest {
             new PostgreSQLContainer<>("postgres:latest")
                     .withDatabaseName("testpostres")
                     .withPassword("2424285")
-                    .withUsername("postgres")
-                    .withInitScript("database-integration/init.sql");
+                    .withUsername("postgres");
 
     @DynamicPropertySource
     public static void overrideProperties(DynamicPropertyRegistry registry){
@@ -64,6 +63,7 @@ public class AppRepositoryInTest {
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
         registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQL95Dialect");
         registry.add("spring.jpa.properties.hibernate.dialect", () -> "org.hibernate.dialect.PostgreSQL95Dialect");
+        registry.add("spring.flyway.locations", () -> "classpath:db/migration-integration_test");
     }
 
     @BeforeEach

@@ -13,9 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 public class DayStatServiceTest {
-    private static SimpleDateFormat FORMATTER;
+    private static DateTimeFormatter FORMATTER;
     private final AppService appService;
     private final StatsRepository statsRepository;
     private final StatService dayStatService;
@@ -34,20 +33,25 @@ public class DayStatServiceTest {
     public DayStatServiceTest() {
         this.appService = spy(AppService.class);
         this.statsRepository = spy(StatsRepository.class);
-        this.dayStatService = new DayStatService(appService, statsRepository);
+        this.dayStatService = new StatServiceImpl(
+                appService,
+                statsRepository,
+                DateTimeFormatter.ofPattern("dd.MM.yyyy"),
+                date -> date.plusDays(1)
+        );
     }
 
     @BeforeAll
     public static void init() {
-        FORMATTER = new SimpleDateFormat("dd.MM.yyyy");
+        FORMATTER = DateTimeFormatter.ofPattern("HH:00 dd.MM.yyyy Z");
     }
 
     @BeforeEach
     public void initMock() {
-        when(statsRepository.getRawApplicationStatsByDays(
+        when(statsRepository.getRawApplicationStats(
                 eq(2L),
-                argThat(time -> FORMATTER.format(time).equals("07.04.2022")),
-                argThat(time -> FORMATTER.format(time).equals("09.04.2022")))
+                argThat(time -> FORMATTER.format(time).equals("00:00 07.04.2022 +0300")),
+                argThat(time -> FORMATTER.format(time).equals("00:00 09.04.2022 +0300")))
         ).thenReturn(Map.of(
                 "07.04.2022", 1,
                 "09.04.2022", 5));
@@ -58,11 +62,11 @@ public class DayStatServiceTest {
     }
 
     @Test
-    public void createStats_Test() throws ParseException {
-        var from = new Timestamp(FORMATTER.parse("07.04.2022").getTime());
-        var to = new Timestamp(FORMATTER.parse("09.04.2022").getTime());
-        var statistic = new StatRequestDTO(1, from, to);
-        var expected = dayStatService.createStats(2, statistic);
+    public void createStats_Test() {
+        var from = OffsetDateTime.parse("00:00 07.04.2022 +0300", FORMATTER);
+        var to = OffsetDateTime.parse("00:00 09.04.2022 +0300", FORMATTER);
+        var statistic = new StatRequestDTO(from, to);
+        var expected = dayStatService.createStats(2, statistic, 1);
         assertEquals(3, expected.size());
         assertEquals("07.04.2022", expected.get(0).date());
         assertEquals(1, expected.get(0).amount());
@@ -73,18 +77,14 @@ public class DayStatServiceTest {
     }
 
     @Test
-    public void create_Basic_Stats_Test() {
-        var expected = dayStatService.createStats(2, 1);
-        verify(statsRepository, times(1))
-                .getRawApplicationStatsByDays(eq(2L), any(), any());
-    }
-
-    @Test
-    public void throw_Exception_When_CreateStats_If_User_Does_Not_Have_App_Test() throws ParseException {
-        var from = new Timestamp(FORMATTER.parse("07.04.2022").getTime());
-        var to = new Timestamp(FORMATTER.parse("09.04.2022").getTime());
-        var statistic = new StatRequestDTO(4, from, to);
-        var exception = assertThrows(EntityException.class, () -> dayStatService.createStats(2, statistic));
+    public void throw_Exception_When_CreateStats_If_User_Does_Not_Have_App_Test() {
+        var from = OffsetDateTime.parse("00:00 07.04.2022 +0300", FORMATTER);
+        var to = OffsetDateTime.parse("00:00 09.04.2022 +0300", FORMATTER);
+        var statistic = new StatRequestDTO(from, to);
+        var exception = assertThrows(
+                EntityException.class,
+                () -> dayStatService.createStats(2, statistic, 4)
+        );
         assertEquals("Application not found", exception.getMessage());
     }
 }

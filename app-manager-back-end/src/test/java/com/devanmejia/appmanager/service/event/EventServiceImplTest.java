@@ -115,7 +115,7 @@ public class EventServiceImplTest {
                             .id(5)
                             .name(event.getName())
                             .creationTime(event.getCreationTime())
-                            .extraInformation(event.getExtraInformation())
+                            .extraInformation(event.getExtraInformation().get())
                             .app(event.getApp())
                             .build();
                 });
@@ -156,7 +156,7 @@ public class EventServiceImplTest {
         Assertions.assertDoesNotThrow(() -> eventService.addAppEvent(1, requestBody, 1, creationTime));
         verify(eventRepository, times(1))
                 .save(argThat(event -> event.getName().equals(requestBody.name())
-                                && event.getExtraInformation().equals(requestBody.extraInformation())
+                                && event.getExtraInformation().map(inf -> inf.equals(requestBody.extraInformation())).orElse(false)
                                 && event.getApp().getId() == 1
                                 && event.getCreationTime().equals(creationTime)));
         verify(appService, times(1))
@@ -212,7 +212,9 @@ public class EventServiceImplTest {
         assertDoesNotThrow(() -> eventService.updateAppEvent(1, 1, requestBody, 1));
         verify(eventRepository, times(1))
                 .save(argThat(event -> event.getId() == 1
-                        && event.getExtraInformation().equals(requestBody.extraInformation())
+                        && event.getExtraInformation()
+                        .map(inf -> inf.equals(requestBody.extraInformation()))
+                        .orElse(false)
                         && event.getName().equals(requestBody.name())));
     }
 

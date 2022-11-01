@@ -1,7 +1,6 @@
 package com.devanmejia.appmanager.controller;
 
 import com.devanmejia.appmanager.security.details.UserPrincipal;
-import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.service.stat.StatService;
 import com.devanmejia.appmanager.transfer.stat.StatRequestDTO;
 import com.devanmejia.appmanager.transfer.stat.StatResponseDTO;
@@ -12,10 +11,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 
 @RestController
 @AllArgsConstructor
@@ -23,7 +22,7 @@ import java.util.Map;
 public class StatController {
     private final Map<String, StatService> statServices;
 
-    @GetMapping("/{appId}/stat")
+    @PostMapping("/{appId}/stat")
     @ApiOperation("Generate app event stats")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ok"),
@@ -33,29 +32,12 @@ public class StatController {
     })
     public List<StatResponseDTO> createStats(
             @PathVariable long appId,
-            @RequestParam String type,
-            @RequestParam String from,
-            @RequestParam String to,
+            @Valid @RequestBody StatRequestDTO statsRequest,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        List<StatResponseDTO> stats;
-        if (!from.isBlank() && !to.isBlank()) {
-            try {
-                var requestDTO = StatRequestDTO.from(principal.id(), from, to);
-                stats = statServices.containsKey(type) ?
-                        statServices.get(type).createStats(appId, requestDTO) : Collections.emptyList();
-            } catch (EntityException exception) {
-                stats = Collections.emptyList();
-            }
-        }
-        else {
-            try {
-                stats = statServices.containsKey(type) ?
-                        statServices.get(type).createStats(appId, principal.id()) : Collections.emptyList();
-            } catch (EntityException exception) {
-                    stats = Collections.emptyList();
-            }
-        }
-        return stats;
+        var serviceName = statsRequest.getType().getStatServiceName();
+        return statServices.containsKey(serviceName)
+                ? statServices.get(serviceName).createStats(appId, statsRequest, principal.id())
+                : Collections.emptyList();
     }
 }

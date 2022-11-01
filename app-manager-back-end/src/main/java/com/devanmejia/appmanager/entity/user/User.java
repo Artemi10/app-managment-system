@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "users")
@@ -33,4 +34,12 @@ public class User {
     private String refreshToken;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<App> apps;
+
+    public Optional<String> getResetToken() {
+        return Optional.ofNullable(resetToken);
+    }
+
+    public Optional<String> getOauthEnterToken() {
+        return Optional.ofNullable(oauthEnterToken);
+    }
 }

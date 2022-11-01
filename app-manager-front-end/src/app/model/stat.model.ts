@@ -1,7 +1,7 @@
 export enum StatType {
-  HOURS = 'hours',
-  DAYS = 'days',
-  MONTHS = 'months'
+  HOUR = 'HOUR',
+  DAY = 'DAY',
+  MONTH = 'MONTH'
 }
 
 export interface StatData {

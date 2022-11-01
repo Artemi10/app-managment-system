@@ -19,7 +19,7 @@ export class DateFieldComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const dateOptions = {
-      format : 'dd.mm.yyyy',
+      format : 'yyyy-mm-dd',
       onSelect : () => this.dateChange.emit(this.datePicker.toString())
     };
     if (this.dateElement !== undefined) {

@@ -13,14 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -30,7 +28,7 @@ import static org.mockito.Mockito.times;
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 public class HourStatServiceTest {
-    private static SimpleDateFormat FORMATTER;
+    private static DateTimeFormatter FORMATTER;
     private final AppService appService;
     private final StatsRepository statsRepository;
     private final StatService hourStatService;
@@ -39,23 +37,30 @@ public class HourStatServiceTest {
     public HourStatServiceTest() {
         this.appService = spy(AppService.class);
         this.statsRepository = spy(StatsRepository.class);
-        this.hourStatService = new HourStatService(appService, statsRepository);
+        this.hourStatService = new StatServiceImpl(
+                appService,
+                statsRepository,
+                DateTimeFormatter.ofPattern("HH:00 dd.MM.yyyy Z"),
+                date -> date.plusHours(1)
+        );
     }
 
     @BeforeAll
     public static void init() {
-        FORMATTER = new SimpleDateFormat("HH:00 dd.MM.yyyy");
+        FORMATTER = DateTimeFormatter.ofPattern("HH:00 dd.MM.yyyy Z");
     }
 
     @BeforeEach
     public void initMock() {
-        when(statsRepository.getRawApplicationStatsByHours(
+        when(statsRepository.getRawApplicationStats(
                 eq(2L),
-                argThat(time -> FORMATTER.format(time).equals("12:00 07.04.2022")),
-                argThat(time -> FORMATTER.format(time).equals("15:00 07.04.2022")))
-        ).thenReturn(Map.of(
-                "12:00 07.04.2022", 1,
-                "15:00 07.04.2022", 8));
+                argThat(time -> FORMATTER.format(time).equals("12:00 07.04.2022 +0300")),
+                argThat(time -> FORMATTER.format(time).equals("15:00 07.04.2022 +0300")))
+        ).thenReturn(
+                Map.of(
+                        "12:00 07.04.2022 +0300", 1,
+                        "15:00 07.04.2022 +0300", 8
+                ));
         when(appService.isUserApp(2L, 1))
                 .thenReturn(true);
         when(appService.isUserApp(2L, 4))
@@ -63,35 +68,33 @@ public class HourStatServiceTest {
     }
 
     @Test
-    public void createStats_Test() throws ParseException {
-        var from = new Timestamp(FORMATTER.parse("12:00 07.04.2022").getTime());
-        var to = new Timestamp(FORMATTER.parse("15:00 07.04.2022").getTime());
-        var statistic = new StatRequestDTO(1, from, to);
-        var expected = hourStatService.createStats(2, statistic);
+    public void createStats_Test() {
+        var from = OffsetDateTime.parse("12:00 07.04.2022 +0300", FORMATTER);
+        var to = OffsetDateTime.parse("15:00 07.04.2022 +0300", FORMATTER);
+        var statistic = new StatRequestDTO(from, to);
+        var expected = hourStatService.createStats(2, statistic, 1);
         assertEquals(4, expected.size());
-        assertEquals("12:00 07.04.2022", expected.get(0).date());
+        assertEquals("12:00 07.04.2022 +0300", expected.get(0).date());
         assertEquals(1, expected.get(0).amount());
-        assertEquals("13:00 07.04.2022", expected.get(1).date());
+        assertEquals("13:00 07.04.2022 +0300", expected.get(1).date());
         assertEquals(0, expected.get(1).amount());
-        assertEquals("14:00 07.04.2022", expected.get(2).date());
+        assertEquals("14:00 07.04.2022 +0300", expected.get(2).date());
         assertEquals(0, expected.get(2).amount());
-        assertEquals("15:00 07.04.2022", expected.get(3).date());
+        assertEquals("15:00 07.04.2022 +0300", expected.get(3).date());
         assertEquals(8, expected.get(3).amount());
-    }
-
-    @Test
-    public void create_Basic_Stats_Test() {
-        var expected = hourStatService.createStats(2, 1);
         verify(statsRepository, times(1))
-                .getRawApplicationStatsByHours(eq(2L), any(), any());
+                .getRawApplicationStats(eq(2L), eq(from), eq(to));
     }
 
     @Test
-    public void throw_Exception_When_CreateStats_If_User_Does_Not_Have_App_Test() throws ParseException {
-        var from = new Timestamp(FORMATTER.parse("12:00 07.04.2022").getTime());
-        var to = new Timestamp(FORMATTER.parse("15:00 07.04.2022").getTime());
-        var statistic = new StatRequestDTO(4, from, to);
-        var exception = assertThrows(EntityException.class, () -> hourStatService.createStats(2, statistic));
+    public void throw_Exception_When_CreateStats_If_User_Does_Not_Have_App_Test() {
+        var from = OffsetDateTime.parse("12:00 07.04.2022 +0300", FORMATTER);
+        var to = OffsetDateTime.parse("15:00 07.04.2022 +0300", FORMATTER);
+        var statistic = new StatRequestDTO(from, to);
+        var exception = assertThrows(
+                EntityException.class,
+                () -> hourStatService.createStats(2, statistic, 4)
+        );
         assertEquals("Application not found", exception.getMessage());
     }
 }

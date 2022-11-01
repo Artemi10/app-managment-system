@@ -3,8 +3,8 @@ package com.devanmejia.appmanager.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @Entity
 @Table(name = "events")
@@ -27,4 +27,8 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private App app;
+
+    public Optional<String> getExtraInformation() {
+        return Optional.ofNullable(extraInformation);
+    }
 }

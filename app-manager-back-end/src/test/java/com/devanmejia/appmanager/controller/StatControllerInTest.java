@@ -11,13 +11,12 @@ import com.devanmejia.appmanager.security.providers.JwtProvider;
 import com.devanmejia.appmanager.security.token.JwtService;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.service.auth.AuthService;
-import com.devanmejia.appmanager.service.stat.DayStatService;
-import com.devanmejia.appmanager.service.stat.HourStatService;
-import com.devanmejia.appmanager.service.stat.MonthStatService;
+import com.devanmejia.appmanager.service.stat.StatService;
 import com.devanmejia.appmanager.service.time.TimeService;
 import com.devanmejia.appmanager.service.time.TimeServiceImpl;
 import com.devanmejia.appmanager.transfer.stat.StatRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -40,6 +40,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.Clock;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -60,12 +61,14 @@ public class StatControllerInTest {
             6,
             ZoneId.of("UTC")
     );
-    @MockBean(name = "days")
-    private DayStatService dayStatService;
-    @MockBean(name = "hours")
-    private HourStatService hourStatService;
-    @MockBean(name = "months")
-    private MonthStatService monthStatService;
+    private static final DateTimeFormatter FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00 Z");
+    @MockBean(name = "dayStatService")
+    private StatService dayStatService;
+    @MockBean(name = "hourStatService")
+    private StatService hourStatService;
+    @MockBean(name = "monthStatService")
+    private StatService monthStatService;
     private final MockMvc mvc;
 
     @Autowired
@@ -77,10 +80,7 @@ public class StatControllerInTest {
     public void initMocks(){
         doThrow(EntityException.class)
                 .when(monthStatService)
-                .createStats(eq(2L), anyLong());
-        doThrow(EntityException.class)
-                .when(monthStatService)
-                .createStats(eq(2L), any(StatRequestDTO.class));
+                .createStats(eq(7L), any(StatRequestDTO.class), eq(1L));
     }
 
     @TestConfiguration
@@ -103,7 +103,9 @@ public class StatControllerInTest {
 
         @Bean
         public ObjectMapper objectMapper() {
-            return new ObjectMapper();
+            var mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            return mapper;
         }
 
         @Bean("testAuthenticationSuccessHandler")
@@ -133,41 +135,19 @@ public class StatControllerInTest {
             value = "lyah.artem10@mail.ru",
             userDetailsServiceBeanName = "testUserDetailsService"
     )
-    public void createDaysStat_If_User_Is_Authenticated() throws Exception {
+    public void return_400_When_createDaysStat_If_Request_param_Is_Invalid() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=days&from=&to=");
+                .post("/api/v1/app/1/stat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"from\" : \"null\", \"to\" : \"null\", \"timeZone\" : \"+0300\", \"type\" : \"DAY\"}");
         mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(dayStatService, times(1))
-                .createStats(eq(1L), anyLong());
-    }
-
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void createHoursStat_If_User_Is_Authenticated() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=hours&from=&to=");
-        mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(hourStatService, times(1))
-                .createStats(eq(1L), anyLong());
-    }
-
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void createMonthStat_If_User_Is_Authenticated() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=months&from=&to=");
-        mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(monthStatService, times(1))
-                .createStats(eq(1L), anyLong());
+                .andExpect(status().isBadRequest());
+        verify(dayStatService, times(0))
+                .createStats(anyLong(),any(), anyLong());
+        verify(monthStatService, times(0))
+                .createStats(anyLong(),any(), anyLong());
+        verify(hourStatService, times(0))
+                .createStats(anyLong(),any(), anyLong());
     }
 
     @Test
@@ -177,21 +157,39 @@ public class StatControllerInTest {
     )
     public void createStatByDatePeriod_If_User_Is_Authenticated() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=days&from=22.03.2022&to=24.03.2022");
+                .post("/api/v1/app/1/stat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"from\" : \"2022-03-22 00:00\", \"to\" : \"2022-03-24 00:00\", \"timeZone\" : \"+0300\", \"type\" : \"DAY\"}");
         mvc.perform(request)
                 .andExpect(status().isOk());
         verify(dayStatService, times(1))
-                .createStats(eq(1L), any(StatRequestDTO.class));
+                .createStats(
+                        eq(1L),
+                        argThat(stats ->
+                                FORMATTER.format(stats.getFrom()).equals("2022-03-22 00:00 +0300")
+                                && FORMATTER.format(stats.getTo()).equals("2022-03-24 00:00 +0300")),
+                        eq(1L)
+                );
+        verify(monthStatService, times(0))
+                .createStats(anyLong(),any(), anyLong());
+        verify(hourStatService, times(0))
+                .createStats(anyLong(),any(), anyLong());
     }
 
     @Test
     public void return_401_When_createStat_If_User_Is_Not_Authenticated() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=months&from=&to=");
+                .post("/api/v1/app/1/stat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"from\" : \"null\", \"to\" : \"null\", \"timeZone\" : \"+3000\", \"type\" : \"MONTH\"}");
         mvc.perform(request)
                 .andExpect(status().isUnauthorized());
+        verify(dayStatService, times(0))
+                .createStats(anyLong(),any(), anyLong());
         verify(monthStatService, times(0))
-                .createStats(anyLong(), anyLong());
+                .createStats(anyLong(),any(), anyLong());
+        verify(hourStatService, times(0))
+                .createStats(anyLong(),any(), anyLong());
     }
 
     @Test
@@ -201,11 +199,17 @@ public class StatControllerInTest {
     )
     public void return_403_When_createStat_If_User_Does_Not_Have_Permission() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=months&from=&to=");
+                .post("/api/v1/app/1/stat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"from\" : \"null\", \"to\" : \"null\", \"timeZone\" : \"+3000\", \"type\" : \"MONTH\"}");
         mvc.perform(request)
                 .andExpect(status().isForbidden());
+        verify(dayStatService, times(0))
+                .createStats(anyLong(),any(), anyLong());
         verify(monthStatService, times(0))
-                .createStats(anyLong(), anyLong());
+                .createStats(anyLong(),any(), anyLong());
+        verify(hourStatService, times(0))
+                .createStats(anyLong(),any(), anyLong());
     }
 
     @Test
@@ -213,13 +217,19 @@ public class StatControllerInTest {
             value = "lyah.artem10@mail.ru",
             userDetailsServiceBeanName = "testUserDetailsService"
     )
-    public void return_422_When_createStat_If_RequestBody_Is_Invalid() throws Exception {
+    public void return_400_When_createStat_If_RequestBody_Is_Invalid() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/1/stat?type=months&from=12 July 2022&to=16 October 2022");
+                .post("/api/v1/app/1/stat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"from\" : \"12 July 2022\", \"to\" : \"16 October 2022\", \"timeZone\" : \"+3000\",  \"type\" : \"MONTH\"}");
         mvc.perform(request)
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isBadRequest());
+        verify(dayStatService, times(0))
+                .createStats(anyLong(),any(), anyLong());
         verify(monthStatService, times(0))
-                .createStats(anyLong(), anyLong());
+                .createStats(anyLong(),any(), anyLong());
+        verify(hourStatService, times(0))
+                .createStats(anyLong(),any(), anyLong());
     }
 
     @Test
@@ -227,26 +237,19 @@ public class StatControllerInTest {
             value = "lyah.artem10@mail.ru",
             userDetailsServiceBeanName = "testUserDetailsService"
     )
-    public void createEmptyStat_If_Application_Not_Found() throws Exception {
+    public void return_404_When_createEmptyStat_If_Application_Not_Found() throws Exception {
         var request = MockMvcRequestBuilders
-                .get("/api/v1/app/2/stat?type=months&from=&to=");
+                .post("/api/v1/app/7/stat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"from\" : \"2022-03-22 00:00\", \"to\" : \"2022-03-24 00:00\", \"timeZone\" : \"+0300\", \"type\" : \"MONTH\"}");
         mvc.perform(request)
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound());
+        verify(dayStatService, times(0))
+                .createStats(anyLong(), any(), anyLong());
         verify(monthStatService, times(1))
-                .createStats(eq(2L), anyLong());
+                .createStats(eq(7L), any(), eq(1L));
+        verify(hourStatService, times(0))
+                .createStats(anyLong(), any(), anyLong());
     }
 
-    @Test
-    @WithUserDetails(
-            value = "lyah.artem10@mail.ru",
-            userDetailsServiceBeanName = "testUserDetailsService"
-    )
-    public void createEmptyStatByDatePeriod_If_Application_Not_Found() throws Exception {
-        var request = MockMvcRequestBuilders
-                .get("/api/v1/app/2/stat?type=months&from=22.03.2022&to=24.03.2022");
-        mvc.perform(request)
-                .andExpect(status().isOk());
-        verify(monthStatService, times(1))
-                .createStats(eq(2L), any(StatRequestDTO.class));
-    }
 }

@@ -1,5 +1,5 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {Stat, StatData} from "../../model/stat.model";
+import {Component, OnInit} from '@angular/core';
+import {Stat, StatData, StatType} from "../../model/stat.model";
 import {StatService} from "../../service/stat/stat.service";
 import {ActivatedRoute, Router} from "@angular/router";
 
@@ -31,7 +31,7 @@ export class StatsComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.appId != undefined) {
-      this.statService.createStats(this.appId, 'days')
+      this.statService.createStats(this.appId, StatType.MONTH)
         .subscribe({
           next: this.initStats.bind(this),
           error: this.handleError.bind(this)
@@ -49,7 +49,7 @@ export class StatsComponent implements OnInit {
 
   public submitStatsForm(stat: Stat) {
     if (this.appId != undefined) {
-      this.statService.createStats(this.appId, stat.type, stat.from, stat.to)
+      this.statService.createStats(this.appId, stat.type as StatType, stat.from, stat.to)
         .subscribe({
           next: this.initStats.bind(this),
           error: this.handleError.bind(this)

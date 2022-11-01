@@ -59,6 +59,7 @@ import { TimeZoneInterceptor } from './interceptor/time-zone/time-zone.intercept
 import { DropdownElementComponent } from './components/utils/sorting/dropdown/dropdown-element/dropdown-element.component';
 import { AppNavigationComponent } from './components/apps/app-navigation/app-navigation.component';
 import { EventNavigationComponent } from './components/events/event-navigation/event-navigation.component';
+import {DatePipe} from "@angular/common";
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -134,6 +135,7 @@ const appRoutes: Routes = [
     ReactiveFormsModule
   ],
   providers: [
+    DatePipe,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: RefreshTokenInterceptor,

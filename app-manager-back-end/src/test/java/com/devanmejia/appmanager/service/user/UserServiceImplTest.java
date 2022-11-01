@@ -81,7 +81,7 @@ public class UserServiceImplTest {
                             .email(user.getEmail())
                             .password(user.getPassword())
                             .authority(user.getAuthority())
-                            .resetToken(user.getResetToken())
+                            .resetToken(user.getResetToken().orElse(null))
                             .apps(user.getApps())
                             .build();
                 });
@@ -147,7 +147,7 @@ public class UserServiceImplTest {
                         userToReset -> userToReset.getAuthority().equals(Authority.ACTIVE)
                                 && userToReset.getEmail().equals("lyah.artem10@mail.ru")
                                 && passwordEncoder.matches("2424285", userToReset.getPassword())
-                                && userToReset.getResetToken() == null
+                                && userToReset.getResetToken().isEmpty()
                                 && userToReset.getApps().isEmpty())
                 );
     }
@@ -161,7 +161,7 @@ public class UserServiceImplTest {
                         userToReset -> userToReset.getAuthority().equals(Authority.ACTIVE)
                                 && userToReset.getEmail().equals("lyah.artem10@gmail.com")
                                 && passwordEncoder.matches("qwerty", userToReset.getPassword())
-                                && userToReset.getResetToken() == null
+                                && userToReset.getResetToken().isEmpty()
                                 && userToReset.getApps().isEmpty())
                 );
     }
@@ -175,7 +175,7 @@ public class UserServiceImplTest {
                         userToReset -> userToReset.getAuthority().equals(Authority.ACTIVE)
                                 && userToReset.getEmail().equals("lyah.artem11@gmail.com")
                                 && passwordEncoder.matches("qwerty", userToReset.getPassword())
-                                && userToReset.getResetToken() == null
+                                && userToReset.getResetToken().isEmpty()
                                 && userToReset.getApps().isEmpty())
                 );
     }
@@ -196,7 +196,7 @@ public class UserServiceImplTest {
         verify(userRepository, times(1)).findByEmail("lyah.artem10@gmail.com");
         verify(userRepository, times(1))
                 .save(argThat(
-                        user -> user.getResetToken() == null
+                        user -> user.getResetToken().isEmpty()
                                 && user.getAuthority().equals(Authority.ACTIVE)
                                 && passwordEncoder.matches(validUpdateDTO.newPassword(), user.getPassword())
                                 && user.getEmail().equals("lyah.artem10@gmail.com")
@@ -233,7 +233,7 @@ public class UserServiceImplTest {
         verify(userRepository, times(1))
                 .findByEmail("lyah.artem11@gmail.com");
         verify(userRepository, times(1))
-                .save(argThat(user -> user.getResetToken() == null
+                .save(argThat(user -> user.getResetToken().isEmpty()
                         && user.getAuthority().equals(Authority.UPDATE_CONFIRMED)));
     }
 

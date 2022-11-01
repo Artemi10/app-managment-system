@@ -34,8 +34,7 @@ public class EventNameSearchRepositoryInTest {
             new PostgreSQLContainer<>("postgres:latest")
                     .withDatabaseName("testpostres")
                     .withPassword("2424285")
-                    .withUsername("postgres")
-                    .withInitScript("database-integration/init.sql");
+                    .withUsername("postgres");
 
     @DynamicPropertySource
     public static void overrideProperties(DynamicPropertyRegistry registry){
@@ -45,6 +44,7 @@ public class EventNameSearchRepositoryInTest {
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
         registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQL95Dialect");
         registry.add("spring.jpa.properties.hibernate.dialect", () -> "org.hibernate.dialect.PostgreSQL95Dialect");
+        registry.add("spring.flyway.locations", () -> "classpath:db/migration-integration_test");
     }
 
     @Test
@@ -67,10 +67,10 @@ public class EventNameSearchRepositoryInTest {
         var eventsByName = eventNameSearchRepository
                 .findAppEventsByName(2, 1, "extra", 5, 0);
         assertEquals(4, eventsByName.size());
-        assertEquals("Extra information", eventsByName.get(0).getExtraInformation());
-        assertEquals("Extra information", eventsByName.get(1).getExtraInformation());
-        assertEquals("Extra information", eventsByName.get(2).getExtraInformation());
-        assertEquals("Extra information", eventsByName.get(3).getExtraInformation());
+        assertTrue(eventsByName.get(0).getExtraInformation().map(inf -> inf.equals("Extra information")).orElse(false));
+        assertTrue(eventsByName.get(1).getExtraInformation().map(inf -> inf.equals("Extra information")).orElse(false));
+        assertTrue(eventsByName.get(2).getExtraInformation().map(inf -> inf.equals("Extra information")).orElse(false));
+        assertTrue(eventsByName.get(3).getExtraInformation().map(inf -> inf.equals("Extra information")).orElse(false));
     }
 
     @Test

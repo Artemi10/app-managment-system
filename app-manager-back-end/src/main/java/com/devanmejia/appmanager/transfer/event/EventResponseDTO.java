@@ -4,8 +4,15 @@ import com.devanmejia.appmanager.entity.Event;
 
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
-public record EventResponseDTO(long id, String name, String extraInformation, String time, long appId) {
+public record EventResponseDTO(
+        long id,
+        String name,
+        Optional<String> extraInformation,
+        String time,
+        long appId
+) {
     private static final DateTimeFormatter DATE_FORMATTER
             = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:s");
 

@@ -37,7 +37,10 @@ public class UserServiceImpl implements UserService {
         if (!user.getAuthority().equals(Authority.UPDATE_NOT_CONFIRMED)) {
             throw new BadCredentialsException("Confirmation is not allowed");
         }
-        if (!user.getResetToken().equals(resetToken)) {
+        var isTokenValid = user.getResetToken()
+                .map(token -> token.equals(resetToken))
+                .orElse(false);
+        if (!isTokenValid) {
             throw new BadCredentialsException("Reset code is invalid");
         }
         user.setResetToken(null);

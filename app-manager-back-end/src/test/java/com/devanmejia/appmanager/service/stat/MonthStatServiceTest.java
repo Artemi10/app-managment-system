@@ -13,24 +13,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 public class MonthStatServiceTest {
-    private static SimpleDateFormat FORMATTER;
+    private static DateTimeFormatter FORMATTER;
     private final AppService appService;
     private final StatsRepository statsRepository;
     private final StatService monthStatService;
@@ -39,20 +36,25 @@ public class MonthStatServiceTest {
     public MonthStatServiceTest() {
         this.appService = spy(AppService.class);
         this.statsRepository = spy(StatsRepository.class);
-        this.monthStatService = new MonthStatService(appService, statsRepository);
+        this.monthStatService = new StatServiceImpl(
+                appService,
+                statsRepository,
+                DateTimeFormatter.ofPattern("MM.yyyy"),
+                date -> date.plusMonths(1)
+        );
     }
 
     @BeforeAll
     public static void init() {
-        FORMATTER = new SimpleDateFormat("MM.yyyy");
+        FORMATTER = DateTimeFormatter.ofPattern("HH:00 dd.MM.yyyy Z");
     }
 
     @BeforeEach
     public void initMock() {
-        when(statsRepository.getRawApplicationStatsByMonths(
+        when(statsRepository.getRawApplicationStats(
                 eq(2L),
-                argThat(time -> FORMATTER.format(time).equals("04.2022")),
-                argThat(time -> FORMATTER.format(time).equals("07.2022")))
+                argThat(time -> FORMATTER.format(time).equals("00:00 01.04.2022 +0300")),
+                argThat(time -> FORMATTER.format(time).equals("00:00 01.07.2022 +0300")))
         ).thenReturn(Map.of(
                 "04.2022", 1,
                 "07.2022", 8));
@@ -63,11 +65,11 @@ public class MonthStatServiceTest {
     }
 
     @Test
-    public void createStats_Test() throws ParseException {
-        var from = new Timestamp(FORMATTER.parse("04.2022").getTime());
-        var to = new Timestamp(FORMATTER.parse("07.2022").getTime());
-        var statistic = new StatRequestDTO(1, from, to);
-        var expected = monthStatService.createStats(2, statistic);
+    public void createStats_Test() {
+        var from = OffsetDateTime.parse("00:00 01.04.2022 +0300", FORMATTER);
+        var to = OffsetDateTime.parse("00:00 01.07.2022 +0300", FORMATTER);
+        var statistic = new StatRequestDTO(from, to);
+        var expected = monthStatService.createStats(2, statistic, 1);
         assertEquals(4, expected.size());
         assertEquals("04.2022", expected.get(0).date());
         assertEquals(1, expected.get(0).amount());
@@ -80,18 +82,14 @@ public class MonthStatServiceTest {
     }
 
     @Test
-    public void create_Basic_Stats_Test() {
-        var expected = monthStatService.createStats(2, 1);
-        verify(statsRepository, times(1))
-                .getRawApplicationStatsByMonths(eq(2L), any(), any());
-    }
-
-    @Test
-    public void throw_Exception_When_CreateStats_If_User_Does_Not_Have_App_Test() throws ParseException {
-        var from = new Timestamp(FORMATTER.parse("04.2022").getTime());
-        var to = new Timestamp(FORMATTER.parse("07.2022").getTime());
-        var statistic = new StatRequestDTO(4, from, to);
-        var exception = assertThrows(EntityException.class, () -> monthStatService.createStats(2, statistic));
+    public void throw_Exception_When_CreateStats_If_User_Does_Not_Have_App_Test() {
+        var from = OffsetDateTime.parse("00:00 01.04.2022 +0300", FORMATTER);
+        var to = OffsetDateTime.parse("00:00 01.07.2022 +0300", FORMATTER);
+        var statistic = new StatRequestDTO(from, to);
+        var exception = assertThrows(
+                EntityException.class,
+                () -> monthStatService.createStats(2, statistic, 4)
+        );
         assertEquals("Application not found", exception.getMessage());
     }
 }

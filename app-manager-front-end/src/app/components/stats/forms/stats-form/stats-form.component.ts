@@ -20,7 +20,7 @@ export class StatsFormComponent {
     this.submitForm = new EventEmitter<Stat>();
     this.statsForm = formBuilder.group({
       typeField: this.formBuilder.group({
-        type:  new FormControl('months')
+        type:  new FormControl('MONTH')
       })
     });
   }
