@@ -4,6 +4,7 @@ import com.devanmejia.appmanager.security.token.AccessTokenService;
 import com.devanmejia.appmanager.entity.user.Authority;
 import com.devanmejia.appmanager.entity.user.User;
 import com.devanmejia.appmanager.repository.UserRepository;
+import com.devanmejia.appmanager.service.token.SecureTokenGenerator;
 import com.devanmejia.appmanager.transfer.auth.LogInDTO;
 import com.devanmejia.appmanager.transfer.auth.SignUpDTO;
 import com.devanmejia.appmanager.transfer.auth.token.EnterToken;
@@ -35,7 +36,12 @@ class AuthServiceImplTest {
     public AuthServiceImplTest() {
         this.accessTokenService = spy(AccessTokenService.class);
         this.userRepository = spy(UserRepository.class);
-        this.authService = new AuthServiceImpl(accessTokenService, new BCryptPasswordEncoder(), userRepository);
+        this.authService = new AuthServiceImpl(
+                accessTokenService,
+                new BCryptPasswordEncoder(),
+                userRepository,
+                new SecureTokenGenerator()
+        );
     }
 
     @BeforeEach
@@ -44,21 +50,21 @@ class AuthServiceImplTest {
                 .id(1)
                 .email("lyah.artem10@mail.ru")
                 .password("$2a$10$3kVWnJcACqfBKzhiA//1MeJ/ex1PylaWC7esjmVwSzePHGW6AQmhu")
-                .refreshToken("7b69ab6d-4767-48d8-a20f-25a2340e1405")
+                .refreshToken("$2a$10$nELieoQz2WeESnhcSm1RAumtrjowOwX6jZArwnDu9vpHv00CKhLUW")
                 .authority(Authority.ACTIVE)
                 .build();
         var newUser = User.builder()
                 .id(2)
                 .email("lyah.artem10@gmail.com")
                 .password("$2a$10$3kVWnJcACqfBKzhiA//1MeJ/ex1PylaWC7esjmVwSzePHGW6AQmhu")
-                .refreshToken("7b69ab6d-4767-48d8-a20f-25a2340e1405")
+                .refreshToken("$2a$10$nELieoQz2WeESnhcSm1RAumtrjowOwX6jZArwnDu9vpHv00CKhLUW")
                 .authority(Authority.ACTIVE)
                 .build();
         var oAuthUser = User.builder()
                 .id(3)
                 .email("lyah.artem03@gmail.com")
                 .password("$2a$10$3kVWnJcACqfBKzhiA//1MeJ/ex1PylaWC7esjmVwSzePHGW6AQmhu")
-                .refreshToken("7b69ab6d-4767-48d8-a20f-25a2340e1405")
+                .refreshToken("$2a$10$nELieoQz2WeESnhcSm1RAumtrjowOwX6jZArwnDu9vpHv00CKhLUW")
                 .oauthEnterToken("7b69ab6d-4767-48d8-a20f-25a2340e424")
                 .authority(Authority.ACTIVE)
                 .build();

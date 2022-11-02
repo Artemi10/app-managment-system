@@ -4,6 +4,7 @@ import com.devanmejia.appmanager.entity.user.Authority;
 import com.devanmejia.appmanager.entity.user.User;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.repository.UserRepository;
+import com.devanmejia.appmanager.service.token.NumericTokenGenerator;
 import com.devanmejia.appmanager.transfer.auth.UpdateDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,11 @@ public class UserServiceImplTest {
     public UserServiceImplTest() {
         this.userRepository = spy(UserRepository.class);
         this.passwordEncoder = new BCryptPasswordEncoder();
-        this.userService = new UserServiceImpl(passwordEncoder, userRepository);
+        this.userService = new UserServiceImpl(
+                passwordEncoder,
+                userRepository,
+                new NumericTokenGenerator()
+        );
     }
 
     @BeforeEach
@@ -59,7 +64,7 @@ public class UserServiceImplTest {
                 .email("lyah.artem11@gmail.com")
                 .password(passwordEncoder.encode("qwerty"))
                 .authority(Authority.UPDATE_NOT_CONFIRMED)
-                .resetToken("DVhclnWO")
+                .resetToken("$2a$10$NCQ/btkbCQksTCuNj2V8dO129dBWxMqvR3jM.7/7zEO1Mey1OFTsa")
                 .apps(new ArrayList<>())
                 .build();
         when(userRepository.findByEmail("lyah.artem10@mail.ru"))
@@ -229,7 +234,7 @@ public class UserServiceImplTest {
     @Test
     public void confirmResetUser_If_User_Has_Update_Not_Confirmed_Authority() {
         assertDoesNotThrow(() -> userService
-                .confirmResetUser("lyah.artem11@gmail.com", "DVhclnWO"));
+                .confirmResetUser("lyah.artem11@gmail.com", "4533"));
         verify(userRepository, times(1))
                 .findByEmail("lyah.artem11@gmail.com");
         verify(userRepository, times(1))

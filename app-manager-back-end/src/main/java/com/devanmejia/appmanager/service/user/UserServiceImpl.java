@@ -3,27 +3,42 @@ package com.devanmejia.appmanager.service.user;
 import com.devanmejia.appmanager.entity.user.Authority;
 import com.devanmejia.appmanager.exception.EntityException;
 import com.devanmejia.appmanager.repository.UserRepository;
+import com.devanmejia.appmanager.service.token.TokenGenerator;
 import com.devanmejia.appmanager.transfer.auth.UpdateDTO;
-import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
 public class UserServiceImpl implements UserService {
+    private final static int RESET_TOKEN_LENGTH = 4;
+
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final TokenGenerator numericTokenGenerator;
+
+    @Autowired
+    public UserServiceImpl(
+            PasswordEncoder passwordEncoder,
+            UserRepository userRepository,
+            @Qualifier("numericTokenGenerator")
+            TokenGenerator numericTokenGenerator
+    ) {
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
+        this.numericTokenGenerator = numericTokenGenerator;
+    }
 
     @Override
     @Transactional
     public String resetUser(String email) {
-        var resetToken = RandomStringUtils.randomAlphabetic(8);
+        var resetToken = numericTokenGenerator.generatorToken(RESET_TOKEN_LENGTH);
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityException("User not found"));
-        user.setResetToken(resetToken);
+        user.setResetToken(passwordEncoder.encode(resetToken));
         user.setAuthority(Authority.UPDATE_NOT_CONFIRMED);
         userRepository.save(user);
         return resetToken;
@@ -38,7 +53,7 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException("Confirmation is not allowed");
         }
         var isTokenValid = user.getResetToken()
-                .map(token -> token.equals(resetToken))
+                .map(token -> passwordEncoder.matches(resetToken, token))
                 .orElse(false);
         if (!isTokenValid) {
             throw new BadCredentialsException("Reset code is invalid");
